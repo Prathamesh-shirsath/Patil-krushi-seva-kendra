@@ -102,6 +102,12 @@ export default function Footer() {
               </div>
             </div>
           </div>
+
+         
+            
+
+
+          
         </div>
 
         {/* Bottom Footer */}
@@ -120,6 +126,7 @@ export default function Footer() {
               Terms & Conditions
             </Link>
           </div>
+          
         </div>
       </div>
     </footer>

@@ -42,7 +42,7 @@ export default function Header() {
             🌱 Quality Agricultural Products
           </span>
 
-          <span>📞 +91 9876543210</span>
+          <span>📞 +91 9209061629</span>
         </div>
       </div>
 

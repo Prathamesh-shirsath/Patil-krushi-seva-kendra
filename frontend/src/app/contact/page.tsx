@@ -133,7 +133,13 @@ export default function ContactPage() {
           </p>
           <p className="font-semibold text-gray-800">
             +91 92090 61629
-          </p>
+                </p>
+                <p className="font-semibold text-gray-800">
+                  +91 70300 81617
+                </p>
+                <p className="font-semibold text-gray-800">
+                  +91 8010070680
+                </p>
           <p className="text-xs text-gray-500 mt-1">
             Mon–Sat: 9:00 AM – 7:00 PM
           </p>
@@ -145,21 +151,30 @@ export default function ContactPage() {
 
 
       {/* WhatsApp */}
-      <div className="border border-gray-200 rounded-xl p-5 flex items-start gap-4 hover:shadow-md transition-shadow">
-        <div className="bg-green-100 rounded-full p-3 flex-shrink-0">
+            <div className="border border-gray-200 rounded-xl p-5 flex items-start gap-4 hover:shadow-md transition-shadow" onClick={() => window.open("https://wa.me/919209061629", "_blank")}>
+              <div className="bg-green-100 rounded-full p-3 flex-shrink-0">
+                
           <FaWhatsapp className="w-6 h-6 text-green-700" />
-        </div>
+              </div>
+              
 
         <div>
-          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
+          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1 ">
             WhatsApp Us
-          </p>
-          <p className="font-semibold text-gray-800">
-            +91 92090 61629
+                </p>
+                
+          <p className="font-semibold text-gray-800 ">
+                  +91 92090 61629
+                  
           </p>
           <p className="text-xs text-gray-500 mt-1">
             Quick support on WhatsApp
-          </p>
+                </p>
+                <button className="mt-2 text-xs font-medium text-white bg-[#1a4d2e] hover:bg-green-800 px-3 py-1.5 rounded-lg transition-colors "  >
+                  Chat on WhatsApp →
+                  
+                </button>
+          
         </div>
       </div>
 
