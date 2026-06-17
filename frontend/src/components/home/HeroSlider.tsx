@@ -1,53 +1,47 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 const banners = [
   {
-    title: "Quality Seeds For Better Harvest",
-    description: "Premium quality seeds for maximum crop yield.",
     image: "/banners/banner.webp",
   },
   {
-    title: "Best Fertilizers For Your Farm",
-    description: "Boost soil fertility and plant growth.",
     image: "/banners/banner1.webp",
   },
   {
-    title: "Modern Farming Solutions",
-    description: "Advanced products for smart agriculture.",
     image: "/banners/banner2.webp",
   },
 ];
 
 export default function HeroSlider() {
   return (
-    <section className="py-6">
+    <section className="w-full">
       <Swiper
-        modules={[Autoplay, Pagination]}
+        modules={[Autoplay, Pagination, Navigation]}
         autoplay={{
-          delay: 4000,
+          delay: 5000,
           disableOnInteraction: false,
         }}
         pagination={{ clickable: true }}
+        navigation
         loop
+        className="w-full"
       >
         {banners.map((banner, index) => (
           <SwiperSlide key={index}>
             <div
               className="
                 relative
-                h-[300px]
-                sm:h-[400px]
-                md:h-[500px]
-                lg:h-[650px]
-                rounded-3xl
-                overflow-hidden
+                h-[70vh]
+                md:h-[80vh]
                 bg-cover
                 bg-center
               "
@@ -55,26 +49,92 @@ export default function HeroSlider() {
                 backgroundImage: `url(${banner.image})`,
               }}
             >
-              {/* Overlay */}
+              {/* Dark Overlay */}
               <div className="absolute inset-0 bg-black/50" />
 
               {/* Content */}
-              <div className="relative z-10 flex h-full items-center px-6 md:px-12 lg:px-20">
-                <div className="max-w-2xl">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white">
-                    {banner.title}
-                  </h1>
+              <div className="relative z-10 flex h-full items-center">
+                <div className="max-w-7xl mx-auto w-full px-6 lg:px-10">
 
-                  <p className="mt-4 text-white/90 text-sm md:text-lg">
-                    {banner.description}
-                  </p>
+                  <div className="max-w-2xl">
 
-                  <Button
-                    size="lg"
-                    className="mt-6 bg-green-600 hover:bg-green-700"
-                  >
-                    Shop Now
-                  </Button>
+                    {/* Badge */}
+                    <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur px-4 py-2 text-sm font-medium text-white">
+                      🌱 Trusted by 10,000+ Farmers
+                    </span>
+
+                    {/* Heading */}
+                    <h1 className="mt-6 text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight text-white">
+                      All Your Farming
+                      <span className="block text-green-400">
+                        Needs In One Place
+                      </span>
+                    </h1>
+
+                    {/* Description */}
+                    <p className="mt-5 text-lg text-gray-200 max-w-xl">
+                      Premium quality seeds, fertilizers, pesticides and
+                      expert agricultural solutions for modern farmers.
+                    </p>
+
+                    {/* Trust Chips */}
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <span className="rounded-full bg-white/20 backdrop-blur px-4 py-2 text-sm text-white">
+                        🚚 Free Delivery
+                      </span>
+
+                      <span className="rounded-full bg-white/20 backdrop-blur px-4 py-2 text-sm text-white">
+                        ✅ Genuine Products
+                      </span>
+
+                      <span className="rounded-full bg-white/20 backdrop-blur px-4 py-2 text-sm text-white">
+                        🌾 Expert Support
+                      </span>
+                    </div>
+
+                    {/* CTA Buttons */}
+                    <div className="mt-8 flex flex-wrap gap-4">
+                      <Button
+                        size="lg"
+                        className="
+                          bg-green-600
+                          hover:bg-green-700
+                          px-8
+                          shadow-lg
+                        "
+                      >
+                        🛒 Shop Products
+                      </Button>
+
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="
+                          border-white
+                          text-white
+                          bg-transparent
+                          hover:bg-white
+                          hover:text-black
+                        "
+                      >
+                        🌱 Browse Categories
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Discount Badge */}
+              <div className="absolute top-6 right-6 z-20">
+                <div className="rounded-full bg-orange-500 px-4 py-2 text-sm font-bold text-white shadow-xl">
+                  🔥 Up To 30% OFF
+                </div>
+              </div>
+
+              {/* Seasonal Badge */}
+              <div className="absolute bottom-8 right-6 z-20">
+                <div className="rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-xl">
+                  🌱 Kharif Season Specials
                 </div>
               </div>
             </div>
@@ -84,3 +144,4 @@ export default function HeroSlider() {
     </section>
   );
 }
+
