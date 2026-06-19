@@ -1,12 +1,30 @@
+export interface ProductVariant {
+    packSize: string;
+    price: number;
+}
+
 export interface Product {
     id: string;
+
     name: string;
-    sku: string;
-    category: string;
-    brand: string;
-    type: string;
+
+    categoryId: string;
+
+    brandId: string;
+
+    description: string;
+
+    usedForCrops?: string[];
+
+    packSize: string;
+
     price: number;
-    stock: number;
-    status: "Active" | "Inactive";
-    isBestseller: boolean;
+
+    variants?: ProductVariant[];
+
+    image?: string;
+
+    status: boolean;
+
+    createdAt?: string;
 }
