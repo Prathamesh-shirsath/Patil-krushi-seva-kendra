@@ -9,38 +9,15 @@ import BestSelling from "@/components/home/BestSelling";
 
 export default function HomePage() {
   return (
-    <main className="w-full bg-white overflow-x-hidden">
-      {/* Hero Section */}
-      <HeroSlider />
+   <main className="w-full overflow-x-hidden bg-white">
+  <HeroSlider />
 
-      {/* Main Content */}
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-10">
-        <section className="mb-8 md:mb-12">
-          <Features />
-        </section>
-
-        <section className="mb-8 md:mb-12">
-          <Categories />
-        </section>
-
-        <section className="mb-8 md:mb-12">
-          <Brands />
-        </section>
-
-        <section className="mb-8 md:mb-12">
-          <FeaturedProducts />
-        </section>
-
-        <section className="mb-8 md:mb-12">
-          <BestSelling />
-        </section>
-      </div>
-
-      {/*  Newsletter 
-      <section className="mt-8 md:mt-12">
-        <Newsletter />
-      </section> */}
-    </main>
+  <Features />
+  <Categories />
+  <Brands />
+  <FeaturedProducts />
+  <BestSelling />
+</main>
   );
 }
 
