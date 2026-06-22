@@ -14,6 +14,7 @@ export type ShopProduct = {
   originalPrice?: number;
   badge?: string;
   unit?: string;
+  slug?: string;
 };
 
 type ProductGridProps = {
@@ -50,6 +51,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
           availability={product.availability}
           badge={product.badge}
           unit={product.unit}
+          slug={product.slug}
         />
       ))}
     </div>

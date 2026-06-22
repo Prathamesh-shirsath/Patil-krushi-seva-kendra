@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ type Props = {
   availability?: "In Stock" | "Out of Stock";
   badge?: string;
   unit?: string;
+  slug?: string;
 };
 
 export default function ProductCard({
@@ -30,19 +32,33 @@ export default function ProductCard({
   availability = "In Stock",
   badge = "New",
   unit,
+  slug,
 }: Props) {
   const isAvailable = availability === "In Stock";
+  const productHref = slug ? `/product/${slug}` : undefined;
 
   return (
     <Card className="group overflow-hidden rounded-lg border border-gray-200 bg-white py-0 text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
       <div className="relative flex h-40 items-center justify-center overflow-hidden bg-white p-5">
-        <Image
-          src={image}
-          alt={name}
-          width={400}
-          height={400}
-          className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
-        />
+        {productHref ? (
+          <Link href={productHref} className="h-full w-full">
+            <Image
+              src={image}
+              alt={name}
+              width={400}
+              height={400}
+              className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+            />
+          </Link>
+        ) : (
+          <Image
+            src={image}
+            alt={name}
+            width={400}
+            height={400}
+            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+          />
+        )}
 
         {badge ? (
           <span className="absolute left-3 top-3 rounded bg-green-700 px-2 py-1 text-[10px] font-semibold text-white">
@@ -56,9 +72,17 @@ export default function ProductCard({
           {category ?? "Product"}
         </p>
 
-        <h3 className="mt-1 min-h-10 text-[13px] font-semibold leading-5 text-gray-950 line-clamp-2">
-          {name}
-        </h3>
+        {productHref ? (
+          <Link href={productHref}>
+            <h3 className="mt-1 min-h-10 text-[13px] font-semibold leading-5 text-gray-950 transition-colors line-clamp-2 hover:text-green-700">
+              {name}
+            </h3>
+          </Link>
+        ) : (
+          <h3 className="mt-1 min-h-10 text-[13px] font-semibold leading-5 text-gray-950 line-clamp-2">
+            {name}
+          </h3>
+        )}
 
         <p className="mt-1 truncate text-[11px] text-gray-500">
           Brand: {brand ?? "Generic"}

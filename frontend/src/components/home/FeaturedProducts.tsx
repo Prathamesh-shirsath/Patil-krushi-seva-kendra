@@ -3,24 +3,28 @@ import ProductCard from "../common/ProductCard";
 const products = [
   {
     id: 1,
+    slug: "organic-fertilizer",
     name: "Organic Fertilizer",
     price: 450,
     image: "/products/p1.png",
   },
   {
     id: 2,
+    slug: "neem-oil",
     name: "Neem Oil",
     price: 290,
     image: "/products/p2.png",
   },
   {
     id: 3,
+    slug: "bio-pesticide",
     name: "Bio Pesticide",
     price: 199,
     image: "/products/p3.png",
   },
   {
     id: 4,
+    slug: "vermi-compost",
     name: "Vermi Compost",
     price: 399,
     image: "/products/p4.png",
