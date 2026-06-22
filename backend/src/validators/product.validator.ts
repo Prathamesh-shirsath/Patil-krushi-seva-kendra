@@ -1,31 +1,32 @@
 import { z } from "zod";
 
 export const createProductSchema = z.object({
-  name: z.string().min(3),
+  name: z.string().min(2),
 
-  slug: z.string(),
+  slug: z.string().min(2),
 
-  brand: z.string().min(2),
-
-  image: z.string(),
-
-  images: z.array(z.string()).optional(),
-
-  price: z.number().positive(),
-
-  discountedPrice: z.number().positive().optional(),
-
-  description: z.string().min(10),
-
-  uses: z.string().min(3),
-
-  features: z.string().optional(),
-
-  cropRecommendation: z.string().optional(),
-
-  stock: z.number().int().nonnegative(),
-
-  isActive: z.boolean().optional(),
+  description: z.string(),
 
   categoryId: z.string(),
+
+  brandId: z.string(),
+
+  packSize: z.string(),
+
+  price: z.number(),
+
+  image: z.string().optional(),
+
+  usedForCrops: z.array(z.string()),
+
+  status: z.boolean().default(true),
+
+  variants: z
+    .array(
+      z.object({
+        packSize: z.string(),
+        price: z.number(),
+      })
+    )
+    .optional(),
 });

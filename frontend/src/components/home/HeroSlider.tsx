@@ -94,7 +94,7 @@ export default function HeroSlider() {
 
                     {/* CTA Buttons */}
                     <div className="mt-8 flex flex-wrap gap-4">
-                      <Button
+                      {/* <Button
                         size="lg"
                         className="
                           bg-green-600
@@ -104,9 +104,9 @@ export default function HeroSlider() {
                         "
                       >
                         🛒 Shop Products
-                      </Button>
+                      </Button> */}
 
-                      <Button
+                      {/* <Button
                         size="lg"
                         variant="outline"
                         className="
@@ -118,7 +118,7 @@ export default function HeroSlider() {
                         "
                       >
                         🌱 Browse Categories
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </div>

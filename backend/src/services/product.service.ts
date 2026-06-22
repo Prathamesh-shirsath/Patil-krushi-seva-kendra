@@ -2,45 +2,59 @@ import { prisma } from "../lib/prisma";
 import { CreateProductInput } from "../types/product.types";
 
 export const createProduct = async (data: CreateProductInput) => {
-  const product = await prisma.product.create({
+  return prisma.product.create({
     data: {
-      ...data,
+      name: data.name,
+      slug: data.slug,
+      description: data.description,
+
+      categoryId: data.categoryId,
+      brandId: data.brandId,
+
+      packSize: data.packSize,
+      price: data.price,
+
+      image: data.image,
+
+      usedForCrops: data.usedForCrops,
+
+      status: data.status,
+
+      variants: data.variants
+        ? {
+          create: data.variants,
+        }
+        : undefined,
+    },
+
+    include: {
+      category: true,
+      brand: true,
+      variants: true,
     },
   });
-
-  return product;
 };
 
 export const getAllProducts = async (
   page = 1,
   limit = 10,
   search?: string,
-  brand?: string,
+  brandId?: string,
   categoryId?: string
 ) => {
   return prisma.product.findMany({
     where: {
-      isActive: true,
+      status: true,
 
       ...(search && {
-        OR: [
-          {
-            name: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-          {
-            brand: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-        ],
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
       }),
 
-      ...(brand && {
-        brand,
+      ...(brandId && {
+        brandId,
       }),
 
       ...(categoryId && {
@@ -50,10 +64,11 @@ export const getAllProducts = async (
 
     include: {
       category: true,
+      brand: true,
+      variants: true,
     },
 
     skip: (page - 1) * limit,
-
     take: limit,
 
     orderBy: {
@@ -67,16 +82,14 @@ export const getProductBySlug = async (slug: string) => {
     where: {
       slug,
     },
+
     include: {
       category: true,
-      reviews: true,
+      brand: true,
+      variants: true,
     },
   });
 };
-
-
-
-
 
 export const updateProduct = async (
   id: string,
@@ -86,7 +99,30 @@ export const updateProduct = async (
     where: {
       id,
     },
-    data,
+
+    data: {
+      name: data.name,
+      slug: data.slug,
+      description: data.description,
+
+      categoryId: data.categoryId,
+      brandId: data.brandId,
+
+      packSize: data.packSize,
+      price: data.price,
+
+      image: data.image,
+
+      usedForCrops: data.usedForCrops,
+
+      status: data.status,
+    },
+
+    include: {
+      category: true,
+      brand: true,
+      variants: true,
+    },
   });
 };
 

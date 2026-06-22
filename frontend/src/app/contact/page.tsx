@@ -213,10 +213,10 @@ export default function ContactPage() {
             Patil Krushi Seva Kendra,
           </p>
           <p className="text-xs text-gray-500">
-           A/p. Tembhurni, Tal. Sillod,
+           A/p. Tembhurni, Tal. Jafrabaad,
           </p>
           <p className="text-xs text-gray-500">
-            Dist. Chhatrapati Sambhajinagar, MH
+            Dist. Jalna, Maharashtra, India - 431208
           </p>
         </div>
       </div>
@@ -345,7 +345,7 @@ export default function ContactPage() {
                 </div>
                 <div className="p-4 bg-gray-50">
                   <p className="text-sm font-semibold text-gray-800">Patil Krushi Seva Kendra</p>
-                  <p className="text-xs text-gray-500 mt-0.5"> A/p. Tembhurni, Tal. Sillod,Dist. Chhatrapati Sambhajinagar, MH</p>
+                  <p className="text-xs text-gray-500 mt-0.5"> A/p. Tembhurni, Tal. Jafrabaad,Dist. Jalna, Maharashtra, India - 431208</p>
                   <a
                     href="https://goo.gl/maps/KLWJxb3s8qhVY2Ud7?g_st=aw"
                     target="_blank"

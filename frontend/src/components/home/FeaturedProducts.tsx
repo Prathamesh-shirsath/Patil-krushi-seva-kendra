@@ -29,31 +29,41 @@ const products = [
 
 export default function FeaturedProducts() {
   return (
-    <section className="py-12">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Section Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold">
-              Featured Products
-            </h2>
+   <section className="w-full py-16 bg-gradient-to-b from-white to-green-50">
+  <div className="w-full px-4 md:px-8 lg:px-12">
 
-            <p className="text-muted-foreground mt-2">
-              Best quality agricultural products for farmers
-            </p>
-          </div>
-        </div>
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
+      <div>
+        <span className="inline-block px-4 py-2 rounded-full bg-green-100 text-green-700 font-medium">
+          🌱 Featured Collection
+        </span>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              {...product}
-            />
-          ))}
-        </div>
+        <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-gray-900">
+          Featured Products
+        </h2>
+
+        <p className="mt-3 text-gray-600">
+          Best quality agricultural products trusted by farmers.
+        </p>
       </div>
-    </section>
+    </div>
+
+    <div
+      className="
+        grid
+        gap-6
+        [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]
+      "
+    >
+      {products.map((product) => (
+        <ProductCard
+          key={product.id}
+          {...product}
+        />
+      ))}
+    </div>
+
+  </div>
+</section>
   );
 }
