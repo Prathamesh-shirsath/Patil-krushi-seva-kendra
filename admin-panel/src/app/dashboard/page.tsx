@@ -21,7 +21,7 @@ import {
 export default function DashboardPage() {
     const { data, isLoading } = useDashboard();
 
-    if (isLoading) {
+    if (isLoading || !data) {
         return (
             <DashboardLayout>
                 <div className="flex h-[60vh] items-center justify-center text-sm text-gray-500">
@@ -33,6 +33,7 @@ export default function DashboardPage() {
 
     return (
         <DashboardLayout>
+
             {/* Header */}
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-950">
@@ -46,9 +47,10 @@ export default function DashboardPage() {
 
             {/* Stats Cards */}
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+
                 <StatsCard
                     title="Total Sales"
-                    value={data.totalSales}
+                    value={data.totalSales ?? 0}
                     prefix="₹"
                     percentage={18.6}
                     icon={<DollarSign className="text-green-700" size={24} />}
@@ -57,7 +59,7 @@ export default function DashboardPage() {
 
                 <StatsCard
                     title="Total Orders"
-                    value={data.totalOrders}
+                    value={data.totalOrders ?? 0}
                     percentage={12.4}
                     icon={<ShoppingBag className="text-emerald-700" size={24} />}
                     iconBg="bg-emerald-50"
@@ -65,7 +67,7 @@ export default function DashboardPage() {
 
                 <StatsCard
                     title="Total Customers"
-                    value={data.totalCustomers}
+                    value={data.totalCustomers ?? 0}
                     percentage={15.8}
                     icon={<Users className="text-violet-700" size={24} />}
                     iconBg="bg-violet-50"
@@ -73,16 +75,18 @@ export default function DashboardPage() {
 
                 <StatsCard
                     title="Average Order Value"
-                    value={data.averageOrderValue}
+                    value={data.averageOrderValue ?? 0}
                     prefix="₹"
                     percentage={8.3}
                     icon={<ShoppingCart className="text-orange-700" size={24} />}
                     iconBg="bg-orange-50"
                 />
+
             </div>
 
             {/* Charts */}
             <div className="mt-8 grid gap-6 lg:grid-cols-3">
+
                 <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm lg:col-span-2">
                     <SalesChart />
                 </div>
@@ -90,6 +94,7 @@ export default function DashboardPage() {
                 <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
                     <OrdersChart />
                 </div>
+
             </div>
 
             {/* Recent Orders */}
@@ -99,6 +104,7 @@ export default function DashboardPage() {
 
             {/* Bottom Cards */}
             <div className="mt-8 grid gap-6 lg:grid-cols-2">
+
                 <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
                     <TopProductsTable />
                 </div>
@@ -106,12 +112,14 @@ export default function DashboardPage() {
                 <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
                     <SalesCategoryCard />
                 </div>
+
             </div>
 
             {/* Low Stock */}
             <div className="mt-8 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
                 <LowStockCard />
             </div>
+
         </DashboardLayout>
     );
 }

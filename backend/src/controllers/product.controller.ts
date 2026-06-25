@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-
+import { uploadImage } from "../services/upload.service";
 
 import {
   createProduct,
@@ -16,17 +16,32 @@ export const createProductController = async (
   res: Response
 ) => {
   try {
-    const product = await createProduct(req.body);
+
+    let imageUrl = "";
+
+    if (req.file) {
+      imageUrl = await uploadImage(req.file);
+    }
+
+    const product = await createProduct({
+      ...req.body,
+      image: imageUrl,
+    });
 
     res.status(201).json({
       success: true,
       data: product,
     });
+
   } catch (error) {
+
+    console.log(error);
+
     res.status(500).json({
       success: false,
       message: "Failed to create product",
     });
+
   }
 };
 

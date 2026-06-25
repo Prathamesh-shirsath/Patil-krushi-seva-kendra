@@ -28,6 +28,7 @@ import {
 const products: ShopProduct[] = [
   {
     id: 1,
+    slug: "multi-crop-seed-care-pack",
     name: "Multi Crop Seed Care Pack",
     price: 640,
     originalPrice: 760,
@@ -43,6 +44,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 2,
+    slug: "balanced-crop-nutrition-mix",
     name: "Balanced Crop Nutrition Mix",
     price: 360,
     image: "/banner.jpg",
@@ -57,6 +59,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 3,
+    slug: "plant-shield-liquid-concentrate",
     name: "Plant Shield Liquid Concentrate",
     price: 520,
     image: "/banners/banner1.webp",
@@ -71,6 +74,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 4,
+    slug: "crop-growth-support-tonic",
     name: "Crop Growth Support Tonic",
     price: 280,
     originalPrice: 340,
@@ -85,6 +89,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 5,
+    slug: "soil-conditioner-organic-blend",
     name: "Soil Conditioner Organic Blend",
     price: 450,
     image: "/banners/banner.webp",
@@ -99,6 +104,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 6,
+    slug: "fungal-control-wettable-powder",
     name: "Fungal Control Wettable Powder",
     price: 710,
     image: "/banner.jpg",
@@ -112,6 +118,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 7,
+    slug: "root-development-booster",
     name: "Root Development Booster",
     price: 195,
     image: "/banners/banner1.webp",
@@ -125,6 +132,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 8,
+    slug: "vegetable-seed-assortment",
     name: "Vegetable Seed Assortment",
     price: 240,
     image: "/banners/banner2.webp",
@@ -138,6 +146,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 9,
+    slug: "micro-nutrient-foliar-spray",
     name: "Micro Nutrient Foliar Spray",
     price: 330,
     image: "/banners/banner.webp",
@@ -151,6 +160,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 10,
+    slug: "irrigation-pipe-roll",
     name: "Irrigation Pipe Roll",
     price: 980,
     image: "/banner.jpg",
@@ -164,6 +174,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 11,
+    slug: "natural-pest-care-solution",
     name: "Natural Pest Care Solution",
     price: 420,
     image: "/banners/banner1.webp",
@@ -178,6 +189,7 @@ const products: ShopProduct[] = [
   },
   {
     id: 12,
+    slug: "farm-tool-maintenance-kit",
     name: "Farm Tool Maintenance Kit",
     price: 560,
     image: "/banners/banner2.webp",

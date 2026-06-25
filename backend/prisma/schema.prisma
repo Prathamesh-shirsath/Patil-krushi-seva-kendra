@@ -283,20 +283,12 @@ model Verification {
 model Product {
   id String @id @default(cuid())
 
-  name String
-  slug String @unique
-
+  name        String
   description String
 
   image String?
 
-  usedForCrops String[]
-
-  packSize String
-
-  price Float
-
-  status Boolean @default(true)
+  slug String @unique
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
@@ -304,14 +296,23 @@ model Product {
   brandId String
   brand   Brand  @relation(fields: [brandId], references: [id])
 
+  packSize String
+  price    Float
+
+  usedForCrops String[]
+
+  status Boolean @default(true)
+
   variants ProductVariant[]
 
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  // ADD THESE
   cartItems  CartItem[]
   wishlists  Wishlist[]
   orderItems OrderItem[]
   reviews    Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProductVariant {
@@ -328,15 +329,19 @@ model ProductVariant {
 }
 
 model Brand {
-  id String @id @default(cuid())
+  id          String   @id @default(cuid())
 
-  name String
-  slug String @unique
+  name        String
+  slug        String   @unique
 
-  image String?
+  logo        String?
 
-  products Product[]
+  description String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status      Boolean  @default(true)
+
+  products    Product[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

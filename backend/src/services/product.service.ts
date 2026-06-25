@@ -20,9 +20,12 @@ export const createProduct = async (data: CreateProductInput) => {
 
       status: data.status,
 
-      variants: data.variants
+      variants: data.variants?.length
         ? {
-          create: data.variants,
+          create: data.variants.map((v) => ({
+            packSize: v.packSize,
+            price: v.price,
+          })),
         }
         : undefined,
     },
@@ -47,10 +50,22 @@ export const getAllProducts = async (
       status: true,
 
       ...(search && {
-        name: {
-          contains: search,
-          mode: "insensitive",
-        },
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            brand: {
+              name: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+        ],
       }),
 
       ...(brandId && {
@@ -69,6 +84,7 @@ export const getAllProducts = async (
     },
 
     skip: (page - 1) * limit,
+
     take: limit,
 
     orderBy: {

@@ -2,21 +2,25 @@ import ProductCard from "../common/ProductCard";
 
 const products = [
   {
+    slug: "best-fertilizer",
     name: "Best Fertilizer",
     price: 499,
     image: "/products/p1.png",
   },
   {
+    slug: "organic-seeds",
     name: "Organic Seeds",
     price: 299,
     image: "/products/p2.png",
   },
   {
+    slug: "bio-pesticide",
     name: "Bio Pesticide",
     price: 399,
     image: "/products/p3.png",
   },
   {
+    slug: "neem-oil",
     name: "Neem Oil",
     price: 199,
     image: "/products/p4.png",

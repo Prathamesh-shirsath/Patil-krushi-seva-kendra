@@ -1,28 +1,29 @@
 import { Router } from "express";
+
 import {
   createProductController,
   getAllProductsController,
   getProductBySlugController,
   updateProductController,
-deleteProductController,
+  deleteProductController,
 } from "../controllers/product.controller";
+
+import { upload } from "../middleware/upload.middleware";
 
 const router = Router();
 
-router.post("/", createProductController);
+router.post(
+  "/",
+  upload.single("image"),
+  createProductController
+);
 
 router.get("/", getAllProductsController);
 
 router.get("/:slug", getProductBySlugController);
-
-export default router;
-
-router.post("/", createProductController);
 
 router.put("/:id", updateProductController);
 
 router.delete("/:id", deleteProductController);
 
-router.get("/", getAllProductsController);
-
-router.get("/:slug", getProductBySlugController);
+export default router;
