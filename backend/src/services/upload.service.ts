@@ -3,6 +3,11 @@ import {
     PutObjectCommand,
 } from "@aws-sdk/client-s3";
 
+
+import {
+    DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
+
 import { v4 as uuid } from "uuid";
 
 const r2 = new S3Client({
@@ -45,3 +50,21 @@ export async function uploadImage(
     return `${process.env.R2_PUBLIC_URL}/${fileName}`;
 }
 
+export async function deleteImage(
+    imageUrl: string
+) {
+    if (!imageUrl) return;
+
+    const key =
+        imageUrl.split("/").pop();
+
+    if (!key) return;
+
+    await r2.send(
+        new DeleteObjectCommand({
+            Bucket:
+                process.env.R2_BUCKET_NAME,
+            Key: key,
+        })
+    );
+}

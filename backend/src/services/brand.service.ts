@@ -44,6 +44,8 @@ export const getBrandById = async (id: string) => {
             },
         },
     });
+
+    
 };
 
 export const updateBrand = async (
@@ -63,3 +65,4 @@ export const deleteBrand = async (
         where: { id },
     });
 };
+

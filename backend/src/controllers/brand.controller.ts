@@ -10,6 +10,17 @@ import {
 import { uploadImage }
     from "../services/upload.service";
 
+
+import {
+    deleteImage,
+} from "../services/upload.service";
+import {
+    getBrandById,
+} from "../services/brand.service";
+
+
+
+
 export const createBrandController = async (
     req: Request,
     res: Response
@@ -101,30 +112,30 @@ export const updateBrandController = async (
     }
 };
 
-export const deleteBrandController = async (
-    req: Request,
-    res: Response
-) => {
-    try {
+export const deleteBrandController =
+    async (
+        req: Request,
+        res: Response
+    ) => {
 
-        await deleteBrand(
-            req.params.id as string
-        );
+        try {
 
-        res.json({
-            success: true,
-            message:
-                "Brand deleted successfully",
-        });
+            const brand =
+                await getBrandById(
+                    req.params.id as string
+                );
 
-    } catch (error) {
+            if (!brand) {
 
-        console.error(error);
+                return res
+                    .status(404)
+                    .json({
+                        success: false,
+                        message:
+                            "Brand not found",
+                    });
 
-        res.status(500).json({
-            success: false,
-            message: "Failed to delete brand",
-        });
+            }
 
     }
 };

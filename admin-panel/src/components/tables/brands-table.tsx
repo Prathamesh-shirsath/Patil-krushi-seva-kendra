@@ -9,6 +9,7 @@ import {
 
 import AddBrandDialog from "@/components/dialogs/add-brand-dialog";
 import EditBrandDialog from "@/components/dialogs/edit-brand-dialog";
+import ViewBrandDialog from "@/components/dialogs/view-brand-dialog";
 
 import {
     Card,
@@ -17,29 +18,30 @@ import {
 
 import {
     Table,
+    TableHeader,
+    TableHead,
+    TableRow,
     TableBody,
     TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
 } from "@/components/ui/table";
 
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import {
     Search,
     Eye,
     Pencil,
     Trash2,
+    Package,
+    CheckCircle,
+    XCircle,
+    Building2,
 } from "lucide-react";
 
-import ViewBrandDialog
-    from "@/components/dialogs/view-brand-dialog";
-
-
 export default function BrandsTable() {
+
     const {
         data: brands = [],
         isLoading,
@@ -51,13 +53,15 @@ export default function BrandsTable() {
     const [search, setSearch] =
         useState("");
 
-    const [
-        selectedBrand,
-        setSelectedBrand,
-    ] = useState<any>(null);
+    const [selectedBrand, setSelectedBrand] =
+        useState<any>(null);
+
+    const [viewBrand, setViewBrand] =
+        useState<any>(null);
 
     const filteredBrands =
         useMemo(() => {
+
             const q =
                 search.toLowerCase();
 
@@ -67,6 +71,7 @@ export default function BrandsTable() {
                         .toLowerCase()
                         .includes(q)
             );
+
         }, [brands, search]);
 
     const totalBrands =
@@ -81,15 +86,6 @@ export default function BrandsTable() {
     const inactiveBrands =
         totalBrands -
         activeBrands;
-    
-    
-    
-    
-    
-    const [viewBrand, setViewBrand] =
-        useState<any>(null);
-    
-    
 
     const totalProducts =
         brands.reduce(
@@ -104,103 +100,101 @@ export default function BrandsTable() {
         );
 
     if (isLoading) {
+
         return (
-            <Card>
+
+            <Card className="rounded-3xl">
+
                 <CardContent className="p-10 text-center">
+
                     Loading brands...
+
                 </CardContent>
+
             </Card>
+
         );
+
     }
 
     return (
+
         <div className="space-y-6">
 
             {/* Stats */}
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
 
-                <Card className="rounded-3xl">
-                    <CardContent className="p-6">
-                        <p className="text-sm text-slate-500">
-                            Total Brands
-                        </p>
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
-                        <h2 className="mt-2 text-3xl font-bold">
-                            {totalBrands}
-                        </h2>
-                    </CardContent>
-                </Card>
+                <StatCard
+                    title="Total Brands"
+                    value={totalBrands}
+                    icon={<Building2 size={24} />}
+                />
 
-                <Card className="rounded-3xl">
-                    <CardContent className="p-6">
-                        <p className="text-sm text-slate-500">
-                            Active Brands
-                        </p>
+                <StatCard
+                    title="Active Brands"
+                    value={activeBrands}
+                    icon={<CheckCircle size={24} />}
+                />
 
-                        <h2 className="mt-2 text-3xl font-bold text-green-700">
-                            {activeBrands}
-                        </h2>
-                    </CardContent>
-                </Card>
+                <StatCard
+                    title="Inactive Brands"
+                    value={inactiveBrands}
+                    icon={<XCircle size={24} />}
+                />
 
-                <Card className="rounded-3xl">
-                    <CardContent className="p-6">
-                        <p className="text-sm text-slate-500">
-                            Inactive Brands
-                        </p>
-
-                        <h2 className="mt-2 text-3xl font-bold text-orange-600">
-                            {inactiveBrands}
-                        </h2>
-                    </CardContent>
-                </Card>
-
-                <Card className="rounded-3xl">
-                    <CardContent className="p-6">
-                        <p className="text-sm text-slate-500">
-                            Total Products
-                        </p>
-
-                        <h2 className="mt-2 text-3xl font-bold text-blue-600">
-                            {totalProducts}
-                        </h2>
-                    </CardContent>
-                </Card>
+                <StatCard
+                    title="Total Products"
+                    value={totalProducts}
+                    icon={<Package size={24} />}
+                />
 
             </div>
 
             {/* Search */}
-            <Card className="rounded-3xl">
-                <CardContent className="flex items-center gap-4 p-5">
 
-                    <div className="relative flex-1">
+            <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm flex flex-col lg:flex-row gap-4">
 
-                        <Search
-                            size={16}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                        />
+                <div className="relative flex-1">
 
-                        <Input
-                            value={search}
-                            onChange={(e) =>
-                                setSearch(
-                                    e.target.value
-                                )
-                            }
-                            placeholder="Search brands..."
-                            className="pl-10 rounded-xl"
-                        />
+                    <Search
+                        size={18}
+                        className="absolute left-3 top-4 text-slate-400"
+                    />
 
-                    </div>
+                    <Input
+                        value={search}
+                        onChange={(e) =>
+                            setSearch(
+                                e.target.value
+                            )
+                        }
+                        placeholder="Search brands..."
+                        className="
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-slate-50
+                        pl-10
+                        pr-4
+                        py-3
+                        focus:bg-white
+                        focus:ring-2
+                        focus:ring-green-500
+                    "
+                    />
 
-                    <AddBrandDialog />
+                </div>
 
-                </CardContent>
-            </Card>
+                <AddBrandDialog />
+
+            </div>
 
             {/* Table */}
-            <Card className="rounded-3xl">
-                <CardContent className="p-0">
+
+            <div className="overflow-hidden rounded-3xl border border-green-100 bg-white/80 backdrop-blur-md shadow-sm">
+
+                <div className="overflow-x-auto">
 
                     <Table>
 
@@ -208,31 +202,31 @@ export default function BrandsTable() {
 
                             <TableRow>
 
-                                <TableHead>
+                                <TableHead className="p-5">
                                     Logo
                                 </TableHead>
 
-                                <TableHead>
+                                <TableHead className="p-5">
                                     Brand
                                 </TableHead>
 
-                                <TableHead>
+                                <TableHead className="p-5">
                                     Slug
                                 </TableHead>
 
-                                <TableHead>
+                                <TableHead className="p-5">
                                     Products
                                 </TableHead>
 
-                                <TableHead>
+                                <TableHead className="p-5">
                                     Status
                                 </TableHead>
 
-                                <TableHead>
+                                <TableHead className="p-5">
                                     Created
                                 </TableHead>
 
-                                <TableHead>
+                                <TableHead className="p-5 text-right">
                                     Actions
                                 </TableHead>
 
@@ -241,162 +235,226 @@ export default function BrandsTable() {
                         </TableHeader>
 
                         <TableBody>
+                            {filteredBrands.map((brand: any) => (
 
-                            {filteredBrands.map(
-                                (brand: any) => (
+                                <TableRow
+                                    key={brand.id}
+                                    className="
+        border-t
+        hover:bg-green-50
+        transition-all
+        duration-300
+    "
+                                >
 
-                                    <TableRow
-                                        key={brand.id}
-                                    >
+                                    {/* Logo */}
 
-                                        <TableCell>
+                                    <TableCell className="p-5">
 
-                                            {brand.logo ? (
+                                        {brand.logo ? (
 
-                                                <img
-                                                    src={
-                                                        brand.logo
-                                                    }
-                                                    alt={
-                                                        brand.name
-                                                    }
-                                                    className="h-12 w-12 rounded-xl object-cover border"
-                                                />
+                                            <img
+                                                src={brand.logo}
+                                                alt={brand.name}
+                                                className="
+                    h-12
+                    w-12
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    shadow-md
+                    object-cover
+                "
+                                            />
 
-                                            ) : (
+                                        ) : (
 
-                                                <div className="h-12 w-12 rounded-xl bg-green-100 flex items-center justify-center font-bold">
-                                                    {brand.name
-                                                        .slice(
-                                                            0,
-                                                            2
-                                                        )
-                                                        .toUpperCase()}
-                                                </div>
-
-                                            )}
-
-                                        </TableCell>
-
-                                        <TableCell className="font-medium">
-                                            {brand.name}
-                                        </TableCell>
-
-                                        <TableCell>
-                                            {brand.slug}
-                                        </TableCell>
-
-                                        <TableCell>
-                                            {
-                                                brand
-                                                    ._count
-                                                    ?.products
-                                            }
-                                        </TableCell>
-
-                                        <TableCell>
-
-                                            {brand.status ? (
-
-                                                <Badge className="bg-green-100 text-green-700">
-                                                    Active
-                                                </Badge>
-
-                                            ) : (
-
-                                                <Badge className="bg-orange-100 text-orange-700">
-                                                    Inactive
-                                                </Badge>
-
-                                            )}
-
-                                        </TableCell>
-
-                                        <TableCell>
-
-                                            {new Date(
-                                                brand.createdAt
-                                            ).toLocaleDateString()}
-
-                                        </TableCell>
-
-                                        <TableCell>
-
-                                            <div className="flex gap-2">
-
-                                                <Button
-                                                    size="icon"
-                                                    variant="ghost"
-                                                    onClick={() =>
-                                                        setViewBrand(brand)
-                                                    }
-                                                >
-                                                    <Eye className="h-4 w-4" />
-                                                </Button>
-
-                                                <Button
-                                                    size="icon"
-                                                    variant="ghost"
-                                                    onClick={() =>
-                                                        setSelectedBrand(
-                                                            brand
-                                                        )
-                                                    }
-                                                >
-                                                    <Pencil className="h-4 w-4" />
-                                                </Button>
-
-                                                <Button
-                                                    size="icon"
-                                                    variant="ghost"
-                                                    className="text-red-600"
-                                                    disabled={
-                                                        deleteMutation.isPending
-                                                    }
-                                                    onClick={() => {
-
-                                                        const confirmDelete =
-                                                            window.confirm(
-                                                                `Delete ${brand.name}?`
-                                                            );
-
-                                                        if (
-                                                            !confirmDelete
-                                                        )
-                                                            return;
-
-                                                        deleteMutation.mutate(
-                                                            brand.id
-                                                        );
-
-                                                    }}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-
+                                            <div
+                                                className="
+                    h-12
+                    w-12
+                    rounded-2xl
+                    bg-gradient-to-br
+                    from-green-500
+                    to-emerald-600
+                    text-white
+                    shadow-lg
+                    flex
+                    items-center
+                    justify-center
+                    font-bold
+                "
+                                            >
+                                                {brand.name
+                                                    .slice(0, 2)
+                                                    .toUpperCase()}
                                             </div>
 
-                                        </TableCell>
+                                        )}
 
-                                    </TableRow>
+                                    </TableCell>
 
-                                )
-                            )}
+                                    {/* Brand */}
+
+                                    <TableCell className="p-5">
+
+                                        <div>
+
+                                            <p className="font-semibold text-slate-800">
+                                                {brand.name}
+                                            </p>
+
+                                            <p className="text-sm text-slate-500">
+                                                {brand._count?.products || 0} Products
+                                            </p>
+
+                                        </div>
+
+                                    </TableCell>
+
+                                    {/* Slug */}
+
+                                    <TableCell className="p-5 text-slate-500">
+                                        {brand.slug}
+                                    </TableCell>
+
+                                    {/* Products */}
+
+                                    <TableCell className="p-5 font-medium">
+                                        {brand._count?.products || 0}
+                                    </TableCell>
+
+                                    {/* Status */}
+
+                                    <TableCell className="p-5">
+
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-sm font-medium ${brand.status
+                                                    ? "bg-green-100 text-green-700"
+                                                    : "bg-red-100 text-red-600"
+                                                }`}
+                                        >
+                                            {brand.status
+                                                ? "Active"
+                                                : "Inactive"}
+                                        </span>
+
+                                    </TableCell>
+
+                                    {/* Created */}
+
+                                    <TableCell className="p-5 text-slate-600">
+
+                                        {new Date(
+                                            brand.createdAt
+                                        ).toLocaleDateString()}
+
+                                    </TableCell>
+
+                                    {/* Actions */}
+
+                                    <TableCell className="p-5">
+
+                                        <div className="flex justify-end gap-2">
+
+                                            {/* View */}
+
+                                            <Button
+                                                size="icon"
+                                                variant="outline"
+                                                className="
+                    h-10
+                    w-10
+                    rounded-xl
+                    border-blue-200
+                    text-blue-600
+                    hover:bg-blue-50
+                "
+                                                onClick={() =>
+                                                    setViewBrand(brand)
+                                                }
+                                            >
+                                                <Eye size={18} />
+                                            </Button>
+
+                                            {/* Edit */}
+
+                                            <Button
+                                                size="icon"
+                                                variant="outline"
+                                                className="
+                    h-10
+                    w-10
+                    rounded-xl
+                    border-green-200
+                    text-green-600
+                    hover:bg-green-50
+                "
+                                                onClick={() =>
+                                                    setSelectedBrand(
+                                                        brand
+                                                    )
+                                                }
+                                            >
+                                                <Pencil size={18} />
+                                            </Button>
+
+                                            {/* Delete */}
+
+                                            <Button
+                                                size="icon"
+                                                variant="outline"
+                                                className="
+                    h-10
+                    w-10
+                    rounded-xl
+                    border-red-200
+                    text-red-600
+                    hover:bg-red-50
+                "
+                                                disabled={
+                                                    deleteMutation.isPending
+                                                }
+                                                onClick={() => {
+
+                                                    const confirmDelete =
+                                                        window.confirm(
+                                                            `Delete ${brand.name}?`
+                                                        );
+
+                                                    if (!confirmDelete)
+                                                        return;
+
+                                                    deleteMutation.mutate(
+                                                        brand.id
+                                                    );
+
+                                                }}
+                                            >
+                                                <Trash2 size={18} />
+                                            </Button>
+
+                                        </div>
+
+                                    </TableCell>
+
+                                </TableRow>
+
+                            ))}
 
                         </TableBody>
 
                     </Table>
 
-                </CardContent>
-            </Card>
+                </div>
+
+            </div>
 
             <EditBrandDialog
                 open={!!selectedBrand}
                 brand={selectedBrand}
                 onOpenChange={() =>
-                    setSelectedBrand(
-                        null
-                    )
+                    setSelectedBrand(null)
                 }
             />
 
@@ -409,5 +467,73 @@ export default function BrandsTable() {
             />
 
         </div>
+
     );
+
+}
+
+function StatCard({
+    title,
+    value,
+    icon,
+}: {
+    title: string;
+    value: number;
+    icon: React.ReactNode;
+}) {
+
+    return (
+
+        <div
+            className="
+            rounded-3xl
+            border
+            border-slate-100
+            bg-white
+            p-6
+            shadow-sm
+            hover:shadow-xl
+            transition-all
+            duration-300
+        "
+        >
+
+            <div className="flex items-center justify-between">
+
+                <div>
+
+                    <p className="text-sm text-slate-500">
+                        {title}
+                    </p>
+
+                    <h3 className="mt-2 text-3xl font-bold text-slate-800">
+                        {value}
+                    </h3>
+
+                </div>
+
+                <div
+                    className="
+                    h-14
+                    w-14
+                    rounded-2xl
+                    bg-gradient-to-br
+                    from-green-500
+                    to-emerald-600
+                    text-white
+                    flex
+                    items-center
+                    justify-center
+                    shadow-lg
+                "
+                >
+                    {icon}
+                </div>
+
+            </div>
+
+        </div>
+
+    );
+
 }
