@@ -5,23 +5,38 @@ import {
 
 import { v4 as uuid } from "uuid";
 
-const r2 = new S3Client({
-    region: "auto",
+const isR2Configured = !!(
+    process.env.R2_ACCOUNT_ID &&
+    process.env.R2_ACCESS_KEY_ID &&
+    process.env.R2_SECRET_ACCESS_KEY &&
+    process.env.R2_BUCKET_NAME &&
+    process.env.R2_PUBLIC_URL
+);
 
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+const r2 = isR2Configured
+    ? new S3Client({
+        region: "auto",
 
-    credentials: {
-        accessKeyId:
-            process.env.R2_ACCESS_KEY_ID!,
+        endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
 
-        secretAccessKey:
-            process.env.R2_SECRET_ACCESS_KEY!,
-    },
-});
+        credentials: {
+            accessKeyId:
+                process.env.R2_ACCESS_KEY_ID!,
+
+            secretAccessKey:
+                process.env.R2_SECRET_ACCESS_KEY!,
+        },
+    })
+    : null;
 
 export async function uploadImage(
     file: Express.Multer.File
 ) {
+    if (!isR2Configured || !r2) {
+        const base64 = file.buffer.toString("base64");
+        return `data:${file.mimetype};base64,${base64}`;
+    }
+
     const extension =
         file.originalname.split(".").pop();
 

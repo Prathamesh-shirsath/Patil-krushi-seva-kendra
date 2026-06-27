@@ -29,6 +29,7 @@ import {
   Headphones,
   ShoppingBag,
   ShoppingCart,
+  Tag,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ interface CategoryMeta {
   productsCount: string;
   brandsCount: string;
   icon: React.ComponentType<any>;
+  image?: string;
 }
 
 const CATEGORIES: CategoryMeta[] = [
@@ -405,14 +407,62 @@ function getMockProductsForCategory(categorySlug: string) {
   });
 }
 
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
+  seeds: Sprout,
+  fertilizers: Wheat,
+  pesticides: Bug,
+  organic: Leaf,
+  "plant-protection": ShieldCheck,
+  protection: ShieldCheck,
+  "farming-tools": Wrench,
+  tools: Wrench,
+  irrigation: Droplet,
+  "animal-care": Heart,
+  animal: Heart,
+};
+
 function CategoriesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
+  const [categoriesList, setCategoriesList] = useState<CategoryMeta[]>(CATEGORIES);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await fetch("http://localhost:5000/api/categories");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success && Array.isArray(data.data)) {
+            const mapped = data.data
+              .filter((c: any) => c.status !== false)
+              .map((c: any) => ({
+                id: c.id,
+                name: c.name,
+                slug: c.slug,
+                description: c.description || "",
+                productsCount: c.productsCount || "0+",
+                brandsCount: c.brandsCount || "0+",
+                icon: ICON_MAP[c.slug] || ICON_MAP[c.id] || Tag,
+                image: c.image || ""
+              }));
+
+            if (mapped.length > 0) {
+              setCategoriesList(mapped);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load categories from backend:", err);
+      }
+    }
+    fetchCategories();
+  }, []);
+
   // Get active category from search params, default to "fertilizers"
   const activeSlug = searchParams.get("name")?.toLowerCase() || "fertilizers";
-  const activeCategory = CATEGORIES.find((c) => c.slug === activeSlug) || CATEGORIES[1];
+  const activeCategory = categoriesList.find((c) => c.slug === activeSlug) || categoriesList[0];
 
   // Filters State
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
@@ -831,8 +881,8 @@ function CategoriesContent() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
-            {CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
+            {categoriesList.map((cat) => {
+              const Icon = cat.icon || Tag;
               const isActive = cat.slug === activeSlug;
 
               return (
@@ -852,7 +902,11 @@ function CategoriesContent() {
                         : "bg-gray-50 text-gray-500 group-hover:bg-green-100 group-hover:text-green-700"
                     }`}
                   >
-                    <Icon className="h-5 w-5" />
+                    {cat.image ? (
+                      <img src={cat.image} alt={cat.name} className="h-5 w-5 object-cover rounded-full" />
+                    ) : (
+                      <Icon className="h-5 w-5" />
+                    )}
                   </div>
                   <span className="text-xs font-bold tracking-tight">
                     {cat.name}
