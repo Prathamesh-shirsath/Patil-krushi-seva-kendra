@@ -2,6 +2,7 @@ import "./globals.css";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import SectionReveal from "@/components/animations/SectionReveal";
 
 import { Geist } from "next/font/google";
 
@@ -36,7 +37,9 @@ export default function RootLayout({
 
           {children}
 
-          <Footer />
+          <SectionReveal threshold={0.2}>
+            <Footer />
+          </SectionReveal>
 
         </QueryProvider>
 

@@ -43,7 +43,7 @@ export default function ProductCard({
   const productImage = getImageSrc(image, DEFAULT_PRODUCT_IMAGE);
 
   return (
-    <Card className="group flex h-full min-h-[318px] overflow-hidden rounded-xl border border-gray-200 bg-white py-0 text-sm shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <Card className="group flex h-full min-h-[318px] overflow-hidden rounded-xl border border-gray-200 bg-white py-0 text-sm shadow-sm transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-green-100 hover:bg-white hover:shadow-xl hover:shadow-green-950/10 motion-reduce:transform-none motion-reduce:transition-none">
       <div className="relative flex h-[150px] shrink-0 items-center justify-center overflow-hidden bg-white px-4 py-3 sm:h-[158px]">
         {productHref ? (
           <Link
@@ -56,7 +56,7 @@ export default function ProductCard({
               alt={name}
               width={400}
               height={400}
-              className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.06]"
+              className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.05] motion-reduce:transform-none motion-reduce:transition-none"
             />
           </Link>
         ) : (
@@ -65,12 +65,12 @@ export default function ProductCard({
             alt={name}
             width={400}
             height={400}
-            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.06]"
+            className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.05] motion-reduce:transform-none motion-reduce:transition-none"
           />
         )}
 
         {badge ? (
-          <span className="absolute left-2.5 top-2.5 rounded-md bg-green-700 px-1.5 py-0.5 text-[9px] font-bold leading-4 text-white shadow-sm">
+          <span className="absolute left-2.5 top-2.5 rounded-md bg-green-700 px-1.5 py-0.5 text-[9px] font-bold leading-4 text-white shadow-sm transition-transform duration-300 ease-out group-hover:scale-[1.04] motion-reduce:transform-none motion-reduce:transition-none">
             {badge}
           </span>
         ) : null}
@@ -83,12 +83,12 @@ export default function ProductCard({
 
         {productHref ? (
           <Link href={productHref}>
-            <h3 className="mt-1 h-10 text-[14px] font-bold leading-5 text-gray-950 transition-colors line-clamp-2 group-hover:text-green-700">
+            <h3 className="mt-1 h-10 text-[14px] font-bold leading-5 text-gray-950 transition-colors duration-200 ease-out line-clamp-2 group-hover:text-green-700">
               {name}
             </h3>
           </Link>
         ) : (
-          <h3 className="mt-1 h-10 text-[14px] font-bold leading-5 text-gray-950 transition-colors line-clamp-2 group-hover:text-green-700">
+          <h3 className="mt-1 h-10 text-[14px] font-bold leading-5 text-gray-950 transition-colors duration-200 ease-out line-clamp-2 group-hover:text-green-700">
             {name}
           </h3>
         )}
@@ -109,7 +109,7 @@ export default function ProductCard({
         </div>
 
         <div className="mt-1.5 flex items-baseline gap-2">
-          <p className="text-[17px] font-extrabold leading-none text-gray-950">
+          <p className="text-[17px] font-extrabold leading-none text-gray-950 transition-colors duration-200 ease-out group-hover:text-green-800">
             Rs. {price}
           </p>
 
@@ -123,17 +123,20 @@ export default function ProductCard({
         <div className="mt-auto flex items-center gap-2 pt-2.5">
           <Button
             disabled={!isAvailable}
-            className="h-9 flex-1 rounded-lg bg-green-700 px-3 text-xs font-bold text-white hover:bg-green-800 disabled:bg-gray-300"
+            className="h-11 flex-1 rounded-lg bg-green-700 px-3 text-xs font-bold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] hover:bg-green-800 hover:shadow-md hover:shadow-green-900/20 disabled:translate-y-0 disabled:scale-100 disabled:bg-gray-300 disabled:shadow-none motion-reduce:transform-none motion-reduce:transition-none"
           >
             <ShoppingCart className="mr-1.5 h-3.5 w-3.5" />
             Add to Cart
           </Button>
 
           <button
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-green-200 text-green-700 transition-colors hover:bg-green-50"
+            className="group/wishlist flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-green-200 text-green-700 transition-all duration-200 ease-out hover:border-green-300 hover:bg-green-50 motion-reduce:transition-none"
             aria-label={`Add ${name} to wishlist`}
           >
-            <Heart size={16} />
+            <Heart
+              size={16}
+              className="transition-transform duration-200 ease-out group-hover/wishlist:scale-105 motion-reduce:transform-none motion-reduce:transition-none"
+            />
           </button>
         </div>
       </CardContent>

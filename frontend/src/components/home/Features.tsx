@@ -33,8 +33,8 @@ const features = [
 export default function Features() {
   return (
     <section className="py-12">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="mx-auto w-full max-w-[1500px] px-4 md:px-8 lg:px-12">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {
             const Icon = feature.icon;
 
@@ -50,7 +50,7 @@ export default function Features() {
                   cursor-pointer
                 "
               >
-                <CardContent className="p-6">
+                <CardContent className="p-5 sm:p-6">
                   <div className="mb-4">
                     <Icon
                       size={36}

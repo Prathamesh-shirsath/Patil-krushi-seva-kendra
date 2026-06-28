@@ -31,13 +31,15 @@ export const getAllBanners = async () => {
   });
 };
 
-export const getPublicBanners = async () => {
+export const getPublicBanners = async (
+  placement: BannerPlacement = BannerPlacement.HOME_HERO
+) => {
   const now = new Date();
 
   return prisma.banner.findMany({
     where: {
       status: true,
-      placement: BannerPlacement.HOME_HERO,
+      placement,
       AND: [
         {
           OR: [

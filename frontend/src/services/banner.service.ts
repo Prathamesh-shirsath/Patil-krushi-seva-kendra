@@ -35,9 +35,15 @@ export type Banner = {
   updatedAt?: string;
 };
 
-export async function getPublicBanners(): Promise<Banner[]> {
+export async function getPublicBanners(
+  placement: BannerPlacement = "HOME_HERO"
+): Promise<Banner[]> {
+  const params = new URLSearchParams({
+    placement,
+  });
+
   const response = await fetch(
-    "http://localhost:5000/api/banners/public",
+    `http://localhost:5000/api/banners/public?${params.toString()}`,
     {
       cache: "no-store",
     }
