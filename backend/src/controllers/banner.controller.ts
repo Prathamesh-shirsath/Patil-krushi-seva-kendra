@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { BannerPlacement } from "@prisma/client";
 import { ZodError } from "zod";
 
 import {
@@ -74,7 +75,20 @@ export const getPublicBannersController = async (
   res: Response
 ) => {
   try {
-    const banners = await getPublicBanners();
+    const placementQuery = req.query.placement;
+    const placement =
+      typeof placementQuery === "string"
+        ? placementQuery
+        : BannerPlacement.HOME_HERO;
+
+    if (!Object.values(BannerPlacement).includes(placement as BannerPlacement)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid banner placement",
+      });
+    }
+
+    const banners = await getPublicBanners(placement as BannerPlacement);
 
     res.json({
       success: true,

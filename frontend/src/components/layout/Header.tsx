@@ -35,8 +35,8 @@ export default function Header() {
   return (
     <>
       {/* Top Bar */}
-      <div className="bg-green-700 text-white text-sm">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+      <div className="bg-green-700 text-white text-[11px] sm:text-sm">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-3">
           <span>🚚 Free Delivery Above ₹499</span>
 
           <span className="hidden md:block">
@@ -48,24 +48,24 @@ export default function Header() {
       </div>
 
       <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur">
-       <div className="w-full px-6 lg:px-10">
-        <div className="flex h-24 items-center gap-6">
+       <div className="w-full px-3 sm:px-4 lg:px-10">
+        <div className="flex h-20 items-center gap-2 sm:h-24 sm:gap-4 lg:gap-6">
             
             {/* Logo */}
             <Link
               href="/"
-              className="flex items-center gap-3 shrink-0"
+              className="flex min-w-0 flex-1 shrink items-center gap-2 sm:gap-3 lg:flex-none"
             >
               <Image
                 src={DEFAULT_BRAND_IMAGE}
                 alt="Patil Krushi Seva Kendra"
                width={72}
                height={62}
-                className="rounded-full object-cover"
+                className="h-11 w-11 shrink-0 rounded-full object-cover sm:h-16 sm:w-16 lg:h-[72px] lg:w-[72px]"
               />
 
-              <div>
-                <h1 className="text-[11px] sm:text-sm md:text-base lg:text-lg font-bold text-green-700 leading-tight">
+              <div className="min-w-0">
+                <h1 className="max-w-[110px] text-[10px] font-bold leading-tight text-green-700 min-[360px]:max-w-[138px] min-[390px]:max-w-[160px] sm:max-w-none sm:text-sm md:text-base lg:text-lg">
                   Patil Krushi Seva Kendra
                 </h1>
 
@@ -116,11 +116,11 @@ export default function Header() {
 </div>
 
             {/* Right Side */}
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
               <Button
   variant="ghost"
   size="icon"
-  className="md:hidden"
+  className="hidden h-11 w-11 sm:inline-flex md:hidden"
 >
   <Search className="h-5 w-5" />
 </Button>
@@ -129,7 +129,7 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative"
+                className="relative hidden h-11 w-11 sm:inline-flex"
               >
                 <Heart className="h-5 w-5" />
 
@@ -152,6 +152,8 @@ export default function Header() {
   size="icon"
   className="
     relative
+    h-11
+    w-11
     hover:bg-red-50
     hover:text-red-500
     transition-all
@@ -170,7 +172,7 @@ export default function Header() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="lg:hidden"
+                    className="h-11 w-11 lg:hidden"
                   >
                     <Menu className="h-6 w-6" />
                   </Button>

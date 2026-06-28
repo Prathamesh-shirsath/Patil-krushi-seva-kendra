@@ -36,9 +36,9 @@ export default function ProductsByCategory() {
     .slice(0, 6);
 
   return (
-    <section className="w-full py-16 bg-white">
-      <div className="w-full px-4 md:px-8 lg:px-12">
-        <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <section className="w-full bg-white py-14 md:py-16">
+      <div className="mx-auto w-full max-w-[1500px] px-4 md:px-8 lg:px-12">
+        <div className="mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between">
           <div>
             <span className="inline-block rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
               Products by Category
@@ -55,7 +55,7 @@ export default function ProductsByCategory() {
 
           <Link
             href="/categories"
-            className="inline-flex items-center gap-2 text-sm font-bold text-green-700 transition-colors hover:text-green-800"
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-green-700 transition-colors hover:text-green-800"
           >
             View All Categories
             <ArrowRight className="h-4 w-4" />
