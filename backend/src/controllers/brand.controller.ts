@@ -137,5 +137,21 @@ export const deleteBrandController =
 
             }
 
-    }
+            await deleteBrand(req.params.id as string);
+
+            res.json({
+                success: true,
+                message: "Brand deleted successfully",
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+                success: false,
+                message: "Failed to delete brand",
+            });
+
+        }
 };
