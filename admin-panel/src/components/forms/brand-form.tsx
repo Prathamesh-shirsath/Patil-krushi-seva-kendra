@@ -4,12 +4,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-
 import {
     brandFormSchema,
     BrandFormValues,
@@ -18,15 +12,27 @@ import {
 import { useCreateBrand } from "@/hooks/use-brands";
 import { slugify } from "@/lib/utils";
 
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+
 interface Props {
     onSuccess: () => void;
 }
 
-export default function BrandForm({ onSuccess }: Props) {
-    const mutation = useCreateBrand();
+export default function BrandForm({
+    onSuccess,
+}: Props) {
 
-    const [selectedImage, setSelectedImage] =
-        useState<File | null>(null);
+    const mutation =
+        useCreateBrand();
+
+    const [
+        selectedImage,
+        setSelectedImage,
+    ] = useState<File | null>(null);
 
     const {
         register,
@@ -34,7 +40,9 @@ export default function BrandForm({ onSuccess }: Props) {
         setValue,
         watch,
     } = useForm<BrandFormValues>({
-        resolver: zodResolver(brandFormSchema),
+        resolver: zodResolver(
+            brandFormSchema
+        ),
 
         defaultValues: {
             name: "",
@@ -43,12 +51,15 @@ export default function BrandForm({ onSuccess }: Props) {
         },
     });
 
-    const status = watch("status");
+    const status =
+        watch("status");
 
     async function onSubmit(
         values: BrandFormValues
     ) {
-        const formData = new FormData();
+
+        const formData =
+            new FormData();
 
         formData.append(
             "name",
@@ -71,10 +82,12 @@ export default function BrandForm({ onSuccess }: Props) {
         );
 
         if (selectedImage) {
+
             formData.append(
                 "logo",
                 selectedImage
             );
+
         }
 
         await mutation.mutateAsync(
@@ -82,46 +95,104 @@ export default function BrandForm({ onSuccess }: Props) {
         );
 
         onSuccess();
+
     }
 
     return (
+
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-5"
+            className="space-y-6"
         >
-            <div>
-                <Label>Brand Name</Label>
+
+            {/* Brand Name */}
+
+            <div className="space-y-2">
+
+                <Label className="font-semibold text-slate-700">
+                    Brand Name
+                    <span className="text-red-500 ml-1">*</span>
+                </Label>
 
                 <Input
                     {...register("name")}
-                    placeholder="Brand Name"
+                    placeholder="Enter brand name"
+                    className="rounded-xl h-11"
                 />
+
             </div>
 
-            <div>
-                <Label>Brand Logo</Label>
+            {/* Logo */}
+
+            <div className="space-y-2">
+
+                <Label className="font-semibold text-slate-700">
+                    Brand Logo
+                </Label>
 
                 <Input
                     type="file"
                     accept="image/*"
+                    className="rounded-xl cursor-pointer"
                     onChange={(e) =>
                         setSelectedImage(
-                            e.target.files?.[0] || null
+                            e.target.files?.[0] ||
+                            null
                         )
                     }
                 />
+
+                <p className="text-xs text-slate-400">
+                    PNG, JPG, JPEG supported.
+                </p>
+
             </div>
 
-            <div>
-                <Label>Description</Label>
+            {/* Description */}
+
+            <div className="space-y-2">
+
+                <Label className="font-semibold text-slate-700">
+                    Description
+                </Label>
 
                 <Textarea
                     {...register("description")}
-                    placeholder="Description"
+                    rows={4}
+                    placeholder="Enter brand description..."
+                    className="rounded-xl resize-none"
                 />
+
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Status */}
+
+            <div
+                className="
+                flex
+                items-center
+                justify-between
+                rounded-2xl
+                border
+                border-slate-200
+                bg-slate-50
+                px-5
+                py-4
+            "
+            >
+
+                <div>
+
+                    <h4 className="font-semibold text-slate-700">
+                        Brand Status
+                    </h4>
+
+                    <p className="text-xs text-slate-500">
+                        Enable this brand for customers.
+                    </p>
+
+                </div>
+
                 <Checkbox
                     checked={status}
                     onCheckedChange={(checked) =>
@@ -132,17 +203,34 @@ export default function BrandForm({ onSuccess }: Props) {
                     }
                 />
 
-                <Label>Active Brand</Label>
             </div>
+
+            {/* Button */}
 
             <Button
                 type="submit"
-                className="w-full"
+                disabled={mutation.isPending}
+                className="
+                h-11
+                w-full
+                rounded-xl
+                bg-gradient-to-r
+                from-green-600
+                to-emerald-600
+                hover:from-green-700
+                hover:to-emerald-700
+                font-semibold
+            "
             >
+
                 {mutation.isPending
-                    ? "Saving..."
-                    : "Save Brand"}
+                    ? "Creating Brand..."
+                    : "Create Brand"}
+
             </Button>
+
         </form>
+
     );
+
 }

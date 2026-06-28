@@ -7,17 +7,29 @@ export default function BrandsPage() {
     return (
         <DashboardLayout>
 
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-950">
-                    Brands
-                </h1>
+            <div className="mx-auto max-w-[1500px] space-y-8">
 
-                <p className="mt-1 text-sm text-gray-500">
-                    Manage all product brands and their information.
-                </p>
+
+                {/* Header */}
+                <div className="rounded-3xl border border-green-100 bg-white/80 backdrop-blur-md p-6 shadow-sm flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+                    <div>
+
+                        <h1 className="text-3xl font-bold text-slate-800">
+                            Brands Management
+                        </h1>
+
+                        <p className="mt-1 text-slate-500">
+                            Manage all agricultural product brands
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <BrandsTable />
+
             </div>
-
-            <BrandsTable />
 
         </DashboardLayout>
     );

@@ -149,7 +149,9 @@ export default function BrandsOverviewPage() {
 
                 {/* CTA */}
                 <Link
-                  href={`/brands/${brand.slug}`}
+                  href={`/shop?brand=${encodeURIComponent(
+                    brand.name
+                  )}`}
                 >
                   <Button className="h-11 w-full rounded-xl bg-green-700 hover:bg-green-800">
                     Explore Products

@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+
 import { TrendingUp } from "lucide-react";
 
 interface ProductStatsCardProps {
@@ -18,25 +19,42 @@ export default function ProductStatsCard({
     icon,
     iconBg,
 }: ProductStatsCardProps) {
+
     return (
+
         <Card
             className="
-      rounded-3xl
-      border-slate-200
-      shadow-sm
-      "
+                rounded-3xl
+                border
+                border-slate-100
+                bg-white
+                shadow-sm
+                transition-all
+                duration-300
+                hover:-translate-y-1
+                hover:shadow-xl
+            "
         >
-            <CardContent className="p-7">
+
+            <CardContent className="p-6">
 
                 <div className="flex items-start justify-between">
 
-                    <div>
+                    <div className="flex-1">
 
-                        <p className="text-base text-slate-500">
+                        <p className="text-sm font-medium text-slate-500">
                             {title}
                         </p>
 
-                        <h2 className="mt-3 text-5xl font-bold text-slate-900">
+                        <h2
+                            className="
+                                mt-3
+                                text-3xl
+                                sm:text-4xl
+                                font-bold
+                                text-slate-900
+                            "
+                        >
                             {value}
                         </h2>
 
@@ -57,14 +75,16 @@ export default function ProductStatsCard({
 
                     <div
                         className={`
-            flex
-            h-16
-            w-16
-            items-center
-            justify-center
-            rounded-3xl
-            ${iconBg}
-            `}
+                            flex
+                            h-14
+                            w-14
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            ${iconBg}
+                            shadow-sm
+                            shrink-0
+                        `}
                     >
                         {icon}
                     </div>
@@ -72,6 +92,9 @@ export default function ProductStatsCard({
                 </div>
 
             </CardContent>
+
         </Card>
+
     );
+
 }
