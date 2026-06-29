@@ -68,7 +68,7 @@ export async function uploadImage(
 export async function deleteImage(
     imageUrl: string
 ) {
-    if (!imageUrl) return;
+    if (!imageUrl || !isR2Configured || !r2) return;
 
     const key =
         imageUrl.split("/").pop();
