@@ -147,24 +147,27 @@ export default function Header() {
                </Link>
 
               {/* Cart */}
-              <Button
-  variant="ghost"
-  size="icon"
-  className="
-    relative
-    h-11
-    w-11
-    hover:bg-red-50
-    hover:text-red-500
-    transition-all
-  "
->
-                <ShoppingCart className="h-5 w-5" />
+              <Link href="/cart">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="
+                    relative
+                    h-11
+                    w-11
+                    hover:bg-green-50
+                    hover:text-green-600
+                    transition-all
+                  "
+                  aria-label="View Cart"
+                >
+                  <ShoppingCart className="h-5 w-5" />
 
-                <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  0
-                </span>
-              </Button>
+                  <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                    5
+                  </span>
+                </Button>
+              </Link>
 
               {/* Mobile Menu */}
               <Sheet>
