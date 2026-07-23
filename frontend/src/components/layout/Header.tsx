@@ -126,18 +126,29 @@ export default function Header() {
 </Button>
               
               {/* Wishlist */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative hidden h-11 w-11 sm:inline-flex"
-              >
-                <Heart className="h-5 w-5" />
+              <Link href="/wishlist">
+  <Button
+    variant="ghost"
+    size="icon"
+    className="
+      relative
+      hidden
+      h-11
+      w-11
+      sm:inline-flex
+      hover:bg-red-50
+      hover:text-red-500
+      transition-all
+    "
+    aria-label="Wishlist"
+  >
+    <Heart className="h-5 w-5" />
 
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  0
-                </span>
-              </Button>
-
+    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+      0
+    </span>
+  </Button>
+</Link>
               {/* Login */}
                 <Link href="/login">
                <Button className="hidden md:flex items-center gap-2 rounded-full bg-green-600 hover:bg-green-700 text-white px-5 h-10 shadow-md hover:shadow-lg transition-all">
@@ -147,24 +158,27 @@ export default function Header() {
                </Link>
 
               {/* Cart */}
-              <Button
-  variant="ghost"
-  size="icon"
-  className="
-    relative
-    h-11
-    w-11
-    hover:bg-red-50
-    hover:text-red-500
-    transition-all
-  "
->
-                <ShoppingCart className="h-5 w-5" />
+              <Link href="/cart">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="
+                    relative
+                    h-11
+                    w-11
+                    hover:bg-green-50
+                    hover:text-green-600
+                    transition-all
+                  "
+                  aria-label="View Cart"
+                >
+                  <ShoppingCart className="h-5 w-5" />
 
-                <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  0
-                </span>
-              </Button>
+                  <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                    5
+                  </span>
+                </Button>
+              </Link>
 
               {/* Mobile Menu */}
               <Sheet>
@@ -183,16 +197,21 @@ export default function Header() {
       <Link
         key={item.name}
         href={item.href}
-        className="
-          text-lg
-          font-medium
-          hover:text-green-600
-        "
+        className="text-lg font-medium hover:text-green-600"
       >
         {item.name}
       </Link>
     ))}
+
+    <Link
+      href="/wishlist"
+      className="text-lg font-medium hover:text-green-600"
+    >
+      ❤️ Wishlist
+    </Link>
   </div>
+
+  
 
   {/* Mobile Login Button */}
   <div className="pt-4 border-t mt-4 flex justify-center">

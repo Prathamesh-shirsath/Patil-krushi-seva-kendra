@@ -1,4 +1,10 @@
 "use client";
+import Link from "next/link";
+import { Heart } from "lucide-react";
+
+<Link href="/wishlist">
+  <Heart className="h-6 w-6" />
+</Link>
 
 import { Suspense } from "react";
 
