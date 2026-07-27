@@ -9,11 +9,48 @@ import {
   getBannerById,
   getPublicBanners,
   updateBanner,
+  validateBannerReferences,
+  BannerReferenceError,
 } from "../services/banner.service";
 import {
   createBannerSchema,
   updateBannerSchema,
 } from "../validators/banner.validator";
+import { uploadImage } from "../services/upload.service";
+
+type BannerUploadFiles = {
+  image?: Express.Multer.File[];
+  mobileImage?: Express.Multer.File[];
+};
+
+async function getBannerRequestData(req: Request) {
+  const files = req.files as BannerUploadFiles | undefined;
+  const data: Record<string, unknown> = {
+    ...req.body,
+  };
+
+  if (typeof data.status === "string") {
+    data.status = data.status === "true";
+  }
+
+  if (typeof data.displayOrder === "string") {
+    data.displayOrder = Number(data.displayOrder);
+  }
+
+  if (data.scopeSlug === "") {
+    data.scopeSlug = null;
+  }
+
+  if (files?.image?.[0]) {
+    data.image = await uploadImage(files.image[0]);
+  }
+
+  if (files?.mobileImage?.[0]) {
+    data.mobileImage = await uploadImage(files.mobileImage[0]);
+  }
+
+  return data;
+}
 
 function handleBannerError(
   res: Response,
@@ -28,6 +65,13 @@ function handleBannerError(
     });
   }
 
+  if (error instanceof BannerReferenceError) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
   return res.status(500).json({
     success: false,
     message,
@@ -39,7 +83,8 @@ export const createBannerController = async (
   res: Response
 ) => {
   try {
-    const data = createBannerSchema.parse(req.body);
+    const data = createBannerSchema.parse(await getBannerRequestData(req));
+    await validateBannerReferences(data);
     const banner = await createBanner(data);
 
     res.status(201).json({
@@ -88,7 +133,30 @@ export const getPublicBannersController = async (
       });
     }
 
-    const banners = await getPublicBanners(placement as BannerPlacement);
+    const scopeSlugQuery = req.query.scopeSlug;
+    const scopeSlug = typeof scopeSlugQuery === "string" ? scopeSlugQuery : undefined;
+    const isScopedPlacement =
+      placement === BannerPlacement.CATEGORY_PAGE ||
+      placement === BannerPlacement.BRAND_PAGE;
+
+    if (isScopedPlacement && !scopeSlug) {
+      return res.status(400).json({
+        success: false,
+        message: "scopeSlug is required for scoped banner placements",
+      });
+    }
+
+    if (!isScopedPlacement && scopeSlug) {
+      return res.status(400).json({
+        success: false,
+        message: "scopeSlug is only valid for scoped banner placements",
+      });
+    }
+
+    const banners = await getPublicBanners(
+      placement as BannerPlacement,
+      scopeSlug
+    );
 
     res.json({
       success: true,
@@ -133,7 +201,8 @@ export const updateBannerController = async (
   res: Response
 ) => {
   try {
-    const data = updateBannerSchema.parse(req.body);
+    const data = updateBannerSchema.parse(await getBannerRequestData(req));
+    await validateBannerReferences(data);
     const banner = await updateBanner(req.params.id as string, data);
 
     res.json({

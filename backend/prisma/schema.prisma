@@ -40,11 +40,18 @@ enum BannerTargetType {
   NONE
 }
 
+enum BannerScopeType {
+  GLOBAL
+  CATEGORY
+  BRAND
+}
+
 enum BannerPlacement {
   HOME_HERO
   HOME_PROMO
   CATEGORY_PAGE
   BRAND_PAGE
+  CONTACT_HERO
   SHOP_PAGE
 }
 
@@ -356,21 +363,21 @@ model ProductVariant {
 }
 
 model Brand {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  name        String
-  slug        String   @unique
+  name String
+  slug String @unique
 
-  logo        String?
+  logo String?
 
   description String?
 
-  status      Boolean  @default(true)
+  status Boolean @default(true)
 
-  products    Product[]
+  products Product[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Banner {
@@ -395,6 +402,10 @@ model Banner {
   targetUrl String?
 
   placement BannerPlacement @default(HOME_HERO)
+
+  scopeType BannerScopeType @default(GLOBAL)
+
+  scopeSlug String?
 
   textTheme BannerTextTheme @default(LIGHT)
 

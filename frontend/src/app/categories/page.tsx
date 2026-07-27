@@ -39,6 +39,7 @@ import {
   DEFAULT_BANNER_IMAGE,
   DEFAULT_PRODUCT_IMAGE,
 } from "@/lib/image-fallbacks";
+import { useBanners } from "@/hooks/use-banners";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 // Categories metadata
@@ -467,6 +468,14 @@ function CategoriesContent() {
   // Get active category from search params, default to "fertilizers"
   const activeSlug = searchParams.get("name")?.toLowerCase() || "fertilizers";
   const activeCategory = categoriesList.find((c) => c.slug === activeSlug) || categoriesList[0];
+  const { data: categoryBanners = [] } = useBanners(
+    "CATEGORY_PAGE",
+    activeCategory?.slug
+  );
+  const categoryBanner = categoryBanners[0];
+  const categoryHeroDesktopImage = categoryBanner?.image || DEFAULT_BANNER_IMAGE;
+  const categoryHeroMobileImage =
+    categoryBanner?.mobileImage || categoryHeroDesktopImage;
 
   // Filters State
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
@@ -810,10 +819,17 @@ function CategoriesContent() {
           {/* Banner background image (fallback to gradient if it doesn't render) */}
           <div className="absolute inset-0 z-0">
             <Image
-              src={DEFAULT_BANNER_IMAGE}
+              src={categoryHeroDesktopImage}
               alt={activeCategory.name}
               fill
-              className="object-cover opacity-80"
+              className="hidden object-cover opacity-80 md:block"
+              priority
+            />
+            <Image
+              src={categoryHeroMobileImage}
+              alt={activeCategory.name}
+              fill
+              className="object-cover opacity-80 md:hidden"
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-950 via-emerald-950/70 to-transparent" />

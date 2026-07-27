@@ -17,7 +17,7 @@ export type BannerScopeType = "GLOBAL" | "CATEGORY" | "BRAND";
 
 export type BannerTextTheme = "LIGHT" | "DARK";
 
-export type Banner = {
+export interface Banner {
   id: string;
   label?: string | null;
   title: string;
@@ -36,34 +36,6 @@ export type Banner = {
   displayOrder: number;
   startsAt?: string | null;
   endsAt?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
-};
-
-export async function getPublicBanners(
-  placement: BannerPlacement = "HOME_HERO",
-  scopeSlug?: string
-): Promise<Banner[]> {
-  const params = new URLSearchParams({
-    placement,
-  });
-
-  if (scopeSlug) {
-    params.set("scopeSlug", scopeSlug);
-  }
-
-  const response = await fetch(
-    `http://localhost:5000/api/banners/public?${params.toString()}`,
-    {
-      cache: "no-store",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch public banners");
-  }
-
-  const data = await response.json();
-
-  return data.data;
+  createdAt: string;
+  updatedAt: string;
 }

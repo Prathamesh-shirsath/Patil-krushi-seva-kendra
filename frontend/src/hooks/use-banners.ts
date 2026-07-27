@@ -6,10 +6,15 @@ import {
 } from "@/services/banner.service";
 
 export function useBanners(
-  placement: BannerPlacement = "HOME_HERO"
+  placement: BannerPlacement = "HOME_HERO",
+  scopeSlug?: string
 ) {
+  const requiresScope =
+    placement === "CATEGORY_PAGE" || placement === "BRAND_PAGE";
+
   return useQuery({
-    queryKey: ["banners", "public", placement],
-    queryFn: () => getPublicBanners(placement),
+    queryKey: ["banners", "public", placement, scopeSlug],
+    queryFn: () => getPublicBanners(placement, scopeSlug),
+    enabled: !requiresScope || Boolean(scopeSlug),
   });
 }

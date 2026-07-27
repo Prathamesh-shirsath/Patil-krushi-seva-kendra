@@ -22,7 +22,11 @@ router.get("/", getAllProductsController);
 
 router.get("/:slug", getProductBySlugController);
 
-router.put("/:id", updateProductController);
+router.put(
+  "/:id",
+  upload.single("image"),
+  updateProductController
+);
 
 router.delete("/:id", deleteProductController);
 
