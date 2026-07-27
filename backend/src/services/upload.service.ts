@@ -73,10 +73,11 @@ export async function uploadImage(
     return `${process.env.R2_PUBLIC_URL}/${fileName}`;
 }
 
-export async function deleteImage(
-    imageUrl: string
-) {
-    if (!imageUrl || !isR2Configured || !r2) return;
+export async function deleteImage(imageUrl: string) {
+    if (!imageUrl) return;
+
+    // R2 configured nasel tar kahi karaycha nahi
+    if (!isR2Configured || !r2) return;
 
     const key = getManagedStorageKey(imageUrl);
 

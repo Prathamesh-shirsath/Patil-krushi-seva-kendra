@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DEFAULT_BRAND_IMAGE } from "@/lib/image-fallbacks";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
 import {
   Menu,
   Search,
@@ -11,6 +12,8 @@ import {
   User,
   Heart,
 } from "lucide-react";
+
+import { useAuth } from "@/providers/AuthProvider";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,6 +23,13 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -32,6 +42,16 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const { user, loading, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    router.replace("/");
+    router.refresh();
+  };
+
   return (
     <>
       {/* Top Bar */}
@@ -48,10 +68,11 @@ export default function Header() {
       </div>
 
       <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur">
-       <div className="w-full px-3 sm:px-4 lg:px-10">
-        <div className="flex h-20 items-center gap-2 sm:h-24 sm:gap-4 lg:gap-6">
-            
+        <div className="w-full px-3 sm:px-4 lg:px-10">
+          <div className="flex h-20 items-center gap-2 sm:h-24 sm:gap-4 lg:gap-6">
+
             {/* Logo */}
+
             <Link
               href="/"
               className="flex min-w-0 flex-1 shrink items-center gap-2 sm:gap-3 lg:flex-none"
@@ -59,8 +80,8 @@ export default function Header() {
               <Image
                 src={DEFAULT_BRAND_IMAGE}
                 alt="Patil Krushi Seva Kendra"
-               width={72}
-               height={62}
+                width={72}
+                height={62}
                 className="h-11 w-11 shrink-0 rounded-full object-cover sm:h-16 sm:w-16 lg:h-[72px] lg:w-[72px]"
               />
 
@@ -69,68 +90,72 @@ export default function Header() {
                   Patil Krushi Seva Kendra
                 </h1>
 
-              <p className="hidden md:block text-xs text-gray-500">
+                <p className="hidden md:block text-xs text-gray-500">
                   Agricultural Products & Solutions
                 </p>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
-         <nav className="hidden lg:flex items-center gap-5">
-          <div className="hidden lg:flex items-center gap-6 ml-auto"></div>
+
+            <nav className="hidden lg:flex items-center gap-5">
               {navLinks.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`text-sm font-medium transition-colors hover:text-green-600 ${
-                  pathname === item.href
-                  ? "text-green-600 border-b-2 border-green-600 pb-0.5"
-                  : "text-gray-700"
-                   }`}
-                  >
+                  className={`text-sm font-medium transition-colors hover:text-green-600 ${pathname === item.href
+                      ? "text-green-600 border-b-2 border-green-600 pb-0.5"
+                      : "text-gray-700"
+                    }`}
+                >
                   {item.name}
                 </Link>
               ))}
             </nav>
 
-           
-            {/* Search Bar */}
-<div className="hidden lg:flex flex-1 max-w-xl">
-  <div className="relative w-full">
-    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            {/* Search */}
 
-    <Input
-      placeholder="Search seeds, fertilizers, pesticides..."
-      className="
-        h-11
-        pl-10
-        rounded-full
-        border-green-200
-        focus-visible:ring-green-500
-        shadow-sm
-        hover:shadow-md
-        transition-all
-      "
-    />
-  </div>
-</div>
+            <div className="hidden lg:flex flex-1 max-w-xl">
+              <div className="relative w-full">
 
-            {/* Right Side */}
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+
+                <Input
+                  placeholder="Search seeds, fertilizers, pesticides..."
+                  className="
+                  h-11
+                  pl-10
+                  rounded-full
+                  border-green-200
+                  focus-visible:ring-green-500
+                  shadow-sm
+                  hover:shadow-md
+                  transition-all
+                "
+                />
+
+              </div>
+            </div>
+
+            {/* Right Side Starts Here */}
+
             <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-              <Button
-  variant="ghost"
-  size="icon"
-  className="hidden h-11 w-11 sm:inline-flex md:hidden"
->
-  <Search className="h-5 w-5" />
-</Button>
+
               
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden h-11 w-11 sm:inline-flex md:hidden"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
               {/* Wishlist */}
               <Link href="/wishlist">
-  <Button
-    variant="ghost"
-    size="icon"
-    className="
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="
       relative
       hidden
       h-11
@@ -140,36 +165,87 @@ export default function Header() {
       hover:text-red-500
       transition-all
     "
-    aria-label="Wishlist"
-  >
-    <Heart className="h-5 w-5" />
+                  aria-label="Wishlist"
+                >
+                  <Heart className="h-5 w-5" />
 
-    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-      0
-    </span>
-  </Button>
-</Link>
-              {/* Login */}
-                <Link href="/login">
-               <Button className="hidden md:flex items-center gap-2 rounded-full bg-green-600 hover:bg-green-700 text-white px-5 h-10 shadow-md hover:shadow-lg transition-all">
-               <User className="h-4 w-4" />
-                Login
-               </Button>
-               </Link>
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                    0
+                  </span>
+                </Button>
+              </Link>
+
+              {/* Login / User */}
+
+              {!loading && (
+                user ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="hidden md:flex items-center gap-2 rounded-full"
+                      >
+                        <User className="h-4 w-4" />
+
+                        {user.name || user.phone}
+                      </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end">
+
+                      <DropdownMenuItem asChild>
+                        <Link href="/profile">
+                          My Profile
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link href="/orders">
+                          My Orders
+                        </Link>
+                      </DropdownMenuItem>
+
+                      {user.role === "ADMIN" && (
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin">
+                            Admin Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+
+                      <DropdownMenuItem
+                        className="text-red-600 cursor-pointer"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </DropdownMenuItem>
+
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link href="/login">
+                    <Button className="hidden md:flex items-center gap-2 rounded-full bg-green-600 hover:bg-green-700 text-white px-5 h-10 shadow-md hover:shadow-lg transition-all">
+                      <User className="h-4 w-4" />
+                      Login
+                    </Button>
+                  </Link>
+                )
+              )}
 
               {/* Cart */}
+
               <Link href="/cart">
                 <Button
                   variant="ghost"
                   size="icon"
                   className="
-                    relative
-                    h-11
-                    w-11
-                    hover:bg-green-50
-                    hover:text-green-600
-                    transition-all
-                  "
+      relative
+      h-11
+      w-11
+      hover:bg-green-50
+      hover:text-green-600
+      transition-all
+    "
                   aria-label="View Cart"
                 >
                   <ShoppingCart className="h-5 w-5" />
@@ -181,6 +257,7 @@ export default function Header() {
               </Link>
 
               {/* Mobile Menu */}
+
               <Sheet>
                 <SheetTrigger asChild>
                   <Button
@@ -191,51 +268,81 @@ export default function Header() {
                     <Menu className="h-6 w-6" />
                   </Button>
                 </SheetTrigger>
-<SheetContent side="left" className="w-[280px] px-4">
-  <div className="mt-8 flex flex-col gap-5">
-    {navLinks.map((item) => (
-      <Link
-        key={item.name}
-        href={item.href}
-        className="text-lg font-medium hover:text-green-600"
-      >
-        {item.name}
-      </Link>
-    ))}
 
-    <Link
-      href="/wishlist"
-      className="text-lg font-medium hover:text-green-600"
-    >
-      ❤️ Wishlist
-    </Link>
-  </div>
+                <SheetContent side="left" className="w-[280px] px-4">
 
-  
+                  <div className="mt-8 flex flex-col gap-5">
 
-  {/* Mobile Login Button */}
-  <div className="pt-4 border-t mt-4 flex justify-center">
-     <Link href="/login">
-  <Button
-    className="
-      w-[220px]
-      bg-green-600
-      hover:bg-green-700
-      rounded-full
-    "
-  >
-    <User className="mr-2 h-4 w-4" />
-    Login
-  </Button>
-     </Link>   
-</div>
-</SheetContent>
+                    {navLinks.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className="text-lg font-medium hover:text-green-600"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+
+                    <Link
+                      href="/wishlist"
+                      className="text-lg font-medium hover:text-green-600"
+                    >
+                      ❤️ Wishlist
+                    </Link>
+                  </div>
+
+                  <div className="pt-4 border-t mt-4 flex flex-col items-center gap-3">
+                    {user ? (
+                      <>
+                        <Link href="/profile" className="w-full">
+                          <Button variant="outline" className="w-full">
+                            My Profile
+                          </Button>
+                        </Link>
+
+                        <Link href="/orders" className="w-full">
+                          <Button variant="outline" className="w-full">
+                            My Orders
+                          </Button>
+                        </Link>
+
+                        {user.role === "ADMIN" && (
+                          <Link href="/admin" className="w-full">
+                            <Button variant="outline" className="w-full">
+                              Admin Dashboard
+                            </Button>
+                          </Link>
+                        )}
+
+                        <Button
+                          variant="destructive"
+                          className="w-full"
+                          onClick={handleLogout}
+                        >
+                          Logout
+                        </Button>
+                      </>
+                    ) : (
+                      <Link href="/login" className="w-full">
+                        <Button
+                          className="
+              w-full
+              bg-green-600
+              hover:bg-green-700
+              rounded-full
+            "
+                        >
+                          <User className="mr-2 h-4 w-4" />
+                          Login
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </SheetContent>
               </Sheet>
+
             </div>
           </div>
-
-          {/* Mobile Search */}
-         
         </div>
       </header>
     </>

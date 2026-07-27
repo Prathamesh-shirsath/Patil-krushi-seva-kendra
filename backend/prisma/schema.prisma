@@ -69,25 +69,32 @@ enum StatisticPlacement {
 model User {
   id String @id @default(cuid())
 
+  // Firebase Authentication
+  firebaseUid String? @unique
+  phone       String? @unique
+
+  // Profile
   name          String?
   email         String? @unique
   emailVerified Boolean @default(false)
-  password      String?
   image         String?
 
-  phone String? @unique
-  role  Role    @default(CUSTOMER)
+  // Admin / Customer
+  role Role @default(CUSTOMER)
 
+  // Keep for Better Auth compatibility (not used for customer login)
+  password String?
+
+  // Better Auth Relations
   sessions Session[]
   accounts Account[]
 
+  // E-commerce Relations
   addresses Address[]
-
-  carts    Cart?
-  wishlist Wishlist[]
-  orders   Order[]
-
-  reviews Review[]
+  cart      Cart?
+  wishlist  Wishlist?
+  orders    Order[]
+  reviews   Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -164,7 +171,7 @@ model CartItem {
 model Wishlist {
   id String @id @default(cuid())
 
-  userId String
+  userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   productId String
