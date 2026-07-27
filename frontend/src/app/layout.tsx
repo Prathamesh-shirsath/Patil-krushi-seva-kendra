@@ -8,8 +8,8 @@ import { Geist } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 
-import QueryProvider
-  from "@/providers/query-provider";
+import QueryProvider from "@/providers/query-provider";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -33,13 +33,17 @@ export default function RootLayout({
 
         <QueryProvider>
 
-          <Header />
+          <AuthProvider>
 
-          {children}
+            <Header />
 
-          <SectionReveal threshold={0.2}>
-            <Footer />
-          </SectionReveal>
+            {children}
+
+            <SectionReveal threshold={0.2}>
+              <Footer />
+            </SectionReveal>
+
+          </AuthProvider>
 
         </QueryProvider>
 
