@@ -23,6 +23,21 @@ type BannerFormProps = {
   onCancel: () => void;
 };
 
+function getBannerErrorMessage(error: unknown, fallback: string) {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "response" in error
+  ) {
+    const message = (error as { response?: { data?: { message?: unknown } } })
+      .response?.data?.message;
+
+    if (typeof message === "string" && message.trim()) return message;
+  }
+
+  return fallback;
+}
+
 const placementOptions: Array<{ value: BannerPlacement; label: string }> = [
   { value: "HOME_HERO", label: "Home Hero" },
   { value: "HOME_PROMO", label: "Home Promo" },
@@ -204,8 +219,13 @@ export default function BannerForm({ banner, onSuccess, onCancel }: BannerFormPr
         toast.success("Banner created successfully.");
       }
       onSuccess();
-    } catch {
-      toast.error(isEditMode ? "Failed to update banner." : "Failed to create banner.");
+    } catch (error) {
+      toast.error(
+        getBannerErrorMessage(
+          error,
+          isEditMode ? "Failed to update banner." : "Failed to create banner."
+        )
+      );
     }
   }
 

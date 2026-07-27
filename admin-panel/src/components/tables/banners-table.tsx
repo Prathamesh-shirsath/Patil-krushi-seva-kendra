@@ -2,13 +2,26 @@
 
 import { useMemo, useState } from "react";
 import { ImageIcon, Pencil, Search, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
-import { useBanners } from "@/hooks/use-banners";
+import {
+  useBanners,
+  useDeleteBanner,
+  useUpdateBannerStatus,
+} from "@/hooks/use-banners";
 import type { Banner, BannerPlacement } from "@/types/banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -82,9 +95,51 @@ type BannersTableProps = {
   onEdit: (banner: Banner) => void;
 };
 
+function getBannerErrorMessage(error: unknown, fallback: string) {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "response" in error
+  ) {
+    const message = (error as { response?: { data?: { message?: unknown } } })
+      .response?.data?.message;
+
+    if (typeof message === "string" && message.trim()) return message;
+  }
+
+  return fallback;
+}
+
 export default function BannersTable({ onCreate, onEdit }: BannersTableProps) {
   const { data: banners = [], isLoading } = useBanners();
+  const deleteMutation = useDeleteBanner();
+  const statusMutation = useUpdateBannerStatus();
   const [search, setSearch] = useState("");
+  const [bannerToDelete, setBannerToDelete] = useState<Banner | null>(null);
+
+  function handleStatusToggle(banner: Banner) {
+    const nextStatus = !banner.status;
+
+    statusMutation.mutate(
+      { id: banner.id, status: nextStatus },
+      {
+        onSuccess: () => toast.success(`Banner ${nextStatus ? "activated" : "deactivated"}.`),
+        onError: (error) => toast.error(getBannerErrorMessage(error, "Failed to update banner status.")),
+      }
+    );
+  }
+
+  function handleDelete() {
+    if (!bannerToDelete) return;
+
+    deleteMutation.mutate(bannerToDelete.id, {
+      onSuccess: () => {
+        toast.success("Banner deleted successfully.");
+        setBannerToDelete(null);
+      },
+      onError: (error) => toast.error(getBannerErrorMessage(error, "Failed to delete banner.")),
+    });
+  }
 
   const filteredBanners = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -168,9 +223,21 @@ export default function BannersTable({ onCreate, onEdit }: BannersTableProps) {
                       <TableCell className="whitespace-pre-line p-5 text-slate-600">{getDisplayLocation(banner)}</TableCell>
                       <TableCell className="p-5 text-slate-600">{banner.targetType}</TableCell>
                       <TableCell className="p-5">
-                        <Badge className={banner.status ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-red-100 text-red-600 hover:bg-red-100"}>
-                          {banner.status ? "Active" : "Inactive"}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge className={banner.status ? "bg-green-100 text-green-700 hover:bg-green-100" : "bg-red-100 text-red-600 hover:bg-red-100"}>
+                            {banner.status ? "Active" : "Inactive"}
+                          </Badge>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={statusMutation.isPending}
+                            onClick={() => handleStatusToggle(banner)}
+                            className="h-8 rounded-lg border-slate-200 px-2 text-xs"
+                          >
+                            {banner.status ? "Deactivate" : "Activate"}
+                          </Button>
+                        </div>
                       </TableCell>
                       <TableCell className="p-5 font-medium text-slate-700">{banner.displayOrder}</TableCell>
                       <TableCell className="p-5 text-slate-600">{formatDate(banner.startsAt)}</TableCell>
@@ -181,7 +248,7 @@ export default function BannersTable({ onCreate, onEdit }: BannersTableProps) {
                           <Button type="button" size="icon" variant="outline" onClick={() => onEdit(banner)} aria-label={`Edit ${banner.title}`} className="h-10 w-10 rounded-xl border-green-200 text-green-600">
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button type="button" size="icon" variant="outline" disabled aria-label={`Delete ${banner.title}`} className="h-10 w-10 rounded-xl border-red-200 text-red-600 disabled:opacity-60">
+                          <Button type="button" size="icon" variant="outline" onClick={() => setBannerToDelete(banner)} aria-label={`Delete ${banner.title}`} className="h-10 w-10 rounded-xl border-red-200 text-red-600">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -194,6 +261,30 @@ export default function BannersTable({ onCreate, onEdit }: BannersTableProps) {
           </Table>
         </div>
       </div>
+
+      <Dialog
+        open={Boolean(bannerToDelete)}
+        onOpenChange={(open) => {
+          if (!open && !deleteMutation.isPending) setBannerToDelete(null);
+        }}
+      >
+        <DialogContent className="max-w-md rounded-3xl border border-red-100 bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-slate-800">Delete banner?</DialogTitle>
+            <DialogDescription>
+              {bannerToDelete ? `“${bannerToDelete.title}” will be permanently deleted.` : ""}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" disabled={deleteMutation.isPending} onClick={() => setBannerToDelete(null)}>
+              Cancel
+            </Button>
+            <Button type="button" disabled={deleteMutation.isPending} onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

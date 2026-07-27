@@ -6,6 +6,7 @@ import {
   updateBannerSchema,
 } from "../validators/banner.validator";
 import { z } from "zod";
+import { deleteImage } from "./upload.service";
 
 type CreateBannerInput = z.infer<typeof createBannerSchema>;
 type UpdateBannerInput = z.infer<typeof updateBannerSchema>;
@@ -144,9 +145,23 @@ export const updateBanner = async (
 export const deleteBanner = async (
   id: string
 ) => {
-  return prisma.banner.delete({
+  const banner = await prisma.banner.delete({
     where: {
       id,
     },
   });
+
+  await Promise.all(
+    [banner.image, banner.mobileImage]
+      .filter((imageUrl): imageUrl is string => Boolean(imageUrl))
+      .map(async (imageUrl) => {
+        try {
+          await deleteImage(imageUrl);
+        } catch (error) {
+          console.error("Failed to clean up deleted banner image", error);
+        }
+      })
+  );
+
+  return banner;
 };

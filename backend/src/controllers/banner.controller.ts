@@ -16,7 +16,7 @@ import {
   createBannerSchema,
   updateBannerSchema,
 } from "../validators/banner.validator";
-import { uploadImage } from "../services/upload.service";
+import { deleteImage, uploadImage } from "../services/upload.service";
 
 type BannerUploadFiles = {
   image?: Express.Multer.File[];
@@ -28,6 +28,7 @@ async function getBannerRequestData(req: Request) {
   const data: Record<string, unknown> = {
     ...req.body,
   };
+  const uploadedImageUrls: string[] = [];
 
   if (typeof data.status === "string") {
     data.status = data.status === "true";
@@ -41,15 +42,36 @@ async function getBannerRequestData(req: Request) {
     data.scopeSlug = null;
   }
 
-  if (files?.image?.[0]) {
-    data.image = await uploadImage(files.image[0]);
+  try {
+    if (files?.image?.[0]) {
+      const imageUrl = await uploadImage(files.image[0], "banners");
+      data.image = imageUrl;
+      uploadedImageUrls.push(imageUrl);
+    }
+
+    if (files?.mobileImage?.[0]) {
+      const imageUrl = await uploadImage(files.mobileImage[0], "banners");
+      data.mobileImage = imageUrl;
+      uploadedImageUrls.push(imageUrl);
+    }
+  } catch (error) {
+    await cleanupUploadedImages(uploadedImageUrls);
+    throw error;
   }
 
-  if (files?.mobileImage?.[0]) {
-    data.mobileImage = await uploadImage(files.mobileImage[0]);
-  }
+  return { data, uploadedImageUrls };
+}
 
-  return data;
+async function cleanupUploadedImages(imageUrls: string[]) {
+  await Promise.all(
+    imageUrls.map(async (imageUrl) => {
+      try {
+        await deleteImage(imageUrl);
+      } catch (error) {
+        console.error("Failed to clean up newly uploaded banner image", error);
+      }
+    })
+  );
 }
 
 function handleBannerError(
@@ -82,8 +104,12 @@ export const createBannerController = async (
   req: Request,
   res: Response
 ) => {
+  let uploadedImageUrls: string[] = [];
+
   try {
-    const data = createBannerSchema.parse(await getBannerRequestData(req));
+    const preparedRequest = await getBannerRequestData(req);
+    uploadedImageUrls = preparedRequest.uploadedImageUrls;
+    const data = createBannerSchema.parse(preparedRequest.data);
     await validateBannerReferences(data);
     const banner = await createBanner(data);
 
@@ -92,6 +118,7 @@ export const createBannerController = async (
       data: banner,
     });
   } catch (error) {
+    await cleanupUploadedImages(uploadedImageUrls);
     handleBannerError(res, error, "Failed to create banner");
   }
 };
@@ -200,16 +227,49 @@ export const updateBannerController = async (
   req: Request,
   res: Response
 ) => {
+  let uploadedImageUrls: string[] = [];
+
   try {
-    const data = updateBannerSchema.parse(await getBannerRequestData(req));
+    const existingBanner = await getBannerById(req.params.id as string);
+
+    if (!existingBanner) {
+      return res.status(404).json({
+        success: false,
+        message: "Banner not found",
+      });
+    }
+
+    const preparedRequest = await getBannerRequestData(req);
+    uploadedImageUrls = preparedRequest.uploadedImageUrls;
+    const data = updateBannerSchema.parse(preparedRequest.data);
     await validateBannerReferences(data);
     const banner = await updateBanner(req.params.id as string, data);
+
+    const oldImagesToDelete = [
+      typeof data.image === "string" && data.image !== existingBanner.image
+        ? existingBanner.image
+        : null,
+      typeof data.mobileImage === "string" && data.mobileImage !== existingBanner.mobileImage
+        ? existingBanner.mobileImage
+        : null,
+    ].filter((imageUrl): imageUrl is string => Boolean(imageUrl));
+
+    await Promise.all(
+      oldImagesToDelete.map(async (imageUrl) => {
+        try {
+          await deleteImage(imageUrl);
+        } catch (error) {
+          console.error("Failed to clean up replaced banner image", error);
+        }
+      })
+    );
 
     res.json({
       success: true,
       data: banner,
     });
   } catch (error) {
+    await cleanupUploadedImages(uploadedImageUrls);
     handleBannerError(res, error, "Failed to update banner");
   }
 };
