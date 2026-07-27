@@ -36,6 +36,7 @@ import {
   DEFAULT_BRAND_IMAGE,
   DEFAULT_PRODUCT_IMAGE,
 } from "@/lib/image-fallbacks";
+import { useBanners } from "@/hooks/use-banners";
 
 // Brand mock data structure
 interface BrandDetail {
@@ -265,6 +266,11 @@ export default function BrandDetailPage({
   const resolvedParams = use(params);
   const router = useRouter();
   const slug = resolvedParams.slug.toLowerCase();
+  const { data: brandBanners = [] } = useBanners("BRAND_PAGE", slug);
+  const brandBanner = brandBanners[0];
+  const brandShowcaseDesktopImage = brandBanner?.image || DEFAULT_BANNER_IMAGE;
+  const brandShowcaseMobileImage =
+    brandBanner?.mobileImage || brandShowcaseDesktopImage;
 
   const brand = BRAND_DATA[slug] || {
     ...defaultBrand,
@@ -374,10 +380,17 @@ export default function BrandDetailPage({
             {/* Right Photo Area */}
             <div className="lg:col-span-5 relative w-full h-[280px] sm:h-[350px] lg:h-full min-h-[350px] overflow-hidden">
               <Image
-                src={DEFAULT_BANNER_IMAGE}
+                src={brandShowcaseDesktopImage}
                 alt={`${brand.name} Product Showcase`}
                 fill
-                className="object-cover object-center scale-100 hover:scale-102 transition duration-700"
+                className="hidden object-cover object-center scale-100 transition duration-700 hover:scale-102 md:block"
+                priority
+              />
+              <Image
+                src={brandShowcaseMobileImage}
+                alt={`${brand.name} Product Showcase`}
+                fill
+                className="object-cover object-center scale-100 transition duration-700 hover:scale-102 md:hidden"
                 priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent lg:bg-gradient-to-r lg:from-white/10 lg:to-transparent" />

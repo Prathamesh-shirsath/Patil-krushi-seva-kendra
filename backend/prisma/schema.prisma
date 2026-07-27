@@ -40,11 +40,18 @@ enum BannerTargetType {
   NONE
 }
 
+enum BannerScopeType {
+  GLOBAL
+  CATEGORY
+  BRAND
+}
+
 enum BannerPlacement {
   HOME_HERO
   HOME_PROMO
   CATEGORY_PAGE
   BRAND_PAGE
+  CONTACT_HERO
   SHOP_PAGE
 }
 
@@ -402,6 +409,10 @@ model Banner {
   targetUrl String?
 
   placement BannerPlacement @default(HOME_HERO)
+
+  scopeType BannerScopeType @default(GLOBAL)
+
+  scopeSlug String?
 
   textTheme BannerTextTheme @default(LIGHT)
 

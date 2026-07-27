@@ -8,11 +8,18 @@ const bannerTargetTypeSchema = z.enum([
   "NONE",
 ]);
 
+const bannerScopeTypeSchema = z.enum([
+  "GLOBAL",
+  "CATEGORY",
+  "BRAND",
+]);
+
 const bannerPlacementSchema = z.enum([
   "HOME_HERO",
   "HOME_PROMO",
   "CATEGORY_PAGE",
   "BRAND_PAGE",
+  "CONTACT_HERO",
   "SHOP_PAGE",
 ]);
 
@@ -43,6 +50,8 @@ const bannerBaseSchema = z.object({
   targetSlug: z.string().optional(),
   targetUrl: z.string().optional(),
   placement: bannerPlacementSchema,
+  scopeType: bannerScopeTypeSchema.default("GLOBAL"),
+  scopeSlug: z.string().nullable().optional(),
   textTheme: bannerTextThemeSchema.default("LIGHT"),
   status: z.boolean(),
   displayOrder: z.number().int().min(0),
@@ -55,6 +64,9 @@ function validateBannerRules(
     targetType?: string;
     targetSlug?: string;
     targetUrl?: string;
+    placement?: string;
+    scopeType?: string;
+    scopeSlug?: string | null;
     startsAt?: Date;
     endsAt?: Date;
   },
@@ -77,6 +89,67 @@ function validateBannerRules(
       path: ["targetUrl"],
       message: "targetUrl is required for custom banners",
     });
+  }
+
+  const globalPlacements = [
+    "HOME_HERO",
+    "HOME_PROMO",
+    "CONTACT_HERO",
+    "SHOP_PAGE",
+  ];
+
+  if (globalPlacements.includes(data.placement ?? "")) {
+    if (data.scopeType !== "GLOBAL") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["scopeType"],
+        message: "Global placements require GLOBAL scopeType",
+      });
+    }
+
+    if (data.scopeSlug) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["scopeSlug"],
+        message: "Global placements cannot have a scopeSlug",
+      });
+    }
+  }
+
+  if (data.placement === "CATEGORY_PAGE") {
+    if (data.scopeType !== "CATEGORY") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["scopeType"],
+        message: "CATEGORY_PAGE requires CATEGORY scopeType",
+      });
+    }
+
+    if (!data.scopeSlug) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["scopeSlug"],
+        message: "CATEGORY_PAGE requires a category scopeSlug",
+      });
+    }
+  }
+
+  if (data.placement === "BRAND_PAGE") {
+    if (data.scopeType !== "BRAND") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["scopeType"],
+        message: "BRAND_PAGE requires BRAND scopeType",
+      });
+    }
+
+    if (!data.scopeSlug) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["scopeSlug"],
+        message: "BRAND_PAGE requires a brand scopeSlug",
+      });
+    }
   }
 
   if (data.startsAt && data.endsAt && data.endsAt <= data.startsAt) {

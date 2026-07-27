@@ -36,6 +36,8 @@ const defaultBanners: Banner[] = [
     targetSlug: null,
     targetUrl: null,
     placement: "HOME_HERO",
+    scopeType: "GLOBAL",
+    scopeSlug: null,
     textTheme: "LIGHT",
     status: true,
     displayOrder: 0,

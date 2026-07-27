@@ -21,8 +21,14 @@ import {
   FaWhatsapp
 } from "react-icons/fa";
 import { DEFAULT_BANNER_IMAGE } from "@/lib/image-fallbacks";
+import { useBanners } from "@/hooks/use-banners";
 
 export default function ContactPage() {
+  const { data: contactBanners = [] } = useBanners("CONTACT_HERO");
+  const contactBanner = contactBanners[0];
+  const contactHeroDesktopImage = contactBanner?.image || DEFAULT_BANNER_IMAGE;
+  const contactHeroMobileImage =
+    contactBanner?.mobileImage || contactHeroDesktopImage;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -106,11 +112,18 @@ export default function ContactPage() {
 
     <div>
       <Image
-        src={DEFAULT_BANNER_IMAGE}
+        src={contactHeroDesktopImage}
         alt="Farm Support"
         width={700}
         height={400}
-        className="w-full h-[260px] md:h-[320px] object-cover"
+        className="hidden h-[260px] w-full object-cover md:block md:h-[320px]"
+      />
+      <Image
+        src={contactHeroMobileImage}
+        alt="Farm Support"
+        width={700}
+        height={400}
+        className="h-[260px] w-full object-cover md:hidden"
       />
     </div>
 
