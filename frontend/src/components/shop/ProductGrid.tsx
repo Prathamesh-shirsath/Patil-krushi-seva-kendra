@@ -1,7 +1,7 @@
 import ProductCard from "@/components/common/ProductCard";
 
 export type ShopProduct = {
-  id: number;
+  id: string;
   name: string;
   price: number;
   image: string;
@@ -28,6 +28,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
         <h2 className="text-xl font-semibold text-gray-900">
           No products found
         </h2>
+
         <p className="mt-2 text-sm text-gray-500">
           Try changing the filters or sorting options.
         </p>
@@ -40,6 +41,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
       {products.map((product) => (
         <ProductCard
           key={product.id}
+          id={product.id}
           name={product.name}
           price={product.price}
           image={product.image}

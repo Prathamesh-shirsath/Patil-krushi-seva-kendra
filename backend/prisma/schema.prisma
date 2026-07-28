@@ -79,20 +79,19 @@ model User {
   emailVerified Boolean @default(false)
   image         String?
 
-  // Admin / Customer
+  // Roles
   role Role @default(CUSTOMER)
 
-  // Keep for Better Auth compatibility (not used for customer login)
+  // Better Auth (Admin login / future use)
   password String?
 
-  // Better Auth Relations
   sessions Session[]
   accounts Account[]
 
-  // E-commerce Relations
+  // Relations
   addresses Address[]
   cart      Cart?
-  wishlist  Wishlist?
+  wishlists Wishlist[]
   orders    Order[]
   reviews   Review[]
 
@@ -104,19 +103,21 @@ model Address {
   id String @id @default(cuid())
 
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   fullName String
-  phone    String
+  phone String
 
-  state    String
+  state String
   district String
-  city     String
+  taluka String?
+  village String
+  city String?
 
   pincode String
 
   addressLine String
-  landmark    String?
+  landmark String?
 
   isDefault Boolean @default(false)
 
@@ -171,11 +172,11 @@ model CartItem {
 model Wishlist {
   id String @id @default(cuid())
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 
   createdAt DateTime @default(now())
 
@@ -338,7 +339,7 @@ model Product {
   brand   Brand  @relation(fields: [brandId], references: [id])
 
   packSize String
-  price    Float
+  price Decimal @db.Decimal(10,2)
 
   usedForCrops String[]
 

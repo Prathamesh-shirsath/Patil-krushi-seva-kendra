@@ -1,66 +1,74 @@
 import { Request, Response } from "express";
-import {
-  addToWishlist,
-  getWishlist,
-  removeWishlistItem,
-} from "../services/wishlist.service";
+import * as wishlistService from "../services/wishlist.service";
 
-export const addToWishlistController = async (
+export const getWishlist = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const item = await addToWishlist(
-      req.body.userId,
-      req.body.productId
+    const { userId } = res.locals.user;
+
+    const wishlist = await wishlistService.getWishlist(userId);
+
+    return res.status(200).json({
+      success: true,
+      data: wishlist,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const addToWishlist = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { userId } = res.locals.user;
+    const productId = req.params.productId as string;
+
+    const wishlist = await wishlistService.addToWishlist(
+      userId,
+      productId
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      data: item,
+      message: "Product added to wishlist.",
+      data: wishlist,
     });
-  } catch {
-    res.status(500).json({
+  } catch (error: any) {
+    return res.status(400).json({
       success: false,
-      message: "Failed to add wishlist item",
+      message: error.message,
     });
   }
 };
 
-export const getWishlistController = async (
+export const removeFromWishlist = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const items = await getWishlist(req.params.userId as string);
+    const { userId } = res.locals.user;
+    const productId = req.params.productId as string;
 
-    res.json({
+    await wishlistService.removeFromWishlist(
+      userId,
+      productId
+    );
+
+    return res.status(200).json({
       success: true,
-      data: items,
+      message: "Product removed from wishlist.",
     });
-  } catch {
-    res.status(500).json({
+  } catch (error: any) {
+    return res.status(400).json({
       success: false,
-      message: "Failed to fetch wishlist",
-    });
-  }
-};
-
-export const removeWishlistItemController = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    await removeWishlistItem(req.params.id as string);
-
-    res.json({
-      success: true,
-      message: "Wishlist item removed",
-    });
-  } catch {
-    res.status(500).json({
-      success: false,
-      message: "Failed to remove wishlist item",
+      message: error.message,
     });
   }
 };

@@ -23,6 +23,12 @@ import {
 import type { ShopProduct } from "@/components/shop/ProductGrid";
 import type { Product } from "@/types/product";
 
+import { useWishlist } from "@/hooks/useWishlist";
+import { useAddWishlist } from "@/hooks/useAddWishlist";
+import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
+import { useAddToCart } from "@/hooks/useCart";
+import { toast } from "sonner";
+
 type ProductDetailsClientProps = {
   product: Product;
   relatedProducts: ShopProduct[];
@@ -109,6 +115,32 @@ export default function ProductDetailsClient({
       ? `Recommended for: ${product.usedForCrops.join(", ")}`
       : "Usage guide will be updated soon.");
 
+  // ===========================
+  // Wishlist
+  // ===========================
+
+  const { data: wishlist = [] } = useWishlist();
+
+  const addWishlist = useAddWishlist();
+
+  const removeWishlist = useRemoveWishlist();
+
+  const isWishlisted = wishlist.some(
+    (item: any) => item.product.id === product.id
+  );
+
+  const wishlistLoading =
+    addWishlist.isPending || removeWishlist.isPending;
+
+  // ===========================
+  // Cart
+  // ===========================
+
+  const addToCart = useAddToCart();
+  const cartLoading = addToCart.isPending;
+
+  // ===========================
+
   const showPreviousImage = () => {
     setActiveImageIndex((index) =>
       index === 0 ? galleryImages.length - 1 : index - 1
@@ -173,11 +205,10 @@ export default function ProductDetailsClient({
                 key={image}
                 type="button"
                 onClick={() => setActiveImageIndex(index)}
-                className={`flex aspect-square min-w-20 items-center justify-center rounded-md border bg-white p-2 transition-colors ${
-                  activeImageIndex === index
+                className={`flex aspect-square min-w-20 items-center justify-center rounded-md border bg-white p-2 transition-colors ${activeImageIndex === index
                     ? "border-green-700 ring-2 ring-green-100"
                     : "border-gray-200 hover:border-green-300"
-                }`}
+                  }`}
                 aria-label={`View product image ${index + 1}`}
               >
                 <Image
@@ -257,16 +288,53 @@ export default function ProductDetailsClient({
           </div>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button className="h-11 flex-1 rounded bg-green-700 text-white hover:bg-green-800">
+            <Button
+              className="h-11 flex-1 rounded bg-green-700 text-white hover:bg-green-800"
+              disabled={!isAvailable || cartLoading}
+              onClick={() => {
+                addToCart.mutate(
+                  {
+                    productId: product.id,
+                    quantity,
+                  },
+                  {
+                    onSuccess: () => {
+                      toast.success("Product added to cart");
+                    },
+                    onError: () => {
+                      toast.error("Failed to add product");
+                    },
+                  }
+                );
+              }}>
               <ShoppingCart className="mr-2 h-4 w-4" />
-              Add to Cart
+
+              {cartLoading ? "Adding..." : "Add to Cart"}
             </Button>
+
             <Button
               variant="outline"
-              className="h-11 flex-1 rounded border-green-200 text-green-700 hover:bg-green-50"
-            >
-              <Heart className="mr-2 h-4 w-4" />
-              Wishlist
+              disabled={wishlistLoading}
+              onClick={() => {
+                if (isWishlisted) {
+                  removeWishlist.mutate(product.id);
+                } else {
+                  addWishlist.mutate(product.id);
+                }
+              }}
+              className="h-11 flex-1 rounded border-green-200 text-green-700 hover:bg-green-50">
+              <Heart
+                className={`mr-2 h-4 w-4 transition-all ${isWishlisted
+                    ? "fill-red-500 text-red-500"
+                    : "text-green-700"
+                  }`}
+              />
+
+              {wishlistLoading
+                ? "Please Wait..."
+                : isWishlisted
+                  ? "Remove Wishlist"
+                  : "Add to Wishlist"}
             </Button>
           </div>
         </div>
@@ -309,11 +377,10 @@ export default function ProductDetailsClient({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`min-w-max px-5 py-4 transition-colors ${
-                activeTab === tab.id
+              className={`min-w-max px-5 py-4 transition-colors ${activeTab === tab.id
                   ? "border-b-2 border-green-700 text-green-700"
                   : "text-gray-950 hover:text-green-700"
-              }`}
+                }`}
             >
               {tab.label}
             </button>
@@ -371,6 +438,7 @@ export default function ProductDetailsClient({
           {relatedProducts.map((relatedProduct) => (
             <div key={relatedProduct.id} className="min-w-[250px] sm:min-w-0">
               <ProductCard
+                id={relatedProduct.id}
                 name={relatedProduct.name}
                 price={relatedProduct.price}
                 image={relatedProduct.image}

@@ -14,6 +14,8 @@ import brandRoutes from "./routes/brand.routes";
 import bannerRoutes from "./routes/banner.routes";
 import statisticRoutes from "./routes/statistic.routes";
 import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
+import addressRoutes from "./routes/address.routes";
 
 
 const app = express();
@@ -47,6 +49,8 @@ app.use("/api/banners", bannerRoutes);
 app.use("/api/statistics", statisticRoutes);
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/addresses", addressRoutes);
 
 
 app.get("/", (req, res) => {
