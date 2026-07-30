@@ -6,40 +6,46 @@ import {
   updateCategory,
   deleteCategory,
 } from "../services/category.service";
+
 import { uploadImage } from "../services/upload.service";
+
+import {
+  createCategorySchema,
+  updateCategorySchema,
+} from "../validators/category.validator";
 
 export const createCategoryController = async (
   req: Request,
   res: Response
 ) => {
   try {
-    let imageUrl = req.body.image || "";
+    let imageUrl: string | undefined;
 
     if (req.file) {
       imageUrl = await uploadImage(req.file);
     }
 
-    const name = req.body.name;
-    const slug = req.body.slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    const status = req.body.status === undefined ? true : (req.body.status === "true" || req.body.status === true);
-
-    const category = await createCategory({
-      name,
-      slug,
+    const data = {
+      ...req.body,
       image: imageUrl,
-      status,
-      parentId: req.body.parentId || undefined,
-    } as any);
+      parentId: req.body.parentId || null,
+    };
 
-    res.status(201).json({
+    const validated = createCategorySchema.parse(data);
+
+    const category = await createCategory(validated);
+
+    return res.status(201).json({
       success: true,
+      message: "Category created successfully",
       data: category,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    res.status(500).json({
+
+    return res.status(400).json({
       success: false,
-      message: "Failed to create category",
+      message: error.message,
     });
   }
 };
@@ -51,12 +57,14 @@ export const getAllCategoriesController = async (
   try {
     const categories = await getAllCategories();
 
-    res.json({
+    return res.json({
       success: true,
       data: categories,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error(error);
+
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch categories",
     });
@@ -68,7 +76,11 @@ export const getCategoryByIdController = async (
   res: Response
 ) => {
   try {
-    const category = await getCategoryById(req.params.id as string);
+    const id = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
+
+    const category = await getCategoryById(id);
 
     if (!category) {
       return res.status(404).json({
@@ -77,12 +89,14 @@ export const getCategoryByIdController = async (
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: category,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error(error);
+
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch category",
     });
@@ -94,40 +108,40 @@ export const updateCategoryController = async (
   res: Response
 ) => {
   try {
-    let imageUrl = req.body.image;
+    const data: any = {
+      ...req.body,
+    };
 
     if (req.file) {
-      imageUrl = await uploadImage(req.file);
+      data.image = await uploadImage(req.file);
     }
 
-    const name = req.body.name;
-    const slug = req.body.slug || (name ? name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") : undefined);
-    
-    const updateData: any = {};
-    if (name !== undefined) updateData.name = name;
-    if (slug !== undefined) updateData.slug = slug;
-    if (imageUrl !== undefined) updateData.image = imageUrl;
-    if (req.body.status !== undefined) {
-      updateData.status = req.body.status === "true" || req.body.status === true;
+    if (data.parentId === "") {
+      data.parentId = null;
     }
-    if (req.body.parentId !== undefined) {
-      updateData.parentId = req.body.parentId || null;
-    }
+
+    const validated = updateCategorySchema.parse(data);
+
+    const id = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
 
     const category = await updateCategory(
-      req.params.id as string,
-      updateData as any
+      id,
+      validated
     );
 
-    res.json({
+    return res.json({
       success: true,
+      message: "Category updated successfully",
       data: category,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    res.status(500).json({
+
+    return res.status(400).json({
       success: false,
-      message: "Failed to update category",
+      message: error.message,
     });
   }
 };
@@ -137,14 +151,20 @@ export const deleteCategoryController = async (
   res: Response
 ) => {
   try {
-    await deleteCategory(req.params.id as string);
+    const id = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
 
-    res.json({
+    await deleteCategory(id);
+
+    return res.json({
       success: true,
       message: "Category deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    console.error(error);
+
+    return res.status(500).json({
       success: false,
       message: "Failed to delete category",
     });

@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { uploadImage } from "../services/upload.service";
 
 import {
   createProduct,
@@ -9,40 +8,62 @@ import {
   deleteProduct,
 } from "../services/product.service";
 
+import { uploadImage } from "../services/upload.service";
 
+import {
+  createProductSchema,
+  updateProductSchema,
+} from "../validators/product.validator";
 
 export const createProductController = async (
   req: Request,
   res: Response
 ) => {
   try {
-
-    // Future Cloudflare flow: admin uploads to Cloudflare, then backend stores the returned URL as this string.
-    let imageUrl = req.body.image;
+    let imageUrl: string | undefined = req.body.image;
 
     if (req.file) {
       imageUrl = await uploadImage(req.file);
     }
 
-    const product = await createProduct({
+    const data: any = {
       ...req.body,
       image: imageUrl,
-    });
+    };
 
-    res.status(201).json({
+    // Parse JSON strings coming from FormData
+    if (typeof data.usedForCrops === "string") {
+      try {
+        data.usedForCrops = JSON.parse(data.usedForCrops);
+      } catch {
+        data.usedForCrops = [];
+      }
+    }
+
+    if (typeof data.variants === "string") {
+      try {
+        data.variants = JSON.parse(data.variants);
+      } catch {
+        data.variants = [];
+      }
+    }
+
+    const validatedData = createProductSchema.parse(data);
+
+    const product = await createProduct(validatedData);
+
+    return res.status(201).json({
       success: true,
+      message: "Product created successfully",
       data: product,
     });
+  } catch (error: any) {
+    console.error(error);
 
-  } catch (error) {
-
-    console.log(error);
-
-    res.status(500).json({
+    return res.status(400).json({
       success: false,
-      message: "Failed to create product",
+      message: error.message || "Failed to create product",
     });
-
   }
 };
 
@@ -54,26 +75,38 @@ export const getAllProductsController = async (
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
 
-    const search = req.query.search as string | undefined;
+    const search =
+      typeof req.query.search === "string"
+        ? req.query.search
+        : undefined;
 
-    const brand = req.query.brand as string | undefined;
+    const brandId =
+      typeof req.query.brandId === "string"
+        ? req.query.brandId
+        : undefined;
 
-    const categoryId = req.query.categoryId as string | undefined;
+    const categoryId =
+      typeof req.query.categoryId === "string"
+        ? req.query.categoryId
+        : undefined;
 
-    const products = await getAllProducts(
+    const result = await getAllProducts(
       page,
       limit,
       search,
-      brand,
+      brandId,
       categoryId
     );
 
-    res.json({
+    return res.status(200).json({
       success: true,
-      data: products,
+      data: result.products,
+      pagination: result.pagination,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error(error);
+
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch products",
     });
@@ -85,7 +118,11 @@ export const getProductBySlugController = async (
   res: Response
 ) => {
   try {
-    const product = await getProductBySlug(req.params.slug as string);
+    const slug = Array.isArray(req.params.slug)
+      ? req.params.slug[0]
+      : req.params.slug;
+
+    const product = await getProductBySlug(slug);
 
     if (!product) {
       return res.status(404).json({
@@ -94,27 +131,26 @@ export const getProductBySlugController = async (
       });
     }
 
-    res.json({
+    return res.status(200).json({
       success: true,
       data: product,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error(error);
+
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch product",
     });
   }
 };
 
-
-
-
 export const updateProductController = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const data = {
+    const data: any = {
       ...req.body,
     };
 
@@ -122,19 +158,45 @@ export const updateProductController = async (
       data.image = await uploadImage(req.file);
     }
 
+    // Parse JSON strings coming from FormData
+    if (typeof data.usedForCrops === "string") {
+      try {
+        data.usedForCrops = JSON.parse(data.usedForCrops);
+      } catch {
+        data.usedForCrops = [];
+      }
+    }
+
+    if (typeof data.variants === "string") {
+      try {
+        data.variants = JSON.parse(data.variants);
+      } catch {
+        data.variants = [];
+      }
+    }
+
+    const validatedData = updateProductSchema.parse(data);
+
+    const id = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
+
     const product = await updateProduct(
-      req.params.id as string,
-      data
+      id,
+      validatedData
     );
 
-    res.json({
+    return res.status(200).json({
       success: true,
+      message: "Product updated successfully",
       data: product,
     });
-  } catch (error) {
-    res.status(500).json({
+  } catch (error: any) {
+    console.error(error);
+
+    return res.status(400).json({
       success: false,
-      message: "Failed to update product",
+      message: error.message || "Failed to update product",
     });
   }
 };
@@ -144,14 +206,20 @@ export const deleteProductController = async (
   res: Response
 ) => {
   try {
-    await deleteProduct(req.params.id as string);
+    const id = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
 
-    res.json({
+    await deleteProduct(id);
+
+    return res.status(200).json({
       success: true,
       message: "Product deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    console.error(error);
+
+    return res.status(500).json({
       success: false,
       message: "Failed to delete product",
     });

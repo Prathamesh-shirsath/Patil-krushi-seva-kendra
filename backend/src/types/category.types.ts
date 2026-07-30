@@ -1,6 +1,13 @@
-import { z } from "zod";
-import { createCategorySchema } from "../validators/category.validator";
+export interface CreateCategoryInput {
+  name: string;
+  slug: string;
+  image?: string;
+  parentId?: string | null;
+}
 
-export type CreateCategoryInput = z.infer<
-  typeof createCategorySchema
->;
+export interface UpdateCategoryInput {
+  name?: string;
+  slug?: string;
+  image?: string;
+  parentId?: string | null;
+}

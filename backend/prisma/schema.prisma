@@ -7,6 +7,322 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String     @id @default(cuid())
+  phone         String?    @unique
+  role          Role       @default(CUSTOMER)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  email         String?    @unique
+  name          String?
+  password      String?
+  emailVerified Boolean    @default(false)
+  image         String?
+  firebaseUid   String?    @unique
+  accounts      Account[]
+  addresses     Address[]
+  cart          Cart?
+  orders        Order[]
+  reviews       Review[]
+  sessions      Session[]
+  wishlists     Wishlist[]
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      String
+  fullName    String
+  phone       String
+  state       String
+  district    String
+  city        String?
+  pincode     String
+  addressLine String
+  landmark    String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  taluka      String?
+  village     String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  image     String?
+  parentId  String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryHierarchy")
+  products  Product[]
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model Order {
+  id             String        @id @default(cuid())
+  userId         String
+  status         OrderStatus   @default(PENDING)
+  paymentStatus  PaymentStatus @default(PENDING)
+  totalAmount    Decimal       @db.Decimal(10, 2)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deliveryCharge Decimal       @default(0)
+  discount       Decimal       @default(0)
+  grandTotal     Decimal
+  paymentMethod  PaymentMethod @default(RAZORPAY)
+  subTotal       Decimal
+  user           User          @relation(fields: [userId], references: [id])
+  address        OrderAddress?
+  items          OrderItem[]
+  payment        Payment?
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String
+  quantity    Int
+  price       Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  productName String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  orderId           String        @unique
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  status            PaymentStatus @default(PENDING)
+  amount            Decimal       @db.Decimal(10, 2)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  failureReason     String?
+  transactionId     String?
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model Coupon {
+  id             String     @id @default(cuid())
+  code           String     @unique
+  type           CouponType
+  value          Decimal    @db.Decimal(10, 2)
+  minOrderAmount Decimal?   @db.Decimal(10, 2)
+  expiresAt      DateTime?
+  isActive       Boolean    @default(true)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model Product {
+  id           String           @id @default(cuid())
+  name         String
+  slug         String           @unique
+  image        String?
+  price        Decimal          @db.Decimal(10, 2)
+  description  String
+  categoryId   String
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  brandId      String
+  packSize     String
+  status       Boolean          @default(true)
+  usedForCrops String[]
+  stock        Int              @default(0)
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
+  brand        Brand            @relation(fields: [brandId], references: [id])
+  category     Category         @relation(fields: [categoryId], references: [id])
+  variants     ProductVariant[]
+  reviews      Review[]
+  wishlists    Wishlist[]
+}
+
+model ProductVariant {
+  id        String   @id @default(cuid())
+  packSize  String
+  price     Float
+  productId String
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Brand {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  logo        String?
+  description String?
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Banner {
+  id           String           @id @default(cuid())
+  label        String?
+  title        String
+  subtitle     String?
+  image        String
+  mobileImage  String?
+  buttonText   String?
+  targetType   BannerTargetType @default(NONE)
+  targetSlug   String?
+  targetUrl    String?
+  placement    BannerPlacement  @default(HOME_HERO)
+  textTheme    BannerTextTheme  @default(LIGHT)
+  status       Boolean          @default(true)
+  displayOrder Int              @default(0)
+  startsAt     DateTime?
+  endsAt       DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  scopeType    BannerScopeType  @default(GLOBAL)
+  scopeSlug    String?
+}
+
+model Statistic {
+  id           String             @id @default(cuid())
+  title        String
+  value        String
+  description  String?
+  icon         String?
+  color        String?            @default("green")
+  placement    StatisticPlacement @default(HOME)
+  displayOrder Int                @default(0)
+  status       Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+model OrderAddress {
+  id          String  @id @default(cuid())
+  orderId     String  @unique
+  fullName    String
+  phone       String
+  state       String
+  district    String
+  taluka      String?
+  village     String
+  city        String?
+  pincode     String
+  addressLine String
+  landmark    String?
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model AppSettings {
+  id                 Int      @id @default(1)
+  storeName          String   @default("Patil Krushi Seva Kendra")
+  supportPhone       String?
+  supportEmail       String?
+  whatsappNumber     String?
+  deliveryCharge     Decimal  @default(0)
+  freeDeliveryAbove  Decimal  @default(0)
+  codEnabled         Boolean  @default(false)
+  razorpayEnabled    Boolean  @default(true)
+  maintenanceMode    Boolean  @default(false)
+  enableOrders       Boolean  @default(true)
+  enableRegistration Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
 enum Role {
   ADMIN
   CUSTOMER
@@ -51,8 +367,8 @@ enum BannerPlacement {
   HOME_PROMO
   CATEGORY_PAGE
   BRAND_PAGE
-  CONTACT_HERO
   SHOP_PAGE
+  CONTACT_HERO
 }
 
 enum BannerTextTheme {
@@ -66,390 +382,7 @@ enum StatisticPlacement {
   FOOTER
 }
 
-model User {
-  id String @id @default(cuid())
-
-  // Firebase Authentication
-  firebaseUid String? @unique
-  phone       String? @unique
-
-  // Profile
-  name          String?
-  email         String? @unique
-  emailVerified Boolean @default(false)
-  image         String?
-
-  // Roles
-  role Role @default(CUSTOMER)
-
-  // Better Auth (Admin login / future use)
-  password String?
-
-  sessions Session[]
-  accounts Account[]
-
-  // Relations
-  addresses Address[]
-  cart      Cart?
-  wishlists Wishlist[]
-  orders    Order[]
-  reviews   Review[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Address {
-  id String @id @default(cuid())
-
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  fullName String
-  phone String
-
-  state String
-  district String
-  taluka String?
-  village String
-  city String?
-
-  pincode String
-
-  addressLine String
-  landmark String?
-
-  isDefault Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Category {
-  id String @id @default(cuid())
-
-  name  String
-  slug  String  @unique
-  image String?
-
-  parentId String?
-  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children Category[] @relation("CategoryHierarchy")
-
-  products Product[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Cart {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  items CartItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model CartItem {
-  id String @id @default(cuid())
-
-  cartId String
-  cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
-
-  quantity Int @default(1)
-
-  createdAt DateTime @default(now())
-
-  @@unique([cartId, productId])
-}
-
-model Wishlist {
-  id String @id @default(cuid())
-
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  productId String
-  product Product @relation(fields: [productId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, productId])
-}
-
-model Order {
-  id String @id @default(cuid())
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  status        OrderStatus   @default(PENDING)
-  paymentStatus PaymentStatus @default(PENDING)
-
-  totalAmount Decimal @db.Decimal(10, 2)
-
-  items OrderItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  payment Payment?
-}
-
-model OrderItem {
-  id String @id @default(cuid())
-
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
-
-  quantity Int
-
-  price Decimal @db.Decimal(10, 2)
-
-  createdAt DateTime @default(now())
-}
-
-model Payment {
-  id String @id @default(cuid())
-
-  orderId String @unique
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  razorpayOrderId   String?
-  razorpayPaymentId String?
-  razorpaySignature String?
-
-  status PaymentStatus @default(PENDING)
-
-  amount Decimal @db.Decimal(10, 2)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Review {
-  id String @id @default(cuid())
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  rating  Int
-  comment String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, productId])
-}
-
-model Coupon {
-  id String @id @default(cuid())
-
-  code String @unique
-
-  type CouponType
-
-  value Decimal @db.Decimal(10, 2)
-
-  minOrderAmount Decimal? @db.Decimal(10, 2)
-
-  expiresAt DateTime?
-
-  isActive Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model Account {
-  id         String @id
-  accountId  String
-  providerId String
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([identifier])
-}
-
-model Product {
-  id String @id @default(cuid())
-
-  name        String
-  description String
-
-  image String?
-
-  slug String @unique
-
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
-
-  brandId String
-  brand   Brand  @relation(fields: [brandId], references: [id])
-
-  packSize String
-  price Decimal @db.Decimal(10,2)
-
-  usedForCrops String[]
-
-  status Boolean @default(true)
-
-  variants ProductVariant[]
-
-  // ADD THESE
-  cartItems  CartItem[]
-  wishlists  Wishlist[]
-  orderItems OrderItem[]
-  reviews    Review[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ProductVariant {
-  id String @id @default(cuid())
-
-  packSize String
-
-  price Float
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-}
-
-model Brand {
-  id String @id @default(cuid())
-
-  name String
-  slug String @unique
-
-  logo String?
-
-  description String?
-
-  status Boolean @default(true)
-
-  products Product[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Banner {
-  id String @id @default(cuid())
-
-  label String?
-
-  title String
-
-  subtitle String?
-
-  image String
-
-  mobileImage String?
-
-  buttonText String?
-
-  targetType BannerTargetType @default(NONE)
-
-  targetSlug String?
-
-  targetUrl String?
-
-  placement BannerPlacement @default(HOME_HERO)
-
-  scopeType BannerScopeType @default(GLOBAL)
-
-  scopeSlug String?
-
-  textTheme BannerTextTheme @default(LIGHT)
-
-  status Boolean @default(true)
-
-  displayOrder Int @default(0)
-
-  startsAt DateTime?
-
-  endsAt DateTime?
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-}
-
-model Statistic {
-  id String @id @default(cuid())
-
-  title String
-
-  value String
-
-  description String?
-
-  icon String?
-
-  color String? @default("green")
-
-  placement StatisticPlacement @default(HOME)
-
-  displayOrder Int @default(0)
-
-  status Boolean @default(true)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+enum PaymentMethod {
+  RAZORPAY
+  COD
 }
