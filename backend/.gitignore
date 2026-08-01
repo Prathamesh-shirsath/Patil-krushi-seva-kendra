@@ -1,5 +1,38 @@
 node_modules
 # Keep environment variables out of version control
 .env
+# Environment variables declared in this file are NOT automatically loaded by Prisma.
+# Please add `import "dotenv/config";` to your `prisma.config.ts` file, or use the Prisma CLI with Bun
+# to load environment variables from .env files: https://pris.ly/prisma-config-env-vars.
 
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+# The following `prisma+postgres` URL is similar to the URL produced by running a local Prisma Postgres
+# server with the `prisma dev` CLI command, when not choosing any non-default ports or settings. The API key, unlike the
+# one found in a remote Prisma Postgres URL, does not contain any sensitive information.
+
+DATABASE_URL="prisma+postgres://localhost:51213/?api_key=eyJkYXRhYmFzZVVybCI6InBvc3RncmVzOi8vcG9zdGdyZXM6cG9zdGdyZXNAbG9jYWxob3N0OjUxMjE0L3RlbXBsYXRlMT9zc2xtb2RlPWRpc2FibGUmY29ubmVjdGlvbl9saW1pdD0xMCZjb25uZWN0X3RpbWVvdXQ9MCZtYXhfaWRsZV9jb25uZWN0aW9uX2xpZmV0aW1lPTAmcG9vbF90aW1lb3V0PTAmc29ja2V0X3RpbWVvdXQ9MCIsIm5hbWUiOiJkZWZhdWx0Iiwic2hhZG93RGF0YWJhc2VVcmwiOiJwb3N0Z3JlczovL3Bvc3RncmVzOnBvc3RncmVzQGxvY2FsaG9zdDo1MTIxNS90ZW1wbGF0ZTE_c3NsbW9kZT1kaXNhYmxlJmNvbm5lY3Rpb25fbGltaXQ9MTAmY29ubmVjdF90aW1lb3V0PTAmbWF4X2lkbGVfY29ubmVjdGlvbl9saWZldGltZT0wJnBvb2xfdGltZW91dD0wJnNvY2tldF90aW1lb3V0PTAifQ"
+DATABASE_URL="postgresql://postgres:admin123@localhost:5432/krushi_seva_kendra?schema=public"
+
+PORT=5000
+
+BETTER_AUTH_SECRET=78fb4aecdc3a438576b6b9f4e5fbefcc1f06a07c2cb2ab97f199ea49841a44c6
+
+BETTER_AUTH_URL=http://localhost:5000
+
+R2_ACCOUNT_ID=addb904c85bc5948e194988b67746ea7
+R2_ACCESS_KEY_ID=8a72b82c59cf446ddbd9f4d440c75738
+R2_SECRET_ACCESS_KEY=1fecf854bb95ebd59c2c3c982eab68cfb5eddcb6f7666fe6329300e0de4f17e3
+R2_BUCKET_NAME=krushi-seva-kendra-products
+
+R2_PUBLIC_URL=https://pub-a1af7329c9c547d39865875bc2a0f92b.r2.dev
+
+FIREBASE_PROJECT_ID=patilkrushisevakendra-d0286
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-fbsvc@patilkrushisevakendra-d0286.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC85RDPyWk6Y8E1\n2Qm64V71ivRwyEQRuvmncvbqHcxwugczOA5TxRGhtc5Iu+PgzwIkkRXBQMWv83tr\nt/te994DqJ1JCm1N8G2fr5YtNJGIEujqY7AoBX7rYMjv65ndCNnLBKdiOeYoavLR\n/NyAoo9JyeakW0axRkUvvnmmiovEauo4UUJhh3V6eZq7L1LdKm0kB7+J2ybe7BEf\noBTusPA2rW0h20cnU2zcOst2KAGz9UvF3CkQCZExDPW1fVBA22aAy2YaJ5qLf3vZ\nSifshd6jVwpb3iCM8SSKb2efyeILWhFPqt5r3go0E7Ftq2Lg3vqTTATc4/6ey13H\nARkhWUINAgMBAAECggEAALaevyIkFxfcWW815bJHMQcy0CA5fZWmrra07wJozL4v\nG8bo6vESFXnByy2GeUle2TOBEQdFF9qEC06ZEO0/teTTnzx+WC6Bw3oex5HswMZN\ngeEZf7UxmwL1D07k+Fw5slYUqb7NOzbYLunVDVlP0DgGenVryWyaA0mlXPcl+vpo\nuNnfTz6y0qrS05YJEAre6r8096OrAgjmA1yO9NXYEyCe4gfvQkzE3TE4oyLSPqYV\nZx0W1Dx6pnRQRTLi33zXJhCadyEgFT11MsLDFxOJ9MgPKeXzyHF4BddKzeUZQ36U\n7Uff3PRvw9xfjO2gtlN8fYI/whPm0x6/vU1sciB+wwKBgQDrW17fc7OTYAcanwYB\nwSE/3RX9/idSGxHd+/zQ0Qvs51xi6m3Rq15SCPDYs7nzjxZoyGFL/6Y7Ru2kwcx1\n7krwdH97/qKWY7HmLET94MOi8jBJz3rdj//rKGq17RX2QDEbz3pps90GkWwo5kY6\nMUarewSXzrSTpAQdmtWsvNl0iwKBgQDNdnL+/l5qQh41Nq4TfExzfaLsoUifzcZ/\naWHGCSoE5A9ZL9vVb4QxGpIC8IBHlMHfKntwo3aWoT0Ubhk/TSv9ILkBqBi1Kt0p\n4MdCAMPARhS1Nu86TeC1s2fXQg9L5CTnKYKJlQshUt3tlSykVm+kbuqTgVlo423s\n2s4TYwI+xwKBgQDPencCaY8PBoJ8t1+mQEk9cXsns9uaB/8SQEg5FXB74eGR2bQC\nOB4oF3Wqs5Xj3moU6UDMrIwwiXCJ48aI2A78NtcDyhAun6h+jtwrKu+MQBDNoLhh\nhcZH2hNoWZ8YvLIOIDN753GbjqtYytdyCWqRVRtRcInD9b0jFBH1+21/zQKBgHEN\ntRcEJjV3riF/tec45ORDhEuKL2jnFEr1VHxgfIN2bc+YWvElTGqsgR0m8p7whoDi\nYkvHVjBqBi7gqfm/3+2HfOUhdn7xWAJ8EYgK3atFpI1V7ep6AaRZVFEIo1wR7BBa\nMd68aQRsEXtyMr82ZHXpJiAF84mYYtsKRow6VXjvAoGBAMxplhopqDSg3IFE8yzI\nnr+ho9xAMlqlxPtcr7VR5IxJj7zcpNEeADzBx15t73cXSS3Gf/FXehzpLJIx5XM6\no4HceKWaVDIsaOecuadNRs80Hv2KkZr60H2uYDOordmeSi5AQ2A+Ge0hcCVJzrQT\n0GtdREGGr5YYDcRVE/srHGMu\n-----END PRIVATE KEY-----\n"
+
+
+JWT_SECRET=patil-krushi-seva-kendra-dev-secret-2026
+JWT_EXPIRES_IN=7d
 /generated/prisma
