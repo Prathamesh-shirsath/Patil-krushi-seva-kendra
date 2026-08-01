@@ -1,11 +1,17 @@
 import { prisma } from "../lib/prisma";
-import { CreateProductInput } from "../types/product.types";
+import {
+  CreateProductInput,
+  UpdateProductInput,
+} from "../types/product.types";
+import { generateUniqueSlug } from "../utils/slug.util";
 
 export const createProduct = async (data: CreateProductInput) => {
+  const slug = await generateUniqueSlug(data.name);
+
   return prisma.product.create({
     data: {
       name: data.name,
-      slug: data.slug,
+      slug,
       description: data.description,
 
       categoryId: data.categoryId,
@@ -13,6 +19,7 @@ export const createProduct = async (data: CreateProductInput) => {
 
       packSize: data.packSize,
       price: data.price,
+      stock: data.stock,
 
       image: data.image,
 
@@ -20,19 +27,32 @@ export const createProduct = async (data: CreateProductInput) => {
 
       status: data.status,
 
-      variants: data.variants?.length
-        ? {
-          create: data.variants.map((v) => ({
-            packSize: v.packSize,
-            price: v.price,
-          })),
-        }
-        : undefined,
+      variants:
+        data.variants && data.variants.length > 0
+          ? {
+            create: data.variants.map((variant) => ({
+              packSize: variant.packSize,
+              price: variant.price,
+            })),
+          }
+          : undefined,
     },
 
     include: {
-      category: true,
-      brand: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+
+      brand: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+
       variants: true,
     },
   });
@@ -45,52 +65,91 @@ export const getAllProducts = async (
   brandId?: string,
   categoryId?: string
 ) => {
-  return prisma.product.findMany({
-    where: {
-      status: true,
+  const where = {
+    status: true,
 
-      ...(search && {
-        OR: [
-          {
+    ...(search && {
+      OR: [
+        {
+          name: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        },
+        {
+          description: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        },
+        {
+          packSize: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        },
+        {
+          brand: {
             name: {
               contains: search,
-              mode: "insensitive",
+              mode: "insensitive" as const,
             },
           },
-          {
-            brand: {
-              name: {
-                contains: search,
-                mode: "insensitive",
-              },
-            },
+        },
+      ],
+    }),
+
+    ...(brandId && { brandId }),
+
+    ...(categoryId && { categoryId }),
+  };
+
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      where,
+
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
           },
-        ],
-      }),
+        },
 
-      ...(brandId && {
-        brandId,
-      }),
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
 
-      ...(categoryId && {
-        categoryId,
-      }),
+        variants: true,
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+      skip: (page - 1) * limit,
+
+      take: limit,
+    }),
+
+    prisma.product.count({
+      where,
+    }),
+  ]);
+
+  return {
+    products,
+
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
     },
-
-    include: {
-      category: true,
-      brand: true,
-      variants: true,
-    },
-
-    skip: (page - 1) * limit,
-
-    take: limit,
-
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  };
 };
 
 export const getProductBySlug = async (slug: string) => {
@@ -100,8 +159,20 @@ export const getProductBySlug = async (slug: string) => {
     },
 
     include: {
-      category: true,
-      brand: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+
+      brand: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+
       variants: true,
     },
   });
@@ -109,43 +180,92 @@ export const getProductBySlug = async (slug: string) => {
 
 export const updateProduct = async (
   id: string,
-  data: CreateProductInput
+  data: UpdateProductInput
 ) => {
+  const updateData: any = {};
+
+  if (data.name) {
+    updateData.name = data.name;
+    updateData.slug = await generateUniqueSlug(data.name);
+  }
+
+  if (data.description !== undefined)
+    updateData.description = data.description;
+
+  if (data.categoryId !== undefined)
+    updateData.categoryId = data.categoryId;
+
+  if (data.brandId !== undefined)
+    updateData.brandId = data.brandId;
+
+  if (data.packSize !== undefined)
+    updateData.packSize = data.packSize;
+
+  if (data.price !== undefined)
+    updateData.price = data.price;
+
+  if (data.stock !== undefined)
+    updateData.stock = data.stock;
+
+  if (data.image !== undefined)
+    updateData.image = data.image;
+
+  if (data.usedForCrops !== undefined)
+    updateData.usedForCrops = data.usedForCrops;
+
+  if (data.status !== undefined)
+    updateData.status = data.status;
+
+  if (data.variants !== undefined) {
+    await prisma.productVariant.deleteMany({
+      where: {
+        productId: id,
+      },
+    });
+
+    updateData.variants = {
+      create: data.variants.map((variant) => ({
+        packSize: variant.packSize,
+        price: variant.price,
+      })),
+    };
+  }
+
   return prisma.product.update({
     where: {
       id,
     },
 
-    data: {
-      name: data.name,
-      slug: data.slug,
-      description: data.description,
-
-      categoryId: data.categoryId,
-      brandId: data.brandId,
-
-      packSize: data.packSize,
-      price: data.price,
-
-      image: data.image,
-
-      usedForCrops: data.usedForCrops,
-
-      status: data.status,
-    },
+    data: updateData,
 
     include: {
-      category: true,
-      brand: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+
+      brand: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+
       variants: true,
     },
   });
 };
 
 export const deleteProduct = async (id: string) => {
-  return prisma.product.delete({
+  return prisma.product.update({
     where: {
       id,
+    },
+
+    data: {
+      status: false,
     },
   });
 };

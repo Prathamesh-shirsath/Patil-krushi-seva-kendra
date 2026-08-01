@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-
 import { TrendingUp } from "lucide-react";
+
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ProductStatsCardProps {
     title: string;
@@ -19,26 +19,23 @@ export default function ProductStatsCard({
     icon,
     iconBg,
 }: ProductStatsCardProps) {
-
     return (
-
         <Card
             className="
-                rounded-3xl
+                overflow-hidden
                 border
-                border-slate-100
+                border-slate-200
                 bg-white
-                shadow-sm
                 transition-all
                 duration-300
                 hover:-translate-y-1
-                hover:shadow-xl
+                hover:border-green-200
+                hover:shadow-lg
             "
         >
-
             <CardContent className="p-6">
 
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-4">
 
                     <div className="flex-1">
 
@@ -46,28 +43,15 @@ export default function ProductStatsCard({
                             {title}
                         </p>
 
-                        <h2
-                            className="
-                                mt-3
-                                text-3xl
-                                sm:text-4xl
-                                font-bold
-                                text-slate-900
-                            "
-                        >
-                            {value}
+                        <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+                            {value.toLocaleString("en-IN")}
                         </h2>
 
-                        <div className="mt-5 flex items-center gap-2">
+                        <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
 
-                            <TrendingUp
-                                size={16}
-                                className="text-green-600"
-                            />
+                            <TrendingUp className="h-4 w-4 text-green-600" />
 
-                            <span className="text-sm text-slate-500">
-                                {subtitle}
-                            </span>
+                            <span>{subtitle}</span>
 
                         </div>
 
@@ -78,12 +62,11 @@ export default function ProductStatsCard({
                             flex
                             h-14
                             w-14
+                            shrink-0
                             items-center
                             justify-center
                             rounded-2xl
                             ${iconBg}
-                            shadow-sm
-                            shrink-0
                         `}
                     >
                         {icon}
@@ -92,9 +75,6 @@ export default function ProductStatsCard({
                 </div>
 
             </CardContent>
-
         </Card>
-
     );
-
 }

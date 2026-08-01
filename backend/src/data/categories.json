@@ -9,6 +9,18 @@
     "status": true,
     "image": "https://pub-a1af7329c9c547d39865875bc2a0f92b.r2.dev/d522e879-f34a-40c9-973c-7051f7d4c485.png",
     "createdAt": "2026-07-24T12:55:17.016Z",
-    "updatedAt": "2026-07-24T12:55:48.516Z"
+    "updatedAt": "2026-07-29T18:22:33.831Z"
+  },
+  {
+    "id": "6j59mruf8",
+    "name": "fertilizer",
+    "slug": "fertilizer",
+    "description": "",
+    "productsCount": "0+",
+    "brandsCount": "0+",
+    "status": true,
+    "image": "https://pub-a1af7329c9c547d39865875bc2a0f92b.r2.dev/a3428d86-e802-4bff-9451-6d74af59a39f.jpg",
+    "createdAt": "2026-07-30T11:40:49.258Z",
+    "updatedAt": "2026-07-30T11:40:49.258Z"
   }
 ]

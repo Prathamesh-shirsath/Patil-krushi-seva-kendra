@@ -27,7 +27,9 @@ export const addToCart = async (
     },
 
     update: {
-      quantity: data.quantity,
+      quantity: {
+        increment: data.quantity,
+      },
     },
 
     create: {
@@ -39,25 +41,146 @@ export const addToCart = async (
 };
 
 export const getCart = async (userId: string) => {
-  return prisma.cart.findUnique({
+  const cart = await prisma.cart.findUnique({
     where: {
       userId,
     },
-
     include: {
       items: {
         include: {
-          product: true,
+          product: {
+            include: {
+              brand: true,
+            },
+          },
         },
       },
     },
   });
+
+  if (!cart) {
+    return {
+      items: [],
+      summary: {
+        totalItems: 0,
+        subTotal: 0,
+        deliveryCharge: 0,
+        discount: 0,
+        grandTotal: 0,
+      },
+    };
+  }
+
+  const items = cart.items.map((item) => ({
+    id: item.id,
+    quantity: item.quantity,
+    createdAt: item.createdAt,
+    product: {
+      id: item.product.id,
+      name: item.product.name,
+      slug: item.product.slug,
+      image: item.product.image,
+      price: Number(item.product.price),
+      packSize: item.product.packSize,
+      stock: item.product.stock,
+      brand: {
+        id: item.product.brand.id,
+        name: item.product.brand.name,
+      },
+    },
+  }));
+
+  const subTotal = items.reduce(
+    (total, item) =>
+      total + item.product.price * item.quantity,
+    0
+  );
+
+  const totalItems = items.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  const deliveryCharge = subTotal >= 499 ? 0 : 50;
+  const discount = 0;
+
+  return {
+    items,
+    summary: {
+      totalItems,
+      subTotal,
+      deliveryCharge,
+      discount,
+      grandTotal: subTotal + deliveryCharge - discount,
+    },
+  };
 };
 
-export const removeCartItem = async (id: string) => {
+export const updateCartItem = async (
+  id: string,
+  data: {
+    quantity: number;
+  }
+) => {
+  return prisma.cartItem.update({
+    where: {
+      id,
+    },
+
+    data: {
+      quantity: data.quantity,
+    },
+  });
+};
+
+export const removeCartItem = async (
+  id: string
+) => {
   return prisma.cartItem.delete({
     where: {
       id,
     },
   });
+};
+
+export const clearCart = async (
+  userId: string
+) => {
+  const cart = await prisma.cart.findUnique({
+    where: {
+      userId,
+    },
+  });
+
+  if (!cart) return;
+
+  return prisma.cartItem.deleteMany({
+    where: {
+      cartId: cart.id,
+    },
+  });
+};
+
+export const getCartCount = async (
+  userId: string
+) => {
+  const cart = await prisma.cart.findUnique({
+    where: {
+      userId,
+    },
+  });
+
+  if (!cart) return 0;
+
+  const result = await prisma.cartItem.aggregate({
+    where: {
+      cartId: cart.id,
+    },
+
+    _sum: {
+      quantity: true,
+    },
+  });
+
+  return result._sum.quantity ?? 0;
 };

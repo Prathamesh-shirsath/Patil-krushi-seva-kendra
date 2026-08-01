@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import {
   addToCart,
   getCart,
+  updateCartItem,
   removeCartItem,
+  clearCart,
+  getCartCount,
 } from "../services/cart.service";
 
 export const addToCartController = async (
@@ -10,35 +13,67 @@ export const addToCartController = async (
   res: Response
 ) => {
   try {
-    const item = await addToCart(req.body);
+    const { userId } = res.locals.user;
 
-    res.status(201).json({
+    const item = await addToCart({
+      userId,
+      productId: req.body.productId,
+      quantity: req.body.quantity,
+    });
+
+    return res.status(201).json({
       success: true,
+      message: "Item added to cart.",
       data: item,
     });
-  } catch {
-    res.status(500).json({
+  } catch (error: any) {
+    return res.status(400).json({
       success: false,
-      message: "Failed to add item",
+      message: error.message,
     });
   }
 };
 
 export const getCartController = async (
+  _req: Request,
+  res: Response
+) => {
+  try {
+    const { userId } = res.locals.user;
+
+    const cart = await getCart(userId);
+
+    return res.status(200).json({
+      success: true,
+      data: cart,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const updateCartItemController = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const cart = await getCart(req.params.userId as string);
+    const item = await updateCartItem(
+      String(req.params.itemId),
+      req.body
+    );
 
-    res.json({
+    return res.status(200).json({
       success: true,
-      data: cart,
+      message: "Cart updated successfully.",
+      data: item,
     });
-  } catch {
-    res.status(500).json({
+  } catch (error: any) {
+    return res.status(400).json({
       success: false,
-      message: "Failed to fetch cart",
+      message: error.message,
     });
   }
 };
@@ -48,16 +83,60 @@ export const removeCartItemController = async (
   res: Response
 ) => {
   try {
-    await removeCartItem(req.params.id as string);
+    await removeCartItem(String(req.params.itemId));
 
-    res.json({
+    return res.status(200).json({
       success: true,
-      message: "Item removed",
+      message: "Item removed from cart.",
     });
-  } catch {
-    res.status(500).json({
+  } catch (error: any) {
+    return res.status(400).json({
       success: false,
-      message: "Failed to remove item",
+      message: error.message,
+    });
+  }
+};
+
+export const clearCartController = async (
+  _req: Request,
+  res: Response
+) => {
+  try {
+    const { userId } = res.locals.user;
+
+    await clearCart(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Cart cleared successfully.",
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getCartCountController = async (
+  _req: Request,
+  res: Response
+) => {
+  try {
+    const { userId } = res.locals.user;
+
+    const count = await getCartCount(userId);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        count,
+      },
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

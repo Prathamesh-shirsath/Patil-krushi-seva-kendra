@@ -26,7 +26,7 @@ import type { Product } from "@/types/product";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAddWishlist } from "@/hooks/useAddWishlist";
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
-import { useAddToCart } from "@/hooks/useCart";
+import { useAddToCart } from "@/hooks/cart/useAddToCart";
 import { toast } from "sonner";
 
 type ProductDetailsClientProps = {

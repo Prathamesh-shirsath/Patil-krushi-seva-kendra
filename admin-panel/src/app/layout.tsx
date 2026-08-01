@@ -8,16 +8,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
+        <html>
             <body>
-
                 <QueryProvider>
-
                     {children}
-                    <Toaster richColors position="top-right" />
-
+                    <Toaster />
                 </QueryProvider>
-
             </body>
         </html>
     );

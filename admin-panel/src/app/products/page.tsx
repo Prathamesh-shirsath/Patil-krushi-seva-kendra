@@ -1,152 +1,144 @@
 "use client";
 
-import DashboardLayout from "@/components/layout/dashboard-layout";
-
-import ProductStatsCard from "@/components/cards/product-stats-card";
-import ProductsTable from "@/components/tables/products-table";
-import AddProductDialog from "@/components/dialogs/add-product-dialog";
-
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 import {
     Download,
     Package,
     CheckCircle2,
     PauseCircle,
-    Tags,
+    AlertTriangle,
+    Plus,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
+import ProductStatsCard from "@/components/cards/product-stats-card";
+import ProductsTable from "@/components/tables/products-table";
+
+import { useProducts } from "@/hooks/use-products";
+
 export default function ProductsPage() {
+
+    const { data } = useProducts({
+        page: 1,
+        limit: 1000,
+    });
+
+    const products = data?.data ?? [];
+
+    const totalProducts = products.length;
+
+    const activeProducts =
+        products.filter((p: { status: any; }) => p.status).length;
+
+    const inactiveProducts =
+        products.filter((p: { status: any; }) => !p.status).length;
+
+    const lowStockProducts =
+        products.filter((p: { stock: number; }) => p.stock < 10).length;
+
     return (
-        <DashboardLayout>
 
-            <div className="space-y-8">
+        <div className="space-y-8">
 
-                {/* Header */}
+            {/* Header */}
 
-                <div
-                    className="
-                        rounded-3xl
-                        border
-                        border-green-100
-                        bg-white
-                        p-6
-                        shadow-sm
-                        flex
-                        flex-col
-                        gap-5
-                        lg:flex-row
-                        lg:items-center
-                        lg:justify-between
-                    "
-                >
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
-                    <div>
+                <div>
 
-                        <h1 className="text-3xl font-bold text-slate-800">
+                    <h1 className="text-3xl font-bold tracking-tight">
 
-                            Products Management
+                        Products
 
-                        </h1>
+                    </h1>
 
-                        <p className="mt-1 text-slate-500">
+                    <p className="text-muted-foreground">
 
-                            Manage all agricultural products, pricing,
-                            stock and availability.
+                        Manage all agricultural products.
 
-                        </p>
-
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-3">
-
-                        <AddProductDialog />
-
-                        <Button
-                            variant="outline"
-                            className="
-                                rounded-2xl
-                                border-slate-200
-                                px-6
-                            "
-                        >
-
-                            <Download
-                                className="mr-2 h-4 w-4"
-                            />
-
-                            Export
-
-                        </Button>
-
-                    </div>
+                    </p>
 
                 </div>
 
-                {/* Stats */}
+                <div className="flex gap-3">
 
-                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                    <Button
+                        variant="outline"
+                    >
+                        <Download className="mr-2 h-4 w-4" />
+                        Export
+                    </Button>
 
-                    <ProductStatsCard
-                        title="Total Products"
-                        value={120}
-                        subtitle="All products"
-                        icon={
-                            <Package
-                                size={24}
-                                className="text-green-600"
-                            />
-                        }
-                        iconBg="bg-green-100"
-                    />
+                    <Button asChild>
 
-                    <ProductStatsCard
-                        title="Active Products"
-                        value={98}
-                        subtitle="Published"
-                        icon={
-                            <CheckCircle2
-                                size={24}
-                                className="text-emerald-600"
-                            />
-                        }
-                        iconBg="bg-emerald-100"
-                    />
+                        <Link href="/products/new">
 
-                    <ProductStatsCard
-                        title="Inactive Products"
-                        value={22}
-                        subtitle="Hidden"
-                        icon={
-                            <PauseCircle
-                                size={24}
-                                className="text-orange-500"
-                            />
-                        }
-                        iconBg="bg-orange-100"
-                    />
+                            <Plus className="mr-2 h-4 w-4" />
 
-                    <ProductStatsCard
-                        title="Low Stock"
-                        value={15}
-                        subtitle="Need restocking"
-                        icon={
-                            <Tags
-                                size={24}
-                                className="text-violet-600"
-                            />
-                        }
-                        iconBg="bg-violet-100"
-                    />
+                            Add Product
+
+                        </Link>
+
+                    </Button>
 
                 </div>
-
-                {/* Table */}
-
-                <ProductsTable />
 
             </div>
 
-        </DashboardLayout>
+            {/* Stats */}
+
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
+                <ProductStatsCard
+                    title="Total Products"
+                    value={totalProducts}
+                    subtitle="All Products"
+                    icon={
+                        <Package className="h-6 w-6 text-green-600" />
+                    }
+                    iconBg="bg-green-100"
+                />
+
+                <ProductStatsCard
+                    title="Active"
+                    value={activeProducts}
+                    subtitle="Visible Products"
+                    icon={
+                        <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                    }
+                    iconBg="bg-emerald-100"
+                />
+
+                <ProductStatsCard
+                    title="Inactive"
+                    value={inactiveProducts}
+                    subtitle="Hidden Products"
+                    icon={
+                        <PauseCircle className="h-6 w-6 text-orange-500" />
+                    }
+                    iconBg="bg-orange-100"
+                />
+
+                <ProductStatsCard
+                    title="Low Stock"
+                    value={lowStockProducts}
+                    subtitle="Need Restocking"
+                    icon={
+                        <AlertTriangle className="h-6 w-6 text-red-600" />
+                    }
+                    iconBg="bg-red-100"
+                />
+
+            </div>
+
+            {/* Table */}
+
+            <ProductsTable />
+
+        </div>
+
     );
+
 }

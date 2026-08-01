@@ -1,6 +1,17 @@
-import { z } from "zod";
-import { createCartItemSchema } from "../validators/cart.validator";
+export interface CreateCartItemInput {
+  userId: string;
+  productId: string;
+  quantity: number;
+}
 
-export type CreateCartItemInput = z.infer<
-  typeof createCartItemSchema
->;
+export interface UpdateCartItemInput {
+  quantity: number;
+}
+
+export interface CartSummary {
+  totalItems: number;
+  subTotal: number;
+  deliveryCharge: number;
+  discount: number;
+  grandTotal: number;
+}
