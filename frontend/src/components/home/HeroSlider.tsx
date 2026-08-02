@@ -162,7 +162,7 @@ function HeroSlide({
   );
 
   return (
-    <div className={`relative grid min-h-0 overflow-hidden bg-linear-to-br ${panelGradient} md:min-h-125 lg:min-h-150 lg:grid-cols-[0.95fr_1.05fr]`}>
+    <div className={`relative grid grid-cols-12 min-h-[250px] sm:min-h-[360px] md:min-h-[440px] lg:min-h-[500px] overflow-hidden bg-gradient-to-br ${panelGradient}`}>
       {href ? (
         <Link
           href={href}
@@ -171,36 +171,36 @@ function HeroSlide({
         />
       ) : null}
 
-      <div className="relative z-20 flex items-center px-4 py-7 min-[390px]:px-5 sm:px-10 md:py-12 lg:px-14">
-        <div className="max-w-xl">
+      <div className="col-span-7 sm:col-span-6 relative z-20 flex items-center p-3 sm:p-6 md:p-10 lg:p-14">
+        <div className="w-full max-w-xl">
           {banner.label ? (
-            <span className={`hero-reveal hero-reveal-label inline-flex items-center rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wide shadow-sm backdrop-blur ${badgeClass}`}>
+            <span className={`hero-reveal hero-reveal-label inline-flex items-center rounded-full px-2.5 py-1 sm:px-4 sm:py-2 text-[9px] sm:text-xs font-bold uppercase tracking-wide shadow-2xs backdrop-blur ${badgeClass}`}>
               {banner.label}
             </span>
           ) : null}
 
-          <h1 className={`hero-reveal hero-reveal-title mt-4 text-2xl font-black leading-[1.08] tracking-tight min-[390px]:text-3xl sm:mt-6 sm:text-5xl lg:text-6xl xl:text-7xl ${textClass}`}>
+          <h1 className={`hero-reveal hero-reveal-title mt-2 sm:mt-4 text-sm min-[360px]:text-base min-[410px]:text-lg sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight sm:leading-[1.08] tracking-tight ${textClass}`}>
             {renderTitle(banner.title)}
           </h1>
 
           {banner.subtitle ? (
-            <p className={`hero-reveal hero-reveal-subtitle mt-4 max-w-125 text-sm leading-6 sm:mt-5 sm:text-base sm:leading-7 ${subtitleClass}`}>
+            <p className={`hero-reveal hero-reveal-subtitle mt-2 sm:mt-4 max-w-125 text-[11px] sm:text-sm md:text-base leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none ${subtitleClass}`}>
               {banner.subtitle}
             </p>
           ) : null}
 
-          <div className="hero-reveal hero-reveal-actions mt-5 flex flex-col gap-3 sm:mt-8 sm:flex-row">
+          <div className="hero-reveal hero-reveal-actions mt-3 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3">
             {banner.buttonText && href ? (
               <Link
                 href={href}
                 className="pointer-events-auto"
               >
                 <Button
-                  size="lg"
-                  className="h-12 w-full rounded-xl bg-green-600 px-7 text-sm font-bold text-white shadow-lg shadow-green-950/20 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] hover:bg-green-700 hover:shadow-xl hover:shadow-green-950/25 sm:w-auto"
+                  size="sm"
+                  className="h-8 sm:h-11 w-full sm:w-auto rounded-lg sm:rounded-xl bg-green-600 px-3 sm:px-6 text-[11px] sm:text-sm font-bold text-white shadow-md hover:bg-green-700"
                 >
                   {banner.buttonText}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-1.5 h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </Link>
             ) : null}
@@ -211,28 +211,28 @@ function HeroSlide({
             >
               <Button
                 type="button"
-                size="lg"
+                size="sm"
                 variant="outline"
-                className="h-12 w-full rounded-xl border-white/70 bg-white/90 px-7 text-sm font-bold text-green-800 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] hover:bg-white hover:shadow-md sm:w-auto"
+                className="h-8 sm:h-11 w-full sm:w-auto rounded-lg sm:rounded-xl border-white/70 bg-white/90 px-3 sm:px-6 text-[11px] sm:text-sm font-bold text-green-800 shadow-2xs hover:bg-white"
               >
                 Explore Categories
               </Button>
             </Link>
           </div>
 
-          <div className="hero-reveal hero-reveal-badges mt-5 grid grid-cols-1 gap-2 min-[390px]:grid-cols-3 sm:mt-7 sm:gap-3">
+          <div className="hero-reveal hero-reveal-badges mt-3 sm:mt-6 grid grid-cols-1 min-[420px]:grid-cols-3 gap-1.5 sm:gap-3">
             <TrustBadge
-              icon={<CheckCircle2 className="h-4 w-4 text-green-400" />}
-              label="Genuine Products"
+              icon={<CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 text-green-400 shrink-0" />}
+              label="Genuine"
               className={trustClass}
             />
             <TrustBadge
-              icon={<Truck className="h-4 w-4 text-green-400" />}
+              icon={<Truck className="h-3 w-3 sm:h-4 sm:w-4 text-green-400 shrink-0" />}
               label="Fast Delivery"
               className={trustClass}
             />
             <TrustBadge
-              icon={<Leaf className="h-4 w-4 text-green-400" />}
+              icon={<Leaf className="h-3 w-3 sm:h-4 sm:w-4 text-green-400 shrink-0" />}
               label="Trusted Brands"
               className={trustClass}
             />
@@ -241,13 +241,13 @@ function HeroSlide({
       </div>
 
       <div
-        className="hero-image relative min-h-40 bg-cover bg-center sm:min-h-47.5 md:min-h-full"
+        className="col-span-5 sm:col-span-6 hero-image relative h-full min-h-full bg-cover bg-center"
         style={{
           backgroundImage: `url(${image})`,
         }}
       >
-        <div className={`absolute inset-0 bg-linear-to-r ${imageOverlay}`} />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black/20 to-transparent" />
+        <div className={`absolute inset-0 bg-gradient-to-r ${imageOverlay}`} />
+        <div className="absolute inset-x-0 bottom-0 h-16 sm:h-24 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
     </div>
   );
@@ -276,7 +276,7 @@ export default function HeroSlider() {
         }}
         pagination={{ clickable: true }}
         navigation
-        loop
+        loop={slides.length > 1}
         className="premium-hero-swiper mx-auto max-w-375 overflow-hidden rounded-2xl shadow-xl sm:rounded-3xl [&_.swiper-button-next:after]:text-[14px] [&_.swiper-button-prev:after]:text-[14px] [&_.swiper-button-next]:right-4 [&_.swiper-button-prev]:left-4 [&_.swiper-button-next]:hidden [&_.swiper-button-prev]:hidden md:[&_.swiper-button-next]:flex md:[&_.swiper-button-prev]:flex [&_.swiper-button-next]:h-10 [&_.swiper-button-prev]:h-10 [&_.swiper-button-next]:w-10 [&_.swiper-button-prev]:w-10 [&_.swiper-button-next]:rounded-full [&_.swiper-button-prev]:rounded-full [&_.swiper-button-next]:bg-white/90 [&_.swiper-button-prev]:bg-white/90 [&_.swiper-button-next]:text-green-800 [&_.swiper-button-prev]:text-green-800 [&_.swiper-button-next]:shadow-lg [&_.swiper-button-prev]:shadow-lg [&_.swiper-button-next]:backdrop-blur [&_.swiper-button-prev]:backdrop-blur [&_.swiper-button-next]:transition-all [&_.swiper-button-prev]:transition-all [&_.swiper-button-next]:duration-200 [&_.swiper-button-prev]:duration-200 [&_.swiper-button-next:hover]:scale-105 [&_.swiper-button-prev:hover]:scale-105 [&_.swiper-button-next:hover]:bg-white [&_.swiper-button-prev:hover]:bg-white [&_.swiper-button-next:hover]:text-green-700 [&_.swiper-button-prev:hover]:text-green-700 [&_.swiper-button-next:hover]:shadow-xl [&_.swiper-button-prev:hover]:shadow-xl [&_.swiper-pagination]:bottom-4 sm:[&_.swiper-pagination]:bottom-5 [&_.swiper-pagination-bullet]:h-2 [&_.swiper-pagination-bullet]:w-6 sm:[&_.swiper-pagination-bullet]:w-7 [&_.swiper-pagination-bullet]:rounded-full [&_.swiper-pagination-bullet]:bg-white/80 [&_.swiper-pagination-bullet]:opacity-100 [&_.swiper-pagination-bullet]:transition-all [&_.swiper-pagination-bullet]:duration-300 [&_.swiper-pagination-bullet-active]:w-9 [&_.swiper-pagination-bullet-active]:bg-green-500"
       >
         {slides.map((banner) => (

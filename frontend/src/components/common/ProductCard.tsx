@@ -151,9 +151,9 @@ export default function ProductCard({
         <div className="mt-auto flex items-center gap-2 pt-3">
           <Button
             disabled={!isAvailable}
-            className="flex-1 bg-green-700 hover:bg-green-800"
+            className="flex-1 bg-green-700 hover:bg-green-800 text-xs px-2 sm:px-3 h-10 font-bold"
           >
-            <ShoppingCart className="mr-2 h-4 w-4" />
+            <ShoppingCart className="mr-1.5 h-3.5 w-3.5 shrink-0" />
             Add to Cart
           </Button>
 
@@ -166,7 +166,7 @@ export default function ProductCard({
                 addWishlist.mutate(id);
               }
             }}
-            className="flex h-11 w-11 items-center justify-center rounded-lg border border-green-200 transition hover:bg-green-50 disabled:opacity-50"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-green-200 transition hover:bg-green-50 disabled:opacity-50"
           >
             <Heart
               size={18}
