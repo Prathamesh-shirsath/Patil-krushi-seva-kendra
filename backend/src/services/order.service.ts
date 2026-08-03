@@ -2,7 +2,6 @@ import { prisma } from "../lib/prisma";
 import { CreateOrderInput } from "../types/order.types";
 
 export const createOrder = async (data: CreateOrderInput) => {
-  // Fetch all ordered products
   const products = await prisma.product.findMany({
     where: {
       id: {
@@ -16,10 +15,6 @@ export const createOrder = async (data: CreateOrderInput) => {
       userId: data.userId,
 
       totalAmount: data.totalAmount,
-      subTotal: data.totalAmount,
-      grandTotal: data.totalAmount,
-      deliveryCharge: 0,
-      discount: 0,
 
       items: {
         create: data.items.map((item) => {
@@ -33,9 +28,7 @@ export const createOrder = async (data: CreateOrderInput) => {
 
           return {
             quantity: item.quantity,
-
             price: product.price,
-
             productName: product.name,
 
             product: {
@@ -56,7 +49,6 @@ export const createOrder = async (data: CreateOrderInput) => {
       },
       payment: true,
       user: true,
-      address: true,
     },
   });
 };
@@ -71,7 +63,6 @@ export const getAllOrders = async () => {
       },
       payment: true,
       user: true,
-      address: true,
     },
 
     orderBy: {
@@ -94,7 +85,6 @@ export const getOrderById = async (id: string) => {
       },
       payment: true,
       user: true,
-      address: true,
     },
   });
 };
