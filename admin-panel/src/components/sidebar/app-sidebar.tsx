@@ -2,133 +2,165 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import {
-    LayoutDashboard,
-    Package,
-    FolderTree,
-    Building2,
-    ShoppingCart,
-    Users,
-    Star,
-    ImageIcon,
-    BadgePercent,
-    Mail,
-    MessageSquare,
-    Shield,
-    BarChart3,
-    Settings,
+  LayoutDashboard,
+  Package,
+  FolderTree,
+  Building2,
+  ShoppingCart,
+  Users,
+  Star,
+  ImageIcon,
+  Shield,
+  BarChart3,
+  Settings,
 } from "lucide-react";
 
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+
 const sections = [
-    {
-        title: "MANAGE",
-        items: [
-            { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-            { name: "Products", href: "/products", icon: Package },
-            { name: "Categories", href: "/categories", icon: FolderTree },
-            { name: "Brands", href: "/brands", icon: Building2 },
-            { name: "Orders", href: "/orders", icon: ShoppingCart },
-            { name: "Customers", href: "/customers", icon: Users },
-            { name: "Reviews", href: "/reviews", icon: Star },
-        ],
-    },
-    {
-        title: "MARKETING",
-        items: [
-            { name: "Banners", href: "/banners", icon: ImageIcon },
-          /*  { name: "Coupons", href: "/coupons", icon: BadgePercent },
-            { name: "Newsletter", href: "/newsletter", icon: Mail },
-            { name: "Bulk SMS", href: "/bulk-sms", icon: MessageSquare },*/
-        ],
-    },
-    {
-        title: "SETTINGS",
-        items: [
-            { name: "Users", href: "/users", icon: Shield },
-            { name: "Reports", href: "/reports", icon: BarChart3 },
-            { name: "Settings", href: "/settings", icon: Settings },
-        ],
-    },
+  {
+    title: "MANAGE",
+    items: [
+      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { name: "Products", href: "/products", icon: Package },
+      { name: "Categories", href: "/categories", icon: FolderTree },
+      { name: "Brands", href: "/brands", icon: Building2 },
+      { name: "Orders", href: "/orders", icon: ShoppingCart },
+      { name: "Customers", href: "/customers", icon: Users },
+      { name: "Reviews", href: "/reviews", icon: Star },
+    ],
+  },
+  {
+    title: "MARKETING",
+    items: [
+      { name: "Banners", href: "/banners", icon: ImageIcon },
+    ],
+  },
+  {
+    title: "SETTINGS",
+    items: [
+      { name: "Users", href: "/users", icon: Shield },
+      { name: "Reports", href: "/reports", icon: BarChart3 },
+      { name: "Settings", href: "/settings", icon: Settings },
+    ],
+  },
 ];
 
 export default function AppSidebar() {
-    const pathname = usePathname();
+  const pathname = usePathname();
 
-    return (
-        <aside className="flex h-screen w-72 flex-col bg-gradient-to-b from-[#052e16] via-[#14532d] to-[#052e16] text-white">
+  return (<Sidebar
+  collapsible="offcanvas"
+  className="border-r border-green-900 bg-gradient-to-b from-[#052e16] via-[#14532d] to-[#052e16] text-white"
+>
 
-            {/* Logo */}
-            <div className="border-b border-green-900 px-6 py-6">
-                <h1 className="text-3xl font-bold text-green-400">
-                    Patil Krushi
-                </h1>
+  {/* Logo */}
 
-                <p className="mt-1 text-sm text-green-100">
-                    Seva Kendra Admin
-                </p>
-            </div>
+  <SidebarHeader className="border-b border-green-900 px-6 py-6">
 
-            {/* Menu */}
-            <div className="flex-1 overflow-y-auto px-4 py-5">
+    <h1 className="text-3xl font-bold text-green-400">
+      Patil Krushi
+    </h1>
 
-                {sections.map((section) => (
-                    <div key={section.title} className="mb-8">
+    <p className="mt-1 text-sm text-green-100">
+      Seva Kendra Admin
+    </p>
 
-                        <p className="mb-3 px-3 text-xs font-bold tracking-widest text-green-400 uppercase">
-                            {section.title}
-                        </p>
+  </SidebarHeader>
 
-                        <div className="space-y-1">
+  {/* Menu */}
 
-                            {section.items.map((item) => {
-                                const Icon = item.icon;
+  <SidebarContent>
 
-                                return (
-                                    <Link
-                                        key={item.name}
-                                        href={item.href}
-                                        className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-300
-                    ${pathname === item.href
-                                                ? "bg-emerald-600 shadow-lg"
-                                                : "hover:bg-green-900"
-                                            }`}
-                                    >
-                                        <Icon size={18} />
+    {sections.map((section) => (
 
-                                        <span>{item.name}</span>
-                                    </Link>
-                                );
-                            })}
+      <SidebarGroup key={section.title}>
 
-                        </div>
-                    </div>
-                ))}
+        <SidebarGroupLabel className="px-3 text-xs font-bold uppercase tracking-widest text-green-400">
+          {section.title}
+        </SidebarGroupLabel>
 
-            </div>
+        <SidebarGroupContent>
 
-            {/* User */}
-            <div className="border-t border-green-900 p-5">
+          <SidebarMenu>{section.items.map((item) => {
+  const Icon = item.icon;
 
-                <div className="flex items-center gap-3">
+  return (
+    <SidebarMenuItem key={item.name}>
 
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-lg font-bold">
-                        PP
-                    </div>
+      <SidebarMenuButton
+        asChild
+        isActive={pathname === item.href}
+        className="
+          h-11
+          rounded-xl
+          text-white
+          hover:bg-green-900
+          hover:text-white
+          data-[active=true]:bg-emerald-600
+          data-[active=true]:text-white
+          data-[active=true]:shadow-lg
+        "
+      >
+        <Link
+          href={item.href}
+          className="flex items-center gap-3"
+        >
+          <Icon className="h-5 w-5" />
 
-                    <div>
-                        <p className="font-semibold">
-                            Pratham Patil
-                        </p>
+          <span>{item.name}</span>
+        </Link>
 
-                        <p className="text-sm text-green-200">
-                            Super Admin
-                        </p>
-                    </div>
+      </SidebarMenuButton>
 
-                </div>
+    </SidebarMenuItem>
+  );
+})}
 
-            </div>
+          </SidebarMenu>
 
-        </aside>
-    );
+        </SidebarGroupContent>
+
+      </SidebarGroup>
+
+    ))}
+
+  </SidebarContent>  <SidebarFooter className="border-t border-green-900 p-5">
+
+    <div className="flex items-center gap-3">
+
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-lg font-bold">
+        PP
+      </div>
+
+      <div>
+        <p className="font-semibold text-white">
+          Pratham Patil
+        </p>
+
+        <p className="text-sm text-green-200">
+          Super Admin
+        </p>
+      </div>
+
+    </div>
+
+  </SidebarFooter>
+
+</Sidebar>
+
+  );
 }
