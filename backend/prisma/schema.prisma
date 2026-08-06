@@ -8,24 +8,24 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  phone         String?    @unique
-  role          Role       @default(CUSTOMER)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  email         String?    @unique
+  id            String    @id @default(cuid())
+  phone         String?   @unique
+  role          Role      @default(CUSTOMER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  email         String?   @unique
   name          String?
   password      String?
-  emailVerified Boolean    @default(false)
+  emailVerified Boolean   @default(false)
   image         String?
-  firebaseUid   String?    @unique
+  firebaseUid   String?   @unique
   accounts      Account[]
   addresses     Address[]
   cart          Cart?
   orders        Order[]
   reviews       Review[]
   sessions      Session[]
-  wishlists     Wishlist[]
+  wishlists     Wishlist?
 }
 
 model Address {
@@ -35,15 +35,13 @@ model Address {
   phone       String
   state       String
   district    String
-  city        String?
+  city        String
   pincode     String
   addressLine String
   landmark    String?
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  taluka      String?
-  village     String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -83,7 +81,7 @@ model CartItem {
 
 model Wishlist {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String   @unique
   productId String
   createdAt DateTime @default(now())
   product   Product  @relation(fields: [productId], references: [id])
@@ -93,34 +91,28 @@ model Wishlist {
 }
 
 model Order {
-  id             String        @id @default(cuid())
-  userId         String
-  status         OrderStatus   @default(PENDING)
-  paymentStatus  PaymentStatus @default(PENDING)
-  totalAmount    Decimal       @db.Decimal(10, 2)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  deliveryCharge Decimal       @default(0)
-  discount       Decimal       @default(0)
-  grandTotal     Decimal
-  paymentMethod  PaymentMethod @default(RAZORPAY)
-  subTotal       Decimal
-  user           User          @relation(fields: [userId], references: [id])
-  address        OrderAddress?
-  items          OrderItem[]
-  payment        Payment?
+  id            String        @id @default(cuid())
+  userId        String
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+  totalAmount   Decimal       @db.Decimal(10, 2)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  user          User          @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  
+  payment       Payment?
 }
 
 model OrderItem {
-  id          String   @id @default(cuid())
-  orderId     String
-  productId   String
-  quantity    Int
-  price       Decimal  @db.Decimal(10, 2)
-  createdAt   DateTime @default(now())
-  productName String
-  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product     Product  @relation(fields: [productId], references: [id])
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
 }
 
 model Payment {
@@ -133,8 +125,6 @@ model Payment {
   amount            Decimal       @db.Decimal(10, 2)
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
-  failureReason     String?
-  transactionId     String?
   order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
@@ -213,16 +203,16 @@ model Product {
   name         String
   slug         String           @unique
   image        String?
-  price        Decimal          @db.Decimal(10, 2)
+  price        Float
   description  String
   categoryId   String
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
   brandId      String
   packSize     String
+  stock        Int              @default(0)
   status       Boolean          @default(true)
   usedForCrops String[]
-  stock        Int              @default(0)
   cartItems    CartItem[]
   orderItems   OrderItem[]
   brand        Brand            @relation(fields: [brandId], references: [id])
@@ -290,38 +280,6 @@ model Statistic {
   updatedAt    DateTime           @updatedAt
 }
 
-model OrderAddress {
-  id          String  @id @default(cuid())
-  orderId     String  @unique
-  fullName    String
-  phone       String
-  state       String
-  district    String
-  taluka      String?
-  village     String
-  city        String?
-  pincode     String
-  addressLine String
-  landmark    String?
-  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-}
-
-model AppSettings {
-  id                 Int      @id @default(1)
-  storeName          String   @default("Patil Krushi Seva Kendra")
-  supportPhone       String?
-  supportEmail       String?
-  whatsappNumber     String?
-  deliveryCharge     Decimal  @default(0)
-  freeDeliveryAbove  Decimal  @default(0)
-  codEnabled         Boolean  @default(false)
-  razorpayEnabled    Boolean  @default(true)
-  maintenanceMode    Boolean  @default(false)
-  enableOrders       Boolean  @default(true)
-  enableRegistration Boolean  @default(true)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-}
 
 enum Role {
   ADMIN
@@ -380,9 +338,4 @@ enum StatisticPlacement {
   HOME
   ABOUT
   FOOTER
-}
-
-enum PaymentMethod {
-  RAZORPAY
-  COD
 }

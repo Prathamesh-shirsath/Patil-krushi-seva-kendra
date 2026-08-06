@@ -4,76 +4,65 @@ import AppNavbar from "../navbar/app-navbar";
 import AppSidebar from "../sidebar/app-sidebar";
 
 export default function DashboardLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <SidebarProvider>
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen w-full overflow-hidden bg-slate-100">
+        <div className="flex min-h-screen w-full overflow-hidden">
 
-            <div className="min-h-screen bg-slate-100">
+          {/* Sidebar */}
+       <div className="hidden lg:flex">
+         <AppSidebar />
+          </div>
 
-                <div className="flex">
+          {/* Main Content */}
+          <main className="flex-1 min-w-0 overflow-x-hidden">
 
-                    {/* Sidebar */}
+            {/* Navbar */}
+            <header
+              className="
+                sticky
+                top-0
+                z-40
+                border-b
+                border-slate-200
+                bg-white/90
+                backdrop-blur
+              "
+            >
+              <AppNavbar />
+            </header>
 
-                    <AppSidebar />
+            {/* Page Content */}
+            <div className="w-full p-4 sm:p-6 lg:p-8">
 
-                    {/* Main */}
-
-                    <main className="flex-1 min-w-0">
-
-                        {/* Navbar */}
-
-                        <header
-                            className="
-                                sticky
-                                top-0
-                                z-40
-                                border-b
-                                border-slate-200
-                                bg-white/90
-                                backdrop-blur
-                            "
-                        >
-                            <AppNavbar />
-                        </header>
-
-                        {/* Content */}
-
-                        <div
-                            className="
-                                p-4
-                                sm:p-6
-                                lg:p-8
-                            "
-                        >
-
-                            <div
-                                className="
-                                    min-h-[calc(100vh-110px)]
-                                    rounded-3xl
-                                    border
-                                    border-slate-200
-                                    bg-white
-                                    p-6
-                                    shadow-sm
-                                    lg:p-8
-                                "
-                            >
-
-                                {children}
-
-                            </div>
-
-                        </div>
-
-                    </main>
-
-                </div>
+              <div
+                className="
+                  w-full
+                  min-h-[calc(100vh-110px)]
+                  overflow-x-hidden
+                  rounded-3xl
+                  border
+                  border-slate-200
+                  bg-white
+                  shadow-sm
+                  p-4
+                  sm:p-6
+                  lg:p-8
+                "
+              >
+                {children}
+              </div>
 
             </div>
 
-        </SidebarProvider>
-    );
+          </main>
+
+        </div>
+      </div>
+    </SidebarProvider>
+  );
 }

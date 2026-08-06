@@ -30,7 +30,9 @@ export default function AppNavbar() {
             <div className="flex items-center gap-4">
 
                 {/* Mobile Sidebar Toggle */}
-                <SidebarTrigger />
+               <div className="lg:hidden">
+               <SidebarTrigger />
+               </div>
 
                 {/* Search */}
                 <div className="relative hidden md:block">
