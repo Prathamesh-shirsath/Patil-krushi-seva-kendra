@@ -19,7 +19,7 @@ export const createProduct = async (data: CreateProductInput) => {
 
       packSize: data.packSize,
       price: data.price,
-      stock: data.stock,
+      
 
       image: data.image,
 
