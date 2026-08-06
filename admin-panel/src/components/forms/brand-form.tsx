@@ -39,10 +39,10 @@ export default function BrandForm({
         handleSubmit,
         setValue,
         watch,
-    } = useForm<BrandFormValues>({
+    } = useForm<any>({
         resolver: zodResolver(
             brandFormSchema
-        ),
+        ) as any,
 
         defaultValues: {
             name: "",
