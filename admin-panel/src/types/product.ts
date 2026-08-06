@@ -16,6 +16,7 @@ export interface Product {
     packSize: string;
 
     price: number;
+    stock?: number;
 
     usedForCrops: string[];
 

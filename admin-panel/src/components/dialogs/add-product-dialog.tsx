@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 
 import { Plus } from "lucide-react";
 
-import ProductForm from "@/components/forms/product-form";
+import ProductForm from "@/components/forms/product/product-form";
 
 export default function AddProductDialog() {
 

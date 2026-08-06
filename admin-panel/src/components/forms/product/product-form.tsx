@@ -41,10 +41,10 @@ export default function ProductForm({
         useState<File | null>(null);
 
     const form =
-        useForm<ProductFormValues>({
+        useForm<any>({
             resolver: zodResolver(
                 productFormSchema
-            ),
+            ) as any,
 
             defaultValues: {
                 name: "",
@@ -171,13 +171,13 @@ export default function ProductForm({
             className="space-y-6"
         >
             <BasicInfoSection
-                form={form}
+                form={form as any}
                 brands={brands}
                 categories={categories}
             />
 
             <PricingSection
-                form={form}
+                form={form as any}
             />
 
             <ImageSection
@@ -186,19 +186,16 @@ export default function ProductForm({
             />
 
             <DescriptionSection
-                form={form}
+                form={form as any}
             />
 
             <CropSection
-                form={form}
+                form={form as any}
             />
 
             <VariantsSection
-                control={control}
-                register={register}
-                fields={fields}
-                append={append}
-                remove={remove}
+                control={control as any}
+                register={register as any}
             />
 
             {createProduct.isError && (

@@ -1,5 +1,4 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-
 import AppNavbar from "../navbar/app-navbar";
 import AppSidebar from "../sidebar/app-sidebar";
 
