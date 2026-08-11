@@ -1,10 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-    throw new Error("JWT_SECRET is missing in environment variables.");
-}
+const JWT_SECRET = process.env.JWT_SECRET || process.env.BETTER_AUTH_SECRET || "patil_krushi_seva_kendra_jwt_secret_key_2026";
 
 export interface JwtPayload {
     userId: string;

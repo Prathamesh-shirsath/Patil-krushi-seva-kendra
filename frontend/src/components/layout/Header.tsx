@@ -67,30 +67,30 @@ export default function Header() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur">
-        <div className="w-full px-3 sm:px-4 lg:px-10">
-          <div className="flex h-20 items-center gap-2 sm:h-24 sm:gap-4 lg:gap-6">
+      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-md shadow-2xs">
+        <div className="w-full px-3 sm:px-6 lg:px-10">
+          <div className="flex h-16 sm:h-20 lg:h-22 items-center justify-between gap-2 sm:gap-4 lg:gap-6">
 
             {/* Logo */}
-
             <Link
               href="/"
-              className="flex min-w-0 flex-1 shrink items-center gap-2 sm:gap-3 lg:flex-none"
+              className="flex items-center gap-2 sm:gap-3 shrink-0"
             >
               <Image
                 src={DEFAULT_BRAND_IMAGE}
                 alt="Patil Krushi Seva Kendra"
                 width={72}
-                height={62}
-                className="h-11 w-11 shrink-0 rounded-full object-cover sm:h-16 sm:w-16 lg:h-[72px] lg:w-[72px]"
+                height={72}
+                priority
+                className="h-10 w-10 sm:h-14 sm:w-14 lg:h-[60px] lg:w-[60px] shrink-0 rounded-full object-cover border border-green-200 shadow-2xs"
               />
 
               <div className="min-w-0">
-                <h1 className="max-w-[110px] text-[10px] font-bold leading-tight text-green-700 min-[360px]:max-w-[138px] min-[390px]:max-w-[160px] sm:max-w-none sm:text-sm md:text-base lg:text-lg">
+                <h1 className="text-xs min-[380px]:text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight text-green-700 tracking-tight">
                   Patil Krushi Seva Kendra
                 </h1>
 
-                <p className="hidden md:block text-xs text-gray-500">
+                <p className="hidden md:block text-xs text-gray-500 font-medium">
                   Agricultural Products & Solutions
                 </p>
               </div>
@@ -257,7 +257,6 @@ export default function Header() {
               </Link>
 
               {/* Mobile Menu */}
-
               <Sheet>
                 <SheetTrigger asChild>
                   <Button
@@ -341,6 +340,17 @@ export default function Header() {
                 </SheetContent>
               </Sheet>
 
+            </div>
+          </div>
+
+          {/* Mobile Search Bar */}
+          <div className="pb-2.5 pt-0.5 lg:hidden">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <Input
+                placeholder="Search seeds, fertilizers, pesticides..."
+                className="h-9 pl-9 text-xs rounded-full border-green-200 focus-visible:ring-green-500 shadow-2xs"
+              />
             </div>
           </div>
         </div>

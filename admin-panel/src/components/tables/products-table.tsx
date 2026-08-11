@@ -347,13 +347,11 @@ export default function ProductsTable() {
                                         <div className="space-y-1">
 
                                             <p className="font-medium">
-
-                                                {product.stock}
-
+                                                {product.stock ?? 0}
                                             </p>
 
                                             <StockBadge
-                                                stock={product.stock}
+                                                stock={product.stock ?? 0}
                                             />
 
                                         </div>
