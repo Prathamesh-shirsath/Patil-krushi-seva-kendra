@@ -1,24 +1,57 @@
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:5000/api";
+
 export type Category = {
   id: string;
+
   name: string;
+
   slug: string;
+
   image?: string | null;
+
   status?: boolean;
-  products?: unknown[];
+
+  parentId?: string | null;
+
+  parent?: Category | null;
+
+  children?: Category[];
+
   _count?: {
     products?: number;
   };
 };
 
-export async function getCategories(): Promise<Category[]> {
+export async function getCategories(): Promise<
+  Category[]
+> {
   const response = await fetch(
-    "http://localhost:5000/api/categories",
+    `${API_URL}/categories`,
     {
       cache: "no-store",
     }
   );
 
-  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch categories (${response.status})`
+    );
+  }
 
-  return data.data;
+  const result = await response.json();
+
+  const categories = Array.isArray(result?.data)
+    ? result.data
+    : [];
+
+  /*
+   * Only active categories are visible
+   * on the customer website.
+   */
+  return categories.filter(
+    (category: Category) =>
+      category.status !== false
+  );
 }

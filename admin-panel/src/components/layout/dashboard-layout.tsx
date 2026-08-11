@@ -1,37 +1,34 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
+"use client";
 
 import AppNavbar from "../navbar/app-navbar";
 import AppSidebar from "../sidebar/app-sidebar";
 
 import {
-    SidebarInset,
-    SidebarProvider,
+  SidebarProvider,
 } from "@/components/ui/sidebar";
+
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-    return (
-        <SidebarProvider>
+  return (
+    <SidebarProvider>
 
-            <div className="min-h-screen bg-slate-100">
+      <div className="min-h-screen bg-slate-100">
 
-                <div className="flex">
+        <div className="flex">
 
-                    {/* Sidebar */}
+          {/* Sidebar */}
+          <AppSidebar />
 
-                    <AppSidebar />
+          {/* Main */}
+          <main className="min-w-0 flex-1">
 
-                    {/* Main */}
-
-                    <main className="flex-1 min-w-0">
-
-                        {/* Navbar */}
-
-                        <header
-                            className="
+            {/* Navbar */}
+            <header
+              className="
                                 sticky
                                 top-0
                                 z-40
@@ -40,45 +37,48 @@ export default function DashboardLayout({
                                 bg-white/90
                                 backdrop-blur
                             "
-                        >
-                            <AppNavbar />
-                        </header>
+            >
+              <AppNavbar />
+            </header>
 
-                        {/* Content */}
 
-                        <div
-                            className="
+            {/* Content */}
+            <div
+              className="
+                                w-full
                                 p-4
                                 sm:p-6
                                 lg:p-8
                             "
-                        >
+            >
 
-                            <div
-                                className="
+              <div
+                className="
                                     min-h-[calc(100vh-110px)]
+                                    w-full
                                     rounded-3xl
                                     border
                                     border-slate-200
                                     bg-white
-                                    p-6
+                                    p-4
                                     shadow-sm
+                                    sm:p-6
                                     lg:p-8
                                 "
-                            >
+              >
 
-                                {children}
+                {children}
 
-                            </div>
-
-                        </div>
-
-                    </main>
-
-                </div>
+              </div>
 
             </div>
 
-        </SidebarProvider>
-    );
+          </main>
+
+        </div>
+
+      </div>
+
+    </SidebarProvider>
+  );
 }

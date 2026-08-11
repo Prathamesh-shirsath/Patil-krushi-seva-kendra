@@ -85,8 +85,8 @@ export default function DashboardPage() {
                     iconBg="bg-orange-50"
                 />
 
-      </StatsGrid>
-
+              {/*</StatsGrid>*/}
+            </div>
             {/* Charts */}
             <div className="mt-8 grid gap-6 lg:grid-cols-3">
 
