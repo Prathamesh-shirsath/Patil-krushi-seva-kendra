@@ -1,7 +1,12 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
+"use client";
 
 import AppNavbar from "../navbar/app-navbar";
 import AppSidebar from "../sidebar/app-sidebar";
+
+import {
+    SidebarInset,
+    SidebarProvider,
+} from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
     children,
@@ -9,70 +14,47 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <SidebarProvider>
+        <SidebarProvider defaultOpen>
 
-            <div className="min-h-screen bg-slate-100">
+            <AppSidebar />
 
-                <div className="flex">
+            <SidebarInset
+                className="
+          min-h-screen
+          bg-slate-100
+          transition-all
+          duration-300
+        "
+            >
+                <AppNavbar />
 
-                    {/* Sidebar */}
+                <main
+                    className="
+            w-full
+            p-3
+            sm:p-5
+            lg:p-7
+          "
+                >
+                    <div
+                        className="
+              w-full
+              min-h-[calc(100vh-110px)]
+              rounded-3xl
+              border
+              border-slate-200
+              bg-white
+              shadow-sm
+              p-4
+              sm:p-6
+              lg:p-8
+            "
+                    >
+                        {children}
+                    </div>
+                </main>
 
-                    <AppSidebar />
-
-                    {/* Main */}
-
-                    <main className="flex-1 min-w-0">
-
-                        {/* Navbar */}
-
-                        <header
-                            className="
-                                sticky
-                                top-0
-                                z-40
-                                border-b
-                                border-slate-200
-                                bg-white/90
-                                backdrop-blur
-                            "
-                        >
-                            <AppNavbar />
-                        </header>
-
-                        {/* Content */}
-
-                        <div
-                            className="
-                                p-4
-                                sm:p-6
-                                lg:p-8
-                            "
-                        >
-
-                            <div
-                                className="
-                                    min-h-[calc(100vh-110px)]
-                                    rounded-3xl
-                                    border
-                                    border-slate-200
-                                    bg-white
-                                    p-6
-                                    shadow-sm
-                                    lg:p-8
-                                "
-                            >
-
-                                {children}
-
-                            </div>
-
-                        </div>
-
-                    </main>
-
-                </div>
-
-            </div>
+            </SidebarInset>
 
         </SidebarProvider>
     );

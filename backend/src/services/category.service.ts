@@ -13,6 +13,7 @@ export const createCategory = async (
       slug: data.slug,
       image: data.image,
       parentId: data.parentId ?? null,
+      status: data.status ?? true,
     },
     include: {
       parent: true,
