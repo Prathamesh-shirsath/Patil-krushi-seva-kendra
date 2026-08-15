@@ -3,74 +3,94 @@
 import AppNavbar from "../navbar/app-navbar";
 import AppSidebar from "../sidebar/app-sidebar";
 
-import {
-  SidebarProvider,
-} from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+}
 
 export default function DashboardLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: DashboardLayoutProps) {
   return (
     <SidebarProvider>
+      <div className="min-h-screen w-full overflow-x-hidden bg-slate-100">
 
-      <div className="min-h-screen bg-slate-100">
+        <div className="flex min-h-screen w-full">
 
-        <div className="flex">
+          {/* =====================================================
+              SIDEBAR
+          ===================================================== */}
 
-          {/* Sidebar */}
           <AppSidebar />
 
-          {/* Main */}
-          <main className="min-w-0 flex-1">
+          {/* =====================================================
+              MAIN CONTENT
+          ===================================================== */}
 
-            {/* Navbar */}
+          <main className="min-w-0 flex-1 overflow-x-hidden">
+
+            {/* ===================================================
+                NAVBAR
+            =================================================== */}
+
             <header
               className="
-                                sticky
-                                top-0
-                                z-40
-                                border-b
-                                border-slate-200
-                                bg-white/90
-                                backdrop-blur
-                            "
+                sticky
+                top-0
+                z-40
+                w-full
+                border-b
+                border-slate-200
+                bg-white/95
+                backdrop-blur
+              "
             >
               <AppNavbar />
             </header>
 
+            {/* ===================================================
+                PAGE CONTENT
+            =================================================== */}
 
-            {/* Content */}
             <div
               className="
-                                w-full
-                                p-4
-                                sm:p-6
-                                lg:p-8
-                            "
+                w-full
+                min-w-0
+                overflow-x-hidden
+                p-3
+                sm:p-4
+                md:p-6
+                lg:p-8
+              "
             >
-
               <div
                 className="
-                                    min-h-[calc(100vh-110px)]
-                                    w-full
-                                    rounded-3xl
-                                    border
-                                    border-slate-200
-                                    bg-white
-                                    p-4
-                                    shadow-sm
-                                    sm:p-6
-                                    lg:p-8
-                                "
+                  min-h-[calc(100vh-110px)]
+                  w-full
+                  min-w-0
+                  overflow-hidden
+                  rounded-2xl
+                  border
+                  border-slate-200
+                  bg-white
+                  shadow-sm
+                  sm:rounded-3xl
+                "
               >
-
-                {children}
-
+                <div
+                  className="
+                    w-full
+                    min-w-0
+                    p-4
+                    sm:p-5
+                    md:p-6
+                    lg:p-8
+                  "
+                >
+                  {children}
+                </div>
               </div>
-
             </div>
 
           </main>
@@ -78,7 +98,6 @@ export default function DashboardLayout({
         </div>
 
       </div>
-
     </SidebarProvider>
   );
 }

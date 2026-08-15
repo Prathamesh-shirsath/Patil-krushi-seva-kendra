@@ -9,12 +9,19 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-export default function OrdersHeader() {
+interface Props {
+  onRefresh: () => Promise<void>;
+  loading: boolean;
+}
+
+export default function OrdersHeader({
+  onRefresh,
+  loading,
+}: Props) {
   return (
     <div className="space-y-6">
 
       {/* Breadcrumb */}
-
       <div className="flex items-center gap-2 text-sm text-slate-500">
 
         <span>Dashboard</span>
@@ -28,11 +35,9 @@ export default function OrdersHeader() {
       </div>
 
       {/* Header */}
-
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
         {/* Left */}
-
         <div>
 
           <h1 className="text-4xl font-bold tracking-tight text-slate-900">
@@ -46,15 +51,24 @@ export default function OrdersHeader() {
         </div>
 
         {/* Right */}
-
         <div className="flex flex-wrap gap-3">
 
           <Button
             variant="outline"
             className="rounded-2xl border-slate-200"
+            onClick={onRefresh}
+            disabled={loading}
           >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${loading
+                  ? "animate-spin"
+                  : ""
+                }`}
+            />
+
+            {loading
+              ? "Refreshing..."
+              : "Refresh"}
           </Button>
 
           <Button
@@ -65,12 +79,12 @@ export default function OrdersHeader() {
             Export
           </Button>
 
-          <Button
+          {/*<Button
             className="rounded-2xl bg-green-600 hover:bg-green-700"
           >
             <Plus className="mr-2 h-4 w-4" />
             New Order
-          </Button>
+          </Button>*/}
 
         </div>
 
