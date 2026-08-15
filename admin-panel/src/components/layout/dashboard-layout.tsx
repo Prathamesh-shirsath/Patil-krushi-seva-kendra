@@ -1,6 +1,12 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
+"use client";
+
 import AppNavbar from "../navbar/app-navbar";
 import AppSidebar from "../sidebar/app-sidebar";
+
+import {
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+
 
 export default function DashboardLayout({
   children,
@@ -13,47 +19,54 @@ export default function DashboardLayout({
         <div className="flex h-screen w-full overflow-hidden">
 
           {/* Sidebar */}
-       <div className="hidden lg:flex">
-         <AppSidebar />
-          </div>
+          <AppSidebar />
 
-          {/* Main Content */}
-          <main className="flex-1 min-w-0 overflow-x-hidden">
+          {/* Main */}
+          <main className="min-w-0 flex-1">
 
             {/* Navbar */}
             <header
               className="
-                sticky
-                top-0
-                z-40
-                border-b
-                border-slate-200
-                bg-white/90
-                backdrop-blur
-              "
+                                sticky
+                                top-0
+                                z-40
+                                border-b
+                                border-slate-200
+                                bg-white/90
+                                backdrop-blur
+                            "
             >
               <AppNavbar />
             </header>
 
-            {/* Page Content */}
-            <div className="w-full p-4 sm:p-6 lg:p-8">
+
+            {/* Content */}
+            <div
+              className="
+                                w-full
+                                p-4
+                                sm:p-6
+                                lg:p-8
+                            "
+            >
 
               <div
                 className="
-                  w-full
-                  min-h-[calc(100vh-110px)]
-                  overflow-x-hidden
-                  rounded-3xl
-                  border
-                  border-slate-200
-                  bg-white
-                  shadow-sm
-                  p-4
-                  sm:p-6
-                  lg:p-8
-                "
+                                    min-h-[calc(100vh-110px)]
+                                    w-full
+                                    rounded-3xl
+                                    border
+                                    border-slate-200
+                                    bg-white
+                                    p-4
+                                    shadow-sm
+                                    sm:p-6
+                                    lg:p-8
+                                "
               >
+
                 {children}
+
               </div>
 
             </div>
@@ -61,7 +74,9 @@ export default function DashboardLayout({
           </main>
 
         </div>
+
       </div>
+
     </SidebarProvider>
   );
 }
