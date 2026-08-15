@@ -369,39 +369,33 @@ export default function ProductsTable() {
                                     <TableCell>
 
                                         <div className="flex justify-end gap-2">
-
+                                            {/* View */}
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
                                                 asChild
                                             >
-
                                                 <Link
-                                                    href={`/products/${product.slug}`}
+                                                    href={`/products/${product.id}`}
                                                 >
-
                                                     <Eye className="h-4 w-4" />
-
                                                 </Link>
-
                                             </Button>
 
+                                            {/* Edit */}
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
                                                 asChild
                                             >
-
                                                 <Link
                                                     href={`/products/${product.id}/edit`}
                                                 >
-
                                                     <Pencil className="h-4 w-4" />
-
                                                 </Link>
-
                                             </Button>
 
+                                            {/* Delete */}
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
@@ -409,11 +403,8 @@ export default function ProductsTable() {
                                                     setDeleteId(product.id)
                                                 }
                                             >
-
                                                 <Trash2 className="h-4 w-4 text-red-600" />
-
                                             </Button>
-
                                         </div>
 
                                     </TableCell>

@@ -1,16 +1,74 @@
 import { Router } from "express";
+
 import {
   createOrderController,
   getAllOrdersController,
   getOrderByIdController,
+  updateOrderStatusController,
 } from "../controllers/order.controller";
 
 const router = Router();
 
-router.post("/", createOrderController);
+/*
+|--------------------------------------------------------------------------
+| CREATE ORDER
+|--------------------------------------------------------------------------
+|
+| POST /api/orders
+|
+*/
 
-router.get("/", getAllOrdersController);
+router.post(
+  "/",
+  createOrderController
+);
 
-router.get("/:id", getOrderByIdController);
+/*
+|--------------------------------------------------------------------------
+| ADMIN - GET ALL ORDERS
+|--------------------------------------------------------------------------
+|
+| GET /api/orders
+|
+*/
+
+router.get(
+  "/",
+  getAllOrdersController
+);
+
+/*
+|--------------------------------------------------------------------------
+| GET SINGLE ORDER
+|--------------------------------------------------------------------------
+|
+| GET /api/orders/:id
+|
+*/
+
+router.get(
+  "/:id",
+  getOrderByIdController
+);
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN - UPDATE ORDER STATUS
+|--------------------------------------------------------------------------
+|
+| PUT /api/orders/:id/status
+|
+| Body:
+|
+| {
+|   "status": "CONFIRMED"
+| }
+|
+*/
+
+router.put(
+  "/:id/status",
+  updateOrderStatusController
+);
 
 export default router;

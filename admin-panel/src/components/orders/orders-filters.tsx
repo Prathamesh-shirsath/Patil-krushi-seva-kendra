@@ -1,92 +1,136 @@
 "use client";
 
-import { Search, RotateCcw } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function OrdersFilters() {
-  return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+interface Props {
+  search: string;
+  status: string;
+  payment: string;
+  onSearchChange: (value: string) => void;
+  onStatusChange: (value: string) => void;
+  onPaymentChange: (value: string) => void;
+  onClear: () => void;
+}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+export default function OrdersFilters({
+  search,
+  status,
+  payment,
+  onSearchChange,
+  onStatusChange,
+  onPaymentChange,
+  onClear,
+}: Props) {
+  const hasFilters =
+    search.trim() !== "" ||
+    status !== "ALL" ||
+    payment !== "ALL";
+
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center">
 
         {/* Search */}
 
-        <div className="relative sm:col-span-2 xl:col-span-2">
-
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
           <Input
-            placeholder="Search Order ID, Customer, Phone..."
-            className="h-11 w-full rounded-xl pl-10"
+            value={search}
+            onChange={(e) =>
+              onSearchChange(e.target.value)
+            }
+            placeholder="Search Order ID, customer or phone..."
+            className="h-11 rounded-2xl border-slate-200 pl-11 pr-4"
           />
-
         </div>
 
         {/* Status */}
 
-        <select
-          className="
-            h-11
-            w-full
-            rounded-xl
-            border
-            border-slate-200
-            bg-white
-            px-4
-            text-sm
-            outline-none
-            transition
-            focus:border-green-500
-            focus:ring-2
-            focus:ring-green-100
-          "
-        >
-          <option>All Status</option>
-          <option>Pending</option>
-          <option>Confirmed</option>
-          <option>Shipped</option>
-          <option>Delivered</option>
-          <option>Cancelled</option>
-        </select>
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="h-4 w-4 text-slate-400" />
+
+          <select
+            value={status}
+            onChange={(e) =>
+              onStatusChange(e.target.value)
+            }
+            className="h-11 min-w-[160px] rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:border-green-500"
+          >
+            <option value="ALL">
+              All Status
+            </option>
+
+            <option value="PENDING">
+              Pending
+            </option>
+
+            <option value="CONFIRMED">
+              Confirmed
+            </option>
+
+            <option value="SHIPPED">
+              Shipped
+            </option>
+
+            <option value="DELIVERED">
+              Delivered
+            </option>
+
+            <option value="CANCELLED">
+              Cancelled
+            </option>
+          </select>
+        </div>
 
         {/* Payment */}
 
         <select
-          className="
-            h-11
-            w-full
-            rounded-xl
-            border
-            border-slate-200
-            bg-white
-            px-4
-            text-sm
-            outline-none
-            transition
-            focus:border-green-500
-            focus:ring-2
-            focus:ring-green-100
-          "
+          value={payment}
+          onChange={(e) =>
+            onPaymentChange(e.target.value)
+          }
+          className="h-11 min-w-[160px] rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:border-green-500"
         >
-          <option>All Payments</option>
-          <option>Paid</option>
-          <option>Pending</option>
-          <option>Failed</option>
+          <option value="ALL">
+            All Payments
+          </option>
+
+          <option value="PENDING">
+            Pending
+          </option>
+
+          <option value="SUCCESS">
+            Success
+          </option>
+
+          <option value="FAILED">
+            Failed
+          </option>
+
+          <option value="REFUNDED">
+            Refunded
+          </option>
         </select>
 
-        {/* Reset */}
+        {/* Clear */}
 
-        <Button
-          variant="outline"
-          className="h-11 w-full rounded-xl xl:w-auto"
-        >
-          <RotateCcw className="mr-2 h-4 w-4" />
-          Reset
-        </Button>
+        {hasFilters && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClear}
+            className="h-11 rounded-2xl border-slate-200"
+          >
+            <X className="mr-2 h-4 w-4" />
+            Clear
+          </Button>
+        )}
 
       </div>
-
     </div>
   );
 }
