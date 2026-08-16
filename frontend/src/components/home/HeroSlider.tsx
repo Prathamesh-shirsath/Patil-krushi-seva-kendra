@@ -8,6 +8,7 @@ import {
   Leaf,
   Truck,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { useBanners } from "@/hooks/use-banners";
 import {
@@ -15,6 +16,7 @@ import {
   getImageSrc,
 } from "@/lib/image-fallbacks";
 import type { Banner } from "@/services/banner.service";
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
@@ -66,28 +68,9 @@ function getBannerHref(banner: Banner) {
 
 function HeroSkeleton() {
   return (
-    <section className="w-full px-4 py-4 md:px-8 md:py-6 lg:px-12">
-      <div className="mx-auto max-w-375 overflow-hidden rounded-2xl bg-green-950 shadow-xl sm:rounded-3xl">
-        <div className="grid min-h-0 overflow-hidden md:min-h-125 lg:min-h-150 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="flex items-center px-5 py-8 sm:px-10 lg:px-14">
-            <div className="w-full max-w-xl">
-              <div className="h-9 w-56 rounded-full bg-white/20 animate-pulse" />
-              <div className="mt-6 h-20 w-full rounded-2xl bg-white/20 animate-pulse sm:h-28" />
-              <div className="mt-5 h-16 w-full max-w-lg rounded-xl bg-white/20 animate-pulse" />
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <div className="h-12 w-full rounded-xl bg-white/20 animate-pulse sm:w-36" />
-                <div className="h-12 w-full rounded-xl bg-white/20 animate-pulse sm:w-44" />
-              </div>
-              <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="h-10 rounded-xl bg-white/20 animate-pulse" />
-                <div className="h-10 rounded-xl bg-white/20 animate-pulse" />
-                <div className="h-10 rounded-xl bg-white/20 animate-pulse" />
-              </div>
-            </div>
-          </div>
-
-          <div className="hidden bg-white/10 md:block animate-pulse" />
-        </div>
+    <section className="w-full px-4 py-5 md:px-8 lg:px-12">
+      <div className="mx-auto max-w-[1500px] overflow-hidden rounded-[28px] bg-green-950 shadow-2xl">
+        <div className="min-h-[430px] animate-pulse bg-white/10 sm:min-h-[500px] lg:min-h-[560px]" />
       </div>
     </section>
   );
@@ -95,20 +78,37 @@ function HeroSkeleton() {
 
 function renderTitle(title: string) {
   const words = title.replace(/\s+/g, " ").trim().split(" ");
+
+  const highlightWords = [
+    "green",
+    "one",
+    "farming",
+    "farm",
+    "organic",
+    "agricultural",
+  ];
+
   const highlightIndex = words.findIndex((word) =>
-    ["green", "one", "farming", "farm", "organic"].includes(
+    highlightWords.includes(
       word.toLowerCase().replace(/[^a-z]/g, "")
     )
   );
+
   const indexToHighlight =
-    highlightIndex >= 0 ? highlightIndex : Math.max(0, words.length - 2);
+    highlightIndex >= 0
+      ? highlightIndex
+      : Math.max(0, words.length - 2);
 
   return (
     <>
       {words.map((word, index) => (
         <span
           key={`${word}-${index}`}
-          className={index === indexToHighlight ? "text-green-500" : undefined}
+          className={
+            index === indexToHighlight
+              ? "text-emerald-400"
+              : "text-white"
+          }
         >
           {word}
           {index < words.length - 1 ? " " : ""}
@@ -121,134 +121,312 @@ function renderTitle(title: string) {
 function TrustBadge({
   icon,
   label,
-  className,
 }: {
   icon: ReactNode;
   label: string;
-  className: string;
 }) {
   return (
-    <span className={`hero-trust-badge inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold shadow-sm backdrop-blur transition-colors duration-200 ease-out ${className}`}>
+    <div
+      className="
+        hero-trust-badge
+        inline-flex
+        items-center
+        gap-2
+        rounded-xl
+        border
+        border-white/15
+        bg-white/10
+        px-3
+        py-2.5
+        text-xs
+        font-bold
+        text-white
+        shadow-lg
+        backdrop-blur-md
+        transition-all
+        duration-300
+        hover:bg-white/15
+        hover:-translate-y-0.5
+      "
+    >
       {icon}
-      {label}
-    </span>
+      <span>{label}</span>
+    </div>
   );
 }
 
-function HeroSlide({
-  banner,
-}: {
-  banner: Banner;
-}) {
+function HeroSlide({ banner }: { banner: Banner }) {
   const href = getBannerHref(banner);
-  const isDarkTheme = banner.textTheme === "DARK";
-  const textClass = isDarkTheme ? "text-gray-950" : "text-white";
-  const subtitleClass = isDarkTheme ? "text-gray-700" : "text-gray-200";
-  const badgeClass = isDarkTheme
-    ? "bg-green-100 text-green-800"
-    : "bg-white/15 text-white ring-1 ring-white/20";
-  const trustClass = isDarkTheme
-    ? "bg-white/80 text-gray-800"
-    : "bg-white/12 text-white ring-1 ring-white/15";
-  const panelGradient = isDarkTheme
-    ? "from-white via-white/95 to-white/75"
-    : "from-green-950 via-green-950/92 to-green-900/50";
-  const imageOverlay = isDarkTheme
-    ? "from-white/60 via-white/10 to-transparent"
-    : "from-black/60 via-black/20 to-transparent";
+
   const image = getImageSrc(
-    banner.mobileImage || banner.image,
+    banner.image,
     DEFAULT_BANNER_IMAGE
   );
 
   return (
-    <div className={`relative grid grid-cols-12 min-h-[250px] sm:min-h-[360px] md:min-h-[440px] lg:min-h-[500px] overflow-hidden bg-gradient-to-br ${panelGradient}`}>
-      {href ? (
-        <Link
-          href={href}
-          className="absolute inset-0 z-10"
-          aria-label={`Open ${banner.title}`}
-        />
-      ) : null}
+    <div
+      className="
+        premium-hero-slide
+        relative
+        min-h-[430px]
+        overflow-hidden
+        bg-green-950
+        sm:min-h-[500px]
+        lg:min-h-[560px]
+      "
+    >
+      {/* Background Image */}
+      <div
+        className="
+          absolute
+          inset-0
+          bg-cover
+          bg-center
+          hero-image
+        "
+        style={{
+          backgroundImage: `url(${image})`,
+        }}
+      />
 
-      <div className="col-span-7 sm:col-span-6 relative z-20 flex items-center p-3 sm:p-6 md:p-10 lg:p-14">
-        <div className="w-full max-w-xl">
-          {banner.label ? (
-            <span className={`hero-reveal hero-reveal-label inline-flex items-center rounded-full px-2.5 py-1 sm:px-4 sm:py-2 text-[9px] sm:text-xs font-bold uppercase tracking-wide shadow-2xs backdrop-blur ${badgeClass}`}>
-              {banner.label}
-            </span>
-          ) : null}
+      {/* Dark image overlay */}
+      <div
+        className="
+          absolute
+          inset-0
+          bg-black/10
+        "
+      />
 
-          <h1 className={`hero-reveal hero-reveal-title mt-2 sm:mt-4 text-sm min-[360px]:text-base min-[410px]:text-lg sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight sm:leading-[1.08] tracking-tight ${textClass}`}>
-            {renderTitle(banner.title)}
-          </h1>
+      {/* Premium Green Gradient */}
+      <div
+        className="
+          absolute
+          inset-0
+          bg-gradient-to-r
+          from-[#032d1b]
+          via-[#063d24]/95
+          via-45%
+          to-transparent
+        "
+      />
 
-          {banner.subtitle ? (
-            <p className={`hero-reveal hero-reveal-subtitle mt-2 sm:mt-4 max-w-125 text-[11px] sm:text-sm md:text-base leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none ${subtitleClass}`}>
-              {banner.subtitle}
-            </p>
-          ) : null}
+      {/* Bottom gradient */}
+      <div
+        className="
+          absolute
+          inset-x-0
+          bottom-0
+          h-40
+          bg-gradient-to-t
+          from-black/35
+          to-transparent
+        "
+      />
 
-          <div className="hero-reveal hero-reveal-actions mt-3 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3">
-            {banner.buttonText && href ? (
-              <Link
-                href={href}
-                className="pointer-events-auto"
+      {/* Decorative glow */}
+      <div
+        className="
+          absolute
+          -left-24
+          -top-24
+          h-72
+          w-72
+          rounded-full
+          bg-emerald-400/10
+          blur-3xl
+        "
+      />
+
+      {/* Content */}
+      <div className="relative z-20 flex min-h-[430px] items-center sm:min-h-[500px] lg:min-h-[560px]">
+        <div className="w-full px-6 py-12 sm:px-10 md:px-14 lg:px-20">
+          <div className="max-w-[720px]">
+
+            {/* Label */}
+            {banner.label && (
+              <span
+                className="
+                  hero-reveal
+                  hero-label
+                  inline-flex
+                  items-center
+                  rounded-full
+                  border
+                  border-white/15
+                  bg-white/10
+                  px-4
+                  py-2
+                  text-[10px]
+                  font-bold
+                  uppercase
+                  tracking-[0.12em]
+                  text-white
+                  shadow-lg
+                  backdrop-blur-md
+                  sm:text-xs
+                "
               >
+                <span className="mr-2 h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
+                {banner.label}
+              </span>
+            )}
+
+            {/* Title */}
+            <h1
+              className="
+                hero-reveal
+                hero-title
+                mt-5
+                max-w-[720px]
+                text-4xl
+                font-black
+                leading-[1.02]
+                tracking-tight
+                sm:text-5xl
+                md:text-6xl
+                lg:text-7xl
+              "
+            >
+              {renderTitle(banner.title)}
+            </h1>
+
+            {/* Subtitle */}
+            {banner.subtitle && (
+              <p
+                className="
+                  hero-reveal
+                  hero-subtitle
+                  mt-5
+                  max-w-[600px]
+                  text-sm
+                  leading-relaxed
+                  text-white/80
+                  sm:text-base
+                  md:text-lg
+                "
+              >
+                {banner.subtitle}
+              </p>
+            )}
+
+            {/* Buttons */}
+            <div
+              className="
+                hero-reveal
+                hero-actions
+                mt-7
+                flex
+                flex-col
+                gap-3
+                sm:flex-row
+              "
+            >
+              {banner.buttonText && href && (
+                <Link href={href}>
+                  <Button
+                    size="lg"
+                    className="
+                      h-12
+                      w-full
+                      rounded-xl
+                      bg-emerald-500
+                      px-7
+                      text-sm
+                      font-bold
+                      text-white
+                      shadow-xl
+                      shadow-emerald-950/30
+                      transition-all
+                      duration-300
+                      hover:bg-emerald-400
+                      hover:-translate-y-0.5
+                      sm:w-auto
+                    "
+                  >
+                    {banner.buttonText}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              )}
+
+              <Link href="/categories">
                 <Button
-                  size="sm"
-                  className="h-8 sm:h-11 w-full sm:w-auto rounded-lg sm:rounded-xl bg-green-600 px-3 sm:px-6 text-[11px] sm:text-sm font-bold text-white shadow-md hover:bg-green-700"
+                  size="lg"
+                  variant="outline"
+                  className="
+                    h-12
+                    w-full
+                    rounded-xl
+                    border-white/30
+                    bg-white/10
+                    px-7
+                    text-sm
+                    font-bold
+                    text-white
+                    backdrop-blur-md
+                    transition-all
+                    duration-300
+                    hover:bg-white
+                    hover:text-green-900
+                    sm:w-auto
+                  "
                 >
-                  {banner.buttonText}
-                  <ArrowRight className="ml-1.5 h-3 w-3 sm:h-4 sm:w-4" />
+                  Explore Categories
                 </Button>
               </Link>
-            ) : null}
+            </div>
 
-            <Link
-              href="/categories"
-              className="pointer-events-auto"
+            {/* Trust badges */}
+            <div
+              className="
+                hero-reveal
+                hero-badges
+                mt-8
+                grid
+                max-w-[620px]
+                grid-cols-1
+                gap-2
+                sm:grid-cols-3
+              "
             >
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                className="h-8 sm:h-11 w-full sm:w-auto rounded-lg sm:rounded-xl border-white/70 bg-white/90 px-3 sm:px-6 text-[11px] sm:text-sm font-bold text-green-800 shadow-2xs hover:bg-white"
-              >
-                Explore Categories
-              </Button>
-            </Link>
-          </div>
+              <TrustBadge
+                icon={
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                }
+                label="Genuine Products"
+              />
 
-          <div className="hero-reveal hero-reveal-badges mt-3 sm:mt-6 grid grid-cols-1 min-[420px]:grid-cols-3 gap-1.5 sm:gap-3">
-            <TrustBadge
-              icon={<CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 text-green-400 shrink-0" />}
-              label="Genuine"
-              className={trustClass}
-            />
-            <TrustBadge
-              icon={<Truck className="h-3 w-3 sm:h-4 sm:w-4 text-green-400 shrink-0" />}
-              label="Fast Delivery"
-              className={trustClass}
-            />
-            <TrustBadge
-              icon={<Leaf className="h-3 w-3 sm:h-4 sm:w-4 text-green-400 shrink-0" />}
-              label="Trusted Brands"
-              className={trustClass}
-            />
+              <TrustBadge
+                icon={
+                  <Truck className="h-4 w-4 text-emerald-400" />
+                }
+                label="Fast Delivery"
+              />
+
+              <TrustBadge
+                icon={
+                  <Leaf className="h-4 w-4 text-emerald-400" />
+                }
+                label="Trusted Brands"
+              />
+            </div>
+
           </div>
         </div>
       </div>
 
-      <div
-        className="col-span-5 sm:col-span-6 hero-image relative h-full min-h-full bg-cover bg-center"
-        style={{
-          backgroundImage: `url(${image})`,
-        }}
-      >
-        <div className={`absolute inset-0 bg-gradient-to-r ${imageOverlay}`} />
-        <div className="absolute inset-x-0 bottom-0 h-16 sm:h-24 bg-gradient-to-t from-black/20 to-transparent" />
-      </div>
+      {/* Optional clickable banner */}
+      {href && (
+        <Link
+          href={href}
+          aria-label={`Open ${banner.title}`}
+          className="absolute inset-0 z-10"
+        />
+      )}
+
+      {/* Keep content above clickable layer */}
+      <div className="pointer-events-none absolute inset-0 z-20" />
     </div>
   );
 }
@@ -264,20 +442,93 @@ export default function HeroSlider() {
     return <HeroSkeleton />;
   }
 
-  const slides = isError || banners.length === 0 ? defaultBanners : banners;
+  const slides =
+    isError || banners.length === 0
+      ? defaultBanners
+      : banners;
 
   return (
-    <section className="w-full px-4 py-4 md:px-8 md:py-6 lg:px-12">
+    <section className="w-full px-4 py-5 md:px-8 md:py-7 lg:px-12">
       <Swiper
-        modules={[Autoplay, Pagination, Navigation]}
+        modules={[
+          Autoplay,
+          Pagination,
+          Navigation,
+        ]}
         autoplay={{
-          delay: 5000,
+          delay: 4500,
           disableOnInteraction: false,
+          pauseOnMouseEnter: true,
         }}
-        pagination={{ clickable: true }}
+        pagination={{
+          clickable: true,
+        }}
         navigation
         loop={slides.length > 1}
-        className="premium-hero-swiper mx-auto max-w-375 overflow-hidden rounded-2xl shadow-xl sm:rounded-3xl [&_.swiper-button-next:after]:text-[14px] [&_.swiper-button-prev:after]:text-[14px] [&_.swiper-button-next]:right-4 [&_.swiper-button-prev]:left-4 [&_.swiper-button-next]:hidden [&_.swiper-button-prev]:hidden md:[&_.swiper-button-next]:flex md:[&_.swiper-button-prev]:flex [&_.swiper-button-next]:h-10 [&_.swiper-button-prev]:h-10 [&_.swiper-button-next]:w-10 [&_.swiper-button-prev]:w-10 [&_.swiper-button-next]:rounded-full [&_.swiper-button-prev]:rounded-full [&_.swiper-button-next]:bg-white/90 [&_.swiper-button-prev]:bg-white/90 [&_.swiper-button-next]:text-green-800 [&_.swiper-button-prev]:text-green-800 [&_.swiper-button-next]:shadow-lg [&_.swiper-button-prev]:shadow-lg [&_.swiper-button-next]:backdrop-blur [&_.swiper-button-prev]:backdrop-blur [&_.swiper-button-next]:transition-all [&_.swiper-button-prev]:transition-all [&_.swiper-button-next]:duration-200 [&_.swiper-button-prev]:duration-200 [&_.swiper-button-next:hover]:scale-105 [&_.swiper-button-prev:hover]:scale-105 [&_.swiper-button-next:hover]:bg-white [&_.swiper-button-prev:hover]:bg-white [&_.swiper-button-next:hover]:text-green-700 [&_.swiper-button-prev:hover]:text-green-700 [&_.swiper-button-next:hover]:shadow-xl [&_.swiper-button-prev:hover]:shadow-xl [&_.swiper-pagination]:bottom-4 sm:[&_.swiper-pagination]:bottom-5 [&_.swiper-pagination-bullet]:h-2 [&_.swiper-pagination-bullet]:w-6 sm:[&_.swiper-pagination-bullet]:w-7 [&_.swiper-pagination-bullet]:rounded-full [&_.swiper-pagination-bullet]:bg-white/80 [&_.swiper-pagination-bullet]:opacity-100 [&_.swiper-pagination-bullet]:transition-all [&_.swiper-pagination-bullet]:duration-300 [&_.swiper-pagination-bullet-active]:w-9 [&_.swiper-pagination-bullet-active]:bg-green-500"
+        className="
+          premium-hero-swiper
+          mx-auto
+          max-w-[1500px]
+          overflow-hidden
+          rounded-[28px]
+          shadow-2xl
+          shadow-green-950/20
+          sm:rounded-[32px]
+
+          [&_.swiper-button-next]:hidden
+          [&_.swiper-button-prev]:hidden
+
+          md:[&_.swiper-button-next]:flex
+          md:[&_.swiper-button-prev]:flex
+
+          [&_.swiper-button-next]:right-5
+          [&_.swiper-button-prev]:left-5
+
+          [&_.swiper-button-next]:h-11
+          [&_.swiper-button-prev]:h-11
+
+          [&_.swiper-button-next]:w-11
+          [&_.swiper-button-prev]:w-11
+
+          [&_.swiper-button-next]:rounded-full
+          [&_.swiper-button-prev]:rounded-full
+
+          [&_.swiper-button-next]:bg-white/90
+          [&_.swiper-button-prev]:bg-white/90
+
+          [&_.swiper-button-next]:text-green-900
+          [&_.swiper-button-prev]:text-green-900
+
+          [&_.swiper-button-next]:shadow-xl
+          [&_.swiper-button-prev]:shadow-xl
+
+          [&_.swiper-button-next]:backdrop-blur
+          [&_.swiper-button-prev]:backdrop-blur
+
+          [&_.swiper-button-next]:transition-all
+          [&_.swiper-button-prev]:transition-all
+
+          [&_.swiper-button-next:hover]:scale-110
+          [&_.swiper-button-prev:hover]:scale-110
+
+          [&_.swiper-button-next:hover]:bg-white
+          [&_.swiper-button-prev:hover]:bg-white
+
+          [&_.swiper-pagination]:bottom-5
+
+          [&_.swiper-pagination-bullet]:h-2
+          [&_.swiper-pagination-bullet]:w-7
+          [&_.swiper-pagination-bullet]:rounded-full
+
+          [&_.swiper-pagination-bullet]:bg-white/60
+          [&_.swiper-pagination-bullet]:opacity-100
+
+          [&_.swiper-pagination-bullet]:transition-all
+          [&_.swiper-pagination-bullet]:duration-300
+
+          [&_.swiper-pagination-bullet-active]:w-11
+          [&_.swiper-pagination-bullet-active]:bg-emerald-400
+        "
       >
         {slides.map((banner) => (
           <SwiperSlide key={banner.id}>
@@ -289,81 +540,115 @@ export default function HeroSlider() {
       <style jsx global>{`
         .premium-hero-swiper .hero-reveal {
           opacity: 0;
-          transform: translateY(20px);
-          will-change: opacity, transform;
+          transform: translateY(22px);
         }
 
-        .premium-hero-swiper .swiper-slide-active .hero-reveal {
-          animation: heroFadeUp 560ms ease-out both;
+        .premium-hero-swiper
+          .swiper-slide-active
+          .hero-reveal {
+          animation: premiumHeroFadeUp 650ms
+            cubic-bezier(0.22, 1, 0.36, 1)
+            forwards;
         }
 
-        .premium-hero-swiper .swiper-slide-active .hero-reveal-label {
+        .premium-hero-swiper
+          .swiper-slide-active
+          .hero-label {
           animation-delay: 0ms;
         }
 
-        .premium-hero-swiper .swiper-slide-active .hero-reveal-title {
-          animation-delay: 80ms;
+        .premium-hero-swiper
+          .swiper-slide-active
+          .hero-title {
+          animation-delay: 100ms;
         }
 
-        .premium-hero-swiper .swiper-slide-active .hero-reveal-subtitle {
-          animation-delay: 160ms;
+        .premium-hero-swiper
+          .swiper-slide-active
+          .hero-subtitle {
+          animation-delay: 180ms;
         }
 
-        .premium-hero-swiper .swiper-slide-active .hero-reveal-actions {
-          animation-delay: 240ms;
+        .premium-hero-swiper
+          .swiper-slide-active
+          .hero-actions {
+          animation-delay: 260ms;
         }
 
-        .premium-hero-swiper .swiper-slide-active .hero-reveal-badges {
-          animation-delay: 320ms;
+        .premium-hero-swiper
+          .swiper-slide-active
+          .hero-badges {
+          animation-delay: 340ms;
         }
 
-        .premium-hero-swiper .hero-trust-badge:hover svg {
-          transform: scale(1.08);
+        .premium-hero-swiper
+          .swiper-slide-active
+          .hero-image {
+          animation: premiumHeroZoom 4500ms
+            ease-out forwards;
         }
 
-        .premium-hero-swiper .hero-trust-badge svg {
+        .premium-hero-swiper
+          .hero-trust-badge:hover svg {
+          transform: scale(1.12);
+        }
+
+        .premium-hero-swiper
+          .hero-trust-badge svg {
           transition: transform 220ms ease-out;
         }
 
-        .premium-hero-swiper .swiper-slide-active .hero-image {
-          animation: heroImageZoom 5000ms ease-out both;
-          transform-origin: center;
-        }
-
-        @keyframes heroFadeUp {
+        @keyframes premiumHeroFadeUp {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(22px);
           }
+
           to {
             opacity: 1;
             transform: translateY(0);
           }
         }
 
-        @keyframes heroImageZoom {
+        @keyframes premiumHeroZoom {
           from {
             transform: scale(1);
           }
+
           to {
-            transform: scale(1.03);
+            transform: scale(1.045);
+          }
+        }
+
+        @media (max-width: 640px) {
+          .premium-hero-swiper
+            .swiper-pagination {
+            bottom: 14px;
+          }
+
+          .premium-hero-swiper
+            .swiper-pagination-bullet {
+            width: 18px;
+            height: 5px;
+          }
+
+          .premium-hero-swiper
+            .swiper-pagination-bullet-active {
+            width: 28px;
           }
         }
 
         @media (prefers-reduced-motion: reduce) {
           .premium-hero-swiper .hero-reveal,
-          .premium-hero-swiper .swiper-slide-active .hero-reveal,
-          .premium-hero-swiper .swiper-slide-active .hero-image {
+          .premium-hero-swiper
+            .swiper-slide-active
+            .hero-reveal,
+          .premium-hero-swiper
+            .swiper-slide-active
+            .hero-image {
             animation: none !important;
             opacity: 1;
             transform: none;
-          }
-
-          .premium-hero-swiper .hero-trust-badge svg,
-          .premium-hero-swiper .swiper-button-next,
-          .premium-hero-swiper .swiper-button-prev,
-          .premium-hero-swiper .swiper-pagination-bullet {
-            transition: none !important;
           }
         }
       `}</style>
