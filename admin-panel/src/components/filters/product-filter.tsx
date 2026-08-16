@@ -1,6 +1,9 @@
 "use client";
 
-import { Search, RotateCcw } from "lucide-react";
+import {
+    Search,
+    RotateCcw,
+} from "lucide-react";
 
 import { useBrands } from "@/hooks/use-brands";
 import { useCategories } from "@/hooks/use-categories";
@@ -16,23 +19,35 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+
 export interface ProductFilterProps {
     search: string;
-    onSearchChange: (value: string) => void;
+
+    onSearchChange: (
+        value: string
+    ) => void;
 
     brandId: string;
-    onBrandChange: (value: string) => void;
+
+    onBrandChange: (
+        value: string
+    ) => void;
 
     categoryId: string;
-    onCategoryChange: (value: string) => void;
+
+    onCategoryChange: (
+        value: string
+    ) => void;
 
     onReset: () => void;
 }
 
-interface Brand {
+
+interface Option {
     id: string;
     name: string;
 }
+
 
 export default function ProductFilter({
     search,
@@ -44,137 +59,217 @@ export default function ProductFilter({
     onReset,
 }: ProductFilterProps) {
 
-    const { data: brands = [] } = useBrands();
+    const {
+        data: brands = [],
+    } = useBrands();
 
-    const { data: categories = [] } = useCategories();
+    const {
+        data: categories = [],
+    } = useCategories();
+
 
     return (
-
         <div
             className="
-                rounded-2xl
+                w-full
+                rounded-3xl
                 border
+                border-slate-100
                 bg-white
-                p-5
+                p-3
                 shadow-sm
+                sm:p-4
+                md:p-5
             "
         >
 
             <div
                 className="
                     grid
-                    gap-4
-                    lg:grid-cols-4
+                    grid-cols-1
+                    gap-3
+                    sm:grid-cols-2
+                    lg:grid-cols-[1.5fr_1fr_1fr_1fr]
                 "
             >
 
-                {/* Search */}
+                {/* =================================================
+                    SEARCH
+                ================================================= */}
 
-                <div className="relative">
+                <div className="relative min-w-0">
 
                     <Search
                         className="
+                            pointer-events-none
                             absolute
-                            left-3
-                            top-3
+                            left-4
+                            top-1/2
                             h-4
                             w-4
-                            text-muted-foreground
+                            -translate-y-1/2
+                            text-slate-400
                         "
                     />
 
                     <Input
-                        placeholder="Search products..."
                         value={search}
-                        onChange={(e) =>
-                            onSearchChange(e.target.value)
+                        onChange={(event) =>
+                            onSearchChange(
+                                event.target.value
+                            )
                         }
-                        className="pl-10"
+                        placeholder="Search products..."
+                        className="
+                            h-11
+                            w-full
+                            rounded-2xl
+                            border-slate-200
+                            bg-slate-50
+                            pl-11
+                            pr-4
+                            text-sm
+                            shadow-none
+                            transition
+                            focus:bg-white
+                            focus:ring-2
+                            focus:ring-emerald-500/20
+                            focus-visible:border-emerald-500
+                        "
                     />
 
                 </div>
 
-                {/* Brand */}
+
+                {/* =================================================
+                    BRAND
+                ================================================= */}
 
                 <Select
                     value={brandId}
                     onValueChange={onBrandChange}
                 >
 
-                    <SelectTrigger>
-
+                    <SelectTrigger
+                        className="
+                            h-11
+                            w-full
+                            rounded-2xl
+                            border-slate-200
+                            bg-white
+                            px-4
+                            shadow-none
+                        "
+                    >
                         <SelectValue
                             placeholder="All Brands"
                         />
-
                     </SelectTrigger>
 
-                    <SelectContent>
+
+                    <SelectContent
+                        className="rounded-2xl"
+                    >
 
                         <SelectItem value="all">
                             All Brands
                         </SelectItem>
 
-                        {(brands as Brand[]).map((brand) => (
 
-                            <SelectItem
-                                key={brand.id}
-                                value={brand.id}
-                            >
-                                {brand.name}
-                            </SelectItem>
-
-                        ))}
+                        {(brands as Option[]).map(
+                            (brand) => (
+                                <SelectItem
+                                    key={brand.id}
+                                    value={brand.id}
+                                >
+                                    {brand.name}
+                                </SelectItem>
+                            )
+                        )}
 
                     </SelectContent>
 
                 </Select>
 
-                {/* Category */}
+
+                {/* =================================================
+                    CATEGORY
+                ================================================= */}
 
                 <Select
                     value={categoryId}
                     onValueChange={onCategoryChange}
                 >
 
-                    <SelectTrigger>
-
+                    <SelectTrigger
+                        className="
+                            h-11
+                            w-full
+                            rounded-2xl
+                            border-slate-200
+                            bg-white
+                            px-4
+                            shadow-none
+                        "
+                    >
                         <SelectValue
                             placeholder="All Categories"
                         />
-
                     </SelectTrigger>
 
-                    <SelectContent>
+
+                    <SelectContent
+                        className="rounded-2xl"
+                    >
 
                         <SelectItem value="all">
                             All Categories
                         </SelectItem>
 
-                        {categories.map((category) => (
 
-                            <SelectItem
-                                key={category.id}
-                                value={category.id}
-                            >
-                                {category.name}
-                            </SelectItem>
-
-                        ))}
+                        {categories.map(
+                            (category) => (
+                                <SelectItem
+                                    key={category.id}
+                                    value={category.id}
+                                >
+                                    {category.name}
+                                </SelectItem>
+                            )
+                        )}
 
                     </SelectContent>
 
                 </Select>
 
-                {/* Reset */}
+
+                {/* =================================================
+                    RESET
+                ================================================= */}
 
                 <Button
+                    type="button"
                     variant="outline"
                     onClick={onReset}
+                    className="
+                        h-11
+                        w-full
+                        rounded-2xl
+                        border-slate-200
+                        bg-white
+                        font-medium
+                        text-slate-700
+                        shadow-none
+                        hover:bg-slate-50
+                    "
                 >
 
                     <RotateCcw
-                        className="mr-2 h-4 w-4"
+                        className="
+                            mr-2
+                            h-4
+                            w-4
+                        "
                     />
 
                     Reset Filters
@@ -184,6 +279,5 @@ export default function ProductFilter({
             </div>
 
         </div>
-
     );
 }

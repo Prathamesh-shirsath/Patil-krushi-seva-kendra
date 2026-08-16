@@ -18,127 +18,236 @@ import ProductsTable from "@/components/tables/products-table";
 
 import { useProducts } from "@/hooks/use-products";
 
-export default function ProductsPage() {
+import DashboardLayout from "@/components/layout/dashboard-layout";
 
-    const { data } = useProducts({
+export default function ProductsPage() {
+    const { data, isLoading } = useProducts({
         page: 1,
         limit: 1000,
+        includeInactive: true,
     });
 
     const products = data?.data ?? [];
 
     const totalProducts = products.length;
 
-    const activeProducts =
-        products.filter((p: { status: any; }) => p.status).length;
+    const activeProducts = products.filter(
+        (product) => product.status === true
+    ).length;
 
-    const inactiveProducts =
-        products.filter((p: { status: any; }) => !p.status).length;
+    const inactiveProducts = products.filter(
+        (product) => product.status === false
+    ).length;
 
-    const lowStockProducts =
-        products.filter((p: { stock: number; }) => p.stock < 10).length;
+    const lowStockProducts = products.filter(
+        (product) => Number(product.stock ?? 0) < 10
+    ).length;
 
     return (
+        <DashboardLayout>
+            <div className="w-full min-w-0 space-y-5 sm:space-y-6">
 
-        <div className="space-y-8">
+                {/* =====================================================
+                    HEADER
+                ===================================================== */}
 
-            {/* Header */}
-
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
-                <div>
-
-                    <h1 className="text-3xl font-bold tracking-tight">
-
-                        Products
-
-                    </h1>
-
-                    <p className="text-muted-foreground">
-
-                        Manage all agricultural products.
-
-                    </p>
-
-                </div>
-
-                <div className="flex gap-3">
-
-                    <Button
-                        variant="outline"
+                <div
+                    className="
+                        w-full
+                        rounded-3xl
+                        border
+                        border-emerald-100
+                        bg-white
+                        p-4
+                        shadow-sm
+                        sm:p-5
+                        md:p-6
+                    "
+                >
+                    <div
+                        className="
+                            flex
+                            flex-col
+                            gap-5
+                            lg:flex-row
+                            lg:items-center
+                            lg:justify-between
+                        "
                     >
-                        <Download className="mr-2 h-4 w-4" />
-                        Export
-                    </Button>
 
-                    <Button asChild>
+                        {/* TITLE */}
 
-                        <Link href="/products/new">
+                        <div className="min-w-0">
 
-                            <Plus className="mr-2 h-4 w-4" />
+                            <h1
+                                className="
+                                    text-2xl
+                                    font-bold
+                                    tracking-tight
+                                    text-slate-800
+                                    sm:text-3xl
+                                "
+                            >
+                                Products Management
+                            </h1>
 
-                            Add Product
+                            <p
+                                className="
+                                    mt-1
+                                    text-sm
+                                    text-slate-500
+                                    sm:text-[15px]
+                                "
+                            >
+                                Manage all agricultural products
+                            </p>
 
-                        </Link>
+                        </div>
 
-                    </Button>
+
+                        {/* ACTIONS */}
+
+                        <div
+                            className="
+                                flex
+                                w-full
+                                flex-col
+                                gap-2
+                                sm:w-auto
+                                sm:flex-row
+                            "
+                        >
+
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="
+                                    h-11
+                                    w-full
+                                    rounded-2xl
+                                    border-slate-200
+                                    bg-white
+                                    px-5
+                                    shadow-sm
+                                    hover:bg-slate-50
+                                    sm:w-auto
+                                "
+                            >
+                                <Download className="mr-2 h-4 w-4" />
+                                Export
+                            </Button>
+
+
+                            <Button
+                                asChild
+                                className="
+                                    h-11
+                                    w-full
+                                    rounded-2xl
+                                    bg-emerald-600
+                                    px-5
+                                    font-semibold
+                                    text-white
+                                    shadow-sm
+                                    hover:bg-emerald-700
+                                    sm:w-auto
+                                "
+                            >
+                                <Link href="/products/new">
+                                    <Plus className="mr-2 h-5 w-5" />
+                                    Add Product
+                                </Link>
+                            </Button>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+                {/* =====================================================
+                    STATS
+                ===================================================== */}
+
+                <div
+                    className="
+                        grid
+                        grid-cols-1
+                        gap-4
+                        sm:grid-cols-2
+                        lg:grid-cols-4
+                    "
+                >
+
+                    <ProductStatsCard
+                        title="Total Products"
+                        value={isLoading ? 0 : totalProducts}
+                        subtitle="All Products"
+                        icon={
+                            <Package className="h-6 w-6 text-white" />
+                        }
+                        iconBg="bg-emerald-600"
+                    />
+
+
+                    <ProductStatsCard
+                        title="Active Products"
+                        value={isLoading ? 0 : activeProducts}
+                        subtitle="Visible Products"
+                        icon={
+                            <CheckCircle2 className="h-6 w-6 text-white" />
+                        }
+                        iconBg="bg-emerald-600"
+                    />
+
+
+                    <ProductStatsCard
+                        title="Inactive Products"
+                        value={isLoading ? 0 : inactiveProducts}
+                        subtitle="Hidden Products"
+                        icon={
+                            <PauseCircle className="h-6 w-6 text-white" />
+                        }
+                        iconBg="bg-orange-500"
+                    />
+
+
+                    <ProductStatsCard
+                        title="Low Stock"
+                        value={isLoading ? 0 : lowStockProducts}
+                        subtitle="Need Restocking"
+                        icon={
+                            <AlertTriangle className="h-6 w-6 text-white" />
+                        }
+                        iconBg="bg-red-500"
+                    />
 
                 </div>
 
-            </div>
 
-            {/* Stats */}
+                {/* =====================================================
+                    PRODUCT MANAGEMENT
+                ===================================================== */}
 
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-
-                <ProductStatsCard
-                    title="Total Products"
-                    value={totalProducts}
-                    subtitle="All Products"
-                    icon={
-                        <Package className="h-6 w-6 text-green-600" />
-                    }
-                    iconBg="bg-green-100"
-                />
-
-                <ProductStatsCard
-                    title="Active"
-                    value={activeProducts}
-                    subtitle="Visible Products"
-                    icon={
-                        <CheckCircle2 className="h-6 w-6 text-emerald-600" />
-                    }
-                    iconBg="bg-emerald-100"
-                />
-
-                <ProductStatsCard
-                    title="Inactive"
-                    value={inactiveProducts}
-                    subtitle="Hidden Products"
-                    icon={
-                        <PauseCircle className="h-6 w-6 text-orange-500" />
-                    }
-                    iconBg="bg-orange-100"
-                />
-
-                <ProductStatsCard
-                    title="Low Stock"
-                    value={lowStockProducts}
-                    subtitle="Need Restocking"
-                    icon={
-                        <AlertTriangle className="h-6 w-6 text-red-600" />
-                    }
-                    iconBg="bg-red-100"
-                />
+                <div
+                    className="
+                        w-full
+                        min-w-0
+                        rounded-3xl
+                        border
+                        border-emerald-100
+                        bg-white
+                        p-3
+                        shadow-sm
+                        sm:p-4
+                        md:p-5
+                        lg:p-6
+                    "
+                >
+                    <ProductsTable />
+                </div>
 
             </div>
-
-            {/* Table */}
-
-            <ProductsTable />
-
-        </div>
-
+        </DashboardLayout>
     );
-
 }

@@ -31,112 +31,119 @@ export function PricingSection({
     const status = watch("status");
 
     return (
-        <Card className="rounded-3xl border shadow-sm">
-            <div className="space-y-6 p-6">
-                <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100">
-                        <IndianRupee className="h-6 w-6 text-emerald-700" />
+        <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+            {/* Header */}
+            <div className="border-b border-slate-100 px-5 py-4 sm:px-6">
+                <div className="flex items-center gap-3">
+
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50">
+                        <IndianRupee className="h-5 w-5 text-green-600" />
                     </div>
 
                     <div>
-                        <h2 className="text-lg font-semibold">
+                        <h2 className="text-base font-semibold text-slate-900 sm:text-lg">
                             Pricing & Inventory
                         </h2>
 
-                        <p className="text-sm text-muted-foreground">
-                            Configure pack size, pricing, stock and product visibility.
+                        <p className="text-xs text-slate-500 sm:text-sm">
+                            Configure pack size, pricing, stock and visibility.
                         </p>
                     </div>
+
                 </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-5 sm:p-6">
 
                 <div className="grid gap-5 md:grid-cols-3">
+
                     <div>
-                        <Label htmlFor="pack-size">
+                        <Label className="text-sm font-medium text-slate-700">
                             Pack Size
                         </Label>
 
                         <Input
-                            id="pack-size"
-                            placeholder="e.g. 500 ml"
+                            placeholder="e.g. 500g"
                             disabled={disabled}
-                            className="mt-2"
+                            className="mt-2 h-11 rounded-xl border-slate-200"
                             {...register("packSize")}
                         />
 
-                        <FieldError
-                            message={errors.packSize?.message}
-                        />
+                        <FieldError message={errors.packSize?.message} />
                     </div>
 
                     <div>
-                        <Label htmlFor="price">
+                        <Label className="text-sm font-medium text-slate-700">
                             Price (₹)
                         </Label>
 
                         <Input
-                            id="price"
                             type="number"
                             min={0}
-                            placeholder="0"
                             disabled={disabled}
-                            className="mt-2"
+                            className="mt-2 h-11 rounded-xl border-slate-200"
                             {...register("price", {
                                 valueAsNumber: true,
                             })}
                         />
 
-                        <FieldError
-                            message={errors.price?.message}
-                        />
+                        <FieldError message={errors.price?.message} />
                     </div>
 
                     <div>
-                        <Label htmlFor="stock">
+                        <Label className="text-sm font-medium text-slate-700">
                             Stock Quantity
                         </Label>
 
                         <Input
-                            id="stock"
                             type="number"
                             min={0}
-                            placeholder="0"
                             disabled={disabled}
-                            className="mt-2"
+                            className="mt-2 h-11 rounded-xl border-slate-200"
                             {...register("stock", {
                                 valueAsNumber: true,
                             })}
                         />
 
-                        <FieldError
-                            message={errors.stock?.message}
-                        />
+                        <FieldError message={errors.stock?.message} />
                     </div>
+
                 </div>
 
-                <div className="rounded-2xl border p-4">
+                {/* Status */}
+                <div className="mt-5 rounded-xl border border-green-100 bg-green-50/50 p-4">
                     <div className="flex items-center gap-3">
+
                         <Checkbox
                             checked={status}
                             disabled={disabled}
                             onCheckedChange={(checked) =>
-                                setValue("status", checked === true, {
-                                    shouldDirty: true,
-                                    shouldValidate: true,
-                                })
+                                setValue(
+                                    "status",
+                                    checked === true,
+                                    {
+                                        shouldDirty: true,
+                                        shouldValidate: true,
+                                    }
+                                )
                             }
                         />
 
                         <div>
-                            <Label>
+                            <Label className="font-medium text-slate-900">
                                 Active Product
                             </Label>
 
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-xs text-slate-500 sm:text-sm">
                                 Active products are visible on the customer website.
                             </p>
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </Card>
     );
