@@ -7,6 +7,7 @@ export interface Order {
   paymentStatus: string;
   createdAt: string;
   user: {
+    email: string;
     name: string;
     phone?: string;
   };
@@ -14,7 +15,7 @@ export interface Order {
   items: any[];
 }
 
-export function useOrders() {
+export function useOrders() { 
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
