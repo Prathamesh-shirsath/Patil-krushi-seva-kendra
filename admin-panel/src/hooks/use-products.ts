@@ -25,14 +25,13 @@ export function useProducts(params?: {
     });
 }
 
-export function useProduct(slug: string) {
+export function useProduct(id: string) {
     return useQuery({
-        queryKey: ["product", slug],
-        queryFn: () => getProduct(slug),
-        enabled: !!slug,
+        queryKey: ["product", id],
+        queryFn: () => getProduct(id),
+        enabled: !!id,
     });
 }
-
 export function useCreateProduct() {
     const queryClient = useQueryClient();
 

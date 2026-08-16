@@ -1,67 +1,94 @@
 "use client";
 
-import { FileText } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
+import {
+    Controller,
+    UseFormReturn,
+} from "react-hook-form";
 
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import {
+    ProductFormValues,
+} from "@/features/products/schemas/product.schema";
 
-import { ProductFormValues } from "@/features/products/schemas/product.schema";
-import { FieldError } from "./field-error";
+import RichTextEditor from "@/components/editor/rich-text-editor";
 
-interface DescriptionSectionProps {
+
+interface Props {
+
     form: UseFormReturn<ProductFormValues>;
-    disabled?: boolean;
+
 }
+
+
 
 export function DescriptionSection({
     form,
-    disabled = false,
-}: DescriptionSectionProps) {
-    const {
-        register,
-        formState: { errors },
-    } = form;
+}: Props) {
+
 
     return (
-        <Card className="rounded-3xl border shadow-sm">
-            <div className="space-y-6 p-6">
-                <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100">
-                        <FileText className="h-6 w-6 text-orange-700" />
-                    </div>
 
-                    <div>
-                        <h2 className="text-lg font-semibold">
-                            Product Details
-                        </h2>
+        <div className="space-y-3 rounded-2xl border bg-white p-6">
 
-                        <p className="text-sm text-muted-foreground">
-                            Provide complete product details.
-                        </p>
-                    </div>
-                </div>
 
-                <div>
-                    <Label htmlFor="description">
-                        Description
-                    </Label>
+            <div>
 
-                    <Textarea
-                        id="description"
-                        rows={7}
-                        className="mt-2 resize-none"
-                        placeholder="Enter product description..."
-                        disabled={disabled}
-                        {...register("description")}
-                    />
+                <h2 className="text-lg font-semibold">
+                    Product Description
+                </h2>
 
-                    <FieldError
-                        message={errors.description?.message}
-                    />
-                </div>
+
+                <p className="text-sm text-muted-foreground">
+                    Add product details, benefits,
+                    usage and precautions.
+                </p>
+
             </div>
-        </Card>
+
+
+
+            <Controller
+
+                control={form.control}
+
+                name="description"
+
+                render={({ field }) => (
+
+                    <RichTextEditor
+
+                        value={field.value}
+
+                        onChange={
+                            field.onChange
+                        }
+
+                    />
+
+                )}
+
+            />
+
+
+            {
+                form.formState.errors.description && (
+
+                    <p className="text-sm text-red-500">
+
+                        {
+                            form.formState
+                                .errors
+                                .description
+                                ?.message
+                        }
+
+                    </p>
+
+                )
+            }
+
+
+        </div>
+
     );
+
 }

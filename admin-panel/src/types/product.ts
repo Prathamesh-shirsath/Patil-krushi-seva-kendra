@@ -1,3 +1,9 @@
+export interface ProductVariant {
+    id?: string;
+    packSize: string;
+    price: number;
+}
+
 export interface Product {
     id: string;
 
@@ -16,11 +22,14 @@ export interface Product {
     packSize: string;
 
     price: number;
-    stock?: number;
+
+    stock: number;
 
     usedForCrops: string[];
 
     status: boolean;
+
+    variants: ProductVariant[];
 
     createdAt: string;
     updatedAt: string;
@@ -28,20 +37,26 @@ export interface Product {
 
 export interface CreateProductDto {
     name: string;
+
     description: string;
 
     categoryId: string;
+
     brandId: string;
 
     packSize: string;
 
     price: number;
 
+    stock: number;
+
     image?: File | null;
 
     usedForCrops: string[];
 
     status: boolean;
+
+    variants: ProductVariant[];
 }
 
 export interface UpdateProductDto
