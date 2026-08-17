@@ -1,8 +1,11 @@
-
 import { api } from "@/lib/axios";
 
-export const getDashboardStats = async () => {
-  const response = await api.get("/dashboard");
+export const getDashboardStats =
+  async () => {
+    const response =
+      await api.get(
+        "/dashboard"
+      );
 
-  return response.data;
-};
+    return response.data;
+  };
