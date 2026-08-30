@@ -12,28 +12,72 @@ import {
     deleteProduct,
 } from "@/services/product.service";
 
+// =====================================================
+// PRODUCTS LIST
+// =====================================================
+
 export function useProducts(params?: {
     page?: number;
     limit?: number;
     search?: string;
     brandId?: string;
     categoryId?: string;
+    includeInactive?: boolean;
 }) {
     return useQuery({
-        queryKey: ["products", params],
-        queryFn: () => getProducts(params),
+        queryKey: [
+            "products",
+            params,
+        ],
+
+        queryFn: () =>
+            getProducts(params),
+
+        staleTime: 0,
+
+        refetchOnMount: true,
+
+        refetchOnWindowFocus: false,
     });
 }
 
-export function useProduct(id: string) {
+// =====================================================
+// SINGLE PRODUCT
+// ID OR SLUG
+// =====================================================
+
+export function useProduct(
+    idOrSlug: string
+) {
     return useQuery({
-        queryKey: ["product", id],
-        queryFn: () => getProduct(id),
-        enabled: !!id,
+        queryKey: [
+            "product",
+            idOrSlug,
+        ],
+
+        queryFn: () =>
+            getProduct(idOrSlug),
+
+        enabled:
+            Boolean(idOrSlug),
+
+        staleTime: 0,
+
+        refetchOnMount: true,
+
+        refetchOnWindowFocus: false,
+
+        retry: 1,
     });
 }
+
+// =====================================================
+// CREATE
+// =====================================================
+
 export function useCreateProduct() {
-    const queryClient = useQueryClient();
+    const queryClient =
+        useQueryClient();
 
     return useMutation({
         mutationFn: createProduct,
@@ -46,8 +90,13 @@ export function useCreateProduct() {
     });
 }
 
+// =====================================================
+// UPDATE
+// =====================================================
+
 export function useUpdateProduct() {
-    const queryClient = useQueryClient();
+    const queryClient =
+        useQueryClient();
 
     return useMutation({
         mutationFn: ({
@@ -56,18 +105,38 @@ export function useUpdateProduct() {
         }: {
             id: string;
             data: FormData;
-        }) => updateProduct(id, data),
+        }) =>
+            updateProduct(
+                id,
+                data
+            ),
 
-        onSuccess: () => {
+        onSuccess: (
+            response,
+            variables
+        ) => {
+
             queryClient.invalidateQueries({
                 queryKey: ["products"],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: [
+                    "product",
+                    variables.id,
+                ],
             });
         },
     });
 }
 
+// =====================================================
+// DELETE
+// =====================================================
+
 export function useDeleteProduct() {
-    const queryClient = useQueryClient();
+    const queryClient =
+        useQueryClient();
 
     return useMutation({
         mutationFn: deleteProduct,

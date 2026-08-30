@@ -1,557 +1,1034 @@
 "use client";
 
-import { useState } from "react";
-import AddCategoryModal from "@/components/admin/AddCategoryModal";
-import DashboardLayout from "@/components/layout/dashboard-layout";
+import { useMemo, useState } from "react";
+
 import {
+    Plus,
     Search,
+    Tag,
+    CheckCircle2,
+    XCircle,
+    Package,
     Eye,
     Pencil,
-    Trash2,
-    Tag,
-    Package,
-    CheckCircle,
-    XCircle,
 } from "lucide-react";
-import { useCategories, useUpdateCategory, useDeleteCategory } from "@/hooks/use-categories";
-import { Category } from "@/services/category.service";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { toast } from "sonner";
+
+import DashboardLayout from "@/components/layout/dashboard-layout";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
+import { useCategories } from "@/hooks/use-categories";
+
+import AddCategoryModal from "@/components/dialogs/AddCategoryModal";
+import CategoryViewDialog from "@/components/dialogs/category-view-dialog";
+import CategoryEditDialog from "@/components/dialogs/category-edit-dialog";
+
+interface Category {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string | null;
+    image?: string | null;
+    status?: boolean;
+
+    _count?: {
+        products?: number;
+    };
+
+    createdAt?: string;
+    updatedAt?: string;
+}
 
 export default function CategoriesPage() {
-    const { data: categories = [], isLoading } = useCategories();
-    const { mutate: updateCategory, isPending: isUpdating } = useUpdateCategory();
-    const { mutate: deleteCategory, isPending: isDeleting } = useDeleteCategory();
+    const {
+        data: categoryData,
+        isLoading,
+        isError,
+    } = useCategories();
 
-    // Local state for Search and Filter
-    const [searchQuery, setSearchQuery] = useState("");
-    const [statusFilter, setStatusFilter] = useState("All Status");
+    const categories: Category[] =
+        Array.isArray(categoryData)
+            ? categoryData
+            : [];
 
-    // Modal state for View
-    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-    const [viewOpen, setViewOpen] = useState(false);
+    const [search, setSearch] = useState("");
 
-    // Modal state for Edit
-    const [editCategory, setEditCategory] = useState<Category | null>(null);
-    const [editOpen, setEditOpen] = useState(false);
-    const [editName, setEditName] = useState("");
-    const [editSlug, setEditSlug] = useState("");
-    const [editDescription, setEditDescription] = useState("");
-    const [editStatus, setEditStatus] = useState(true);
-    const [editImageFile, setEditImageFile] = useState<File | null>(null);
-    const [editPreview, setEditPreview] = useState<string | null>(null);
+    const [statusFilter, setStatusFilter] =
+        useState("all");
 
-    // Modal state for Delete
-    const [deleteId, setDeleteId] = useState<string | null>(null);
-    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [addOpen, setAddOpen] =
+        useState(false);
 
-    // Compute stats
-    const totalCategories = categories.length;
-    const activeCategories = categories.filter((c) => c.status).length;
-    const inactiveCategories = totalCategories - activeCategories;
-    // Sum total products from categories if products array or _count exists
-    const totalProducts = categories.reduce((sum, c) => {
-        const count = c.products?.length || c._count?.products || 0;
-        return sum + count;
-    }, 0);
+    const [viewCategory, setViewCategory] =
+        useState<Category | null>(null);
 
-    // Filter categories based on search query and status filter
-    const filteredCategories = categories.filter((category) => {
-        const matchesSearch = category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            category.slug.toLowerCase().includes(searchQuery.toLowerCase());
+    const [editCategory, setEditCategory] =
+        useState<Category | null>(null);
 
-        const matchesStatus = statusFilter === "All Status" ||
-            (statusFilter === "Active" && category.status) ||
-            (statusFilter === "Inactive" && !category.status);
+    /*
+    |--------------------------------------------------------------------------
+    | Filter categories
+    |--------------------------------------------------------------------------
+    */
 
-        return matchesSearch && matchesStatus;
-    });
+    const filteredCategories = useMemo(() => {
+        const keyword =
+            search.trim().toLowerCase();
 
-    // Handle Edit Submit
-    const handleUpdate = () => {
-        if (!editCategory) return;
-        if (!editName.trim()) {
-            toast.error("Category name is required");
-            return;
-        }
+        return categories.filter(
+            (category) => {
+                const matchesSearch =
+                    !keyword ||
+                    category.name
+                        .toLowerCase()
+                        .includes(keyword) ||
+                    category.slug
+                        .toLowerCase()
+                        .includes(keyword);
 
-        const formData = new FormData();
-        formData.append("name", editName);
-        formData.append("slug", editSlug || editName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""));
-        formData.append("description", editDescription);
-        formData.append("status", String(editStatus));
-        if (editImageFile) {
-            formData.append("image", editImageFile);
-        }
+                const active =
+                    category.status !== false;
 
-        updateCategory(
-            { id: editCategory.id, formData },
-            {
-                onSuccess: () => {
-                    toast.success("Category updated successfully!");
-                    setEditOpen(false);
-                    setEditCategory(null);
-                    setEditImageFile(null);
-                    setEditPreview(null);
-                },
-                onError: (err) => {
-                    console.error(err);
-                    toast.error("Failed to update category");
-                },
+                const matchesStatus =
+                    statusFilter === "all" ||
+                    (statusFilter ===
+                        "active" &&
+                        active) ||
+                    (statusFilter ===
+                        "inactive" &&
+                        !active);
+
+                return (
+                    matchesSearch &&
+                    matchesStatus
+                );
             }
         );
-    };
+    }, [
+        categories,
+        search,
+        statusFilter,
+    ]);
 
-    // Handle Delete Confirm
-    const handleDelete = () => {
-        if (!deleteId) return;
+    /*
+    |--------------------------------------------------------------------------
+    | Statistics
+    |--------------------------------------------------------------------------
+    */
 
-        deleteCategory(deleteId, {
-            onSuccess: () => {
-                toast.success("Category deleted successfully!");
-                setDeleteOpen(false);
-                setDeleteId(null);
-            },
-            onError: (err) => {
-                console.error(err);
-                toast.error("Failed to delete category");
-            },
-        });
-    };
+    const totalCategories =
+        categories.length;
+
+    const activeCategories =
+        categories.filter(
+            (category) =>
+                category.status !== false
+        ).length;
+
+    const inactiveCategories =
+        categories.filter(
+            (category) =>
+                category.status === false
+        ).length;
+
+    const totalProducts =
+        categories.reduce(
+            (total, category) =>
+                total +
+                (category._count?.products ??
+                    0),
+            0
+        );
 
     return (
         <DashboardLayout>
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-6">
 
-                {/* Header */}
-                <div className="rounded-3xl border border-green-100 bg-white/80 backdrop-blur-md p-6 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold text-slate-800">
-                            Categories Management
-                        </h1>
+                {/* ================================================= */}
+                {/* PAGE HEADER */}
+                {/* ================================================= */}
 
-                        <p className="mt-1 text-slate-500">
-                            Manage all agricultural product categories
-                        </p>
+                <Card className="overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-sm">
+
+                    <div className="bg-gradient-to-br from-emerald-50 via-white to-green-50 p-5 sm:p-7 lg:p-8">
+
+                        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+                            <div className="min-w-0">
+
+                                <div className="mb-3 flex items-center gap-2">
+
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+                                        <Tag className="h-5 w-5" />
+                                    </div>
+
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-700 sm:text-xs">
+                                        Category Management
+                                    </span>
+
+                                </div>
+
+                                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+                                    Categories Management
+                                </h1>
+
+                                <p className="mt-2 max-w-2xl text-sm text-slate-500 sm:text-base">
+                                    Manage agricultural product
+                                    categories, status and
+                                    category information.
+                                </p>
+
+                            </div>
+
+                            {/* ADD CATEGORY */}
+
+                            <Button
+                                type="button"
+                                className="
+                                    h-11
+                                    w-full
+                                    rounded-xl
+                                    bg-emerald-600
+                                    px-5
+                                    font-semibold
+                                    text-white
+                                    shadow-sm
+                                    hover:bg-emerald-700
+                                    sm:w-auto
+                                "
+                                onClick={() =>
+                                    setAddOpen(true)
+                                }
+                            >
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Category
+                            </Button>
+
+                        </div>
+
                     </div>
 
-                    <AddCategoryModal />
-                </div>
+                </Card>
 
-                {/* Stats */}
-                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                {/* ================================================= */}
+                {/* STATISTICS */}
+                {/* ================================================= */}
+
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
                     <StatCard
                         title="Total Categories"
-                        value={isLoading ? "..." : String(totalCategories)}
-                        icon={<Tag size={24} />}
+                        value={
+                            totalCategories
+                        }
+                        subtitle="All categories"
+                        icon={Tag}
+                        iconClass="bg-emerald-50 text-emerald-600"
                     />
 
                     <StatCard
                         title="Active Categories"
-                        value={isLoading ? "..." : String(activeCategories)}
-                        icon={<CheckCircle size={24} />}
+                        value={
+                            activeCategories
+                        }
+                        subtitle="Currently active"
+                        icon={
+                            CheckCircle2
+                        }
+                        iconClass="bg-green-50 text-green-600"
                     />
 
                     <StatCard
                         title="Inactive Categories"
-                        value={isLoading ? "..." : String(inactiveCategories)}
-                        icon={<XCircle size={24} />}
+                        value={
+                            inactiveCategories
+                        }
+                        subtitle="Currently hidden"
+                        icon={XCircle}
+                        iconClass="bg-red-50 text-red-500"
                     />
 
                     <StatCard
                         title="Total Products"
-                        value={isLoading ? "..." : String(totalProducts)}
-                        icon={<Package size={24} />}
+                        value={
+                            totalProducts
+                        }
+                        subtitle="Across categories"
+                        icon={Package}
+                        iconClass="bg-blue-50 text-blue-600"
                     />
+
                 </div>
 
-                {/* Search */}
-                <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm flex flex-col lg:flex-row gap-4">
-                    <div className="relative flex-1">
-                        <Search
-                            size={18}
-                            className="absolute left-3 top-4 text-slate-400"
-                        />
+                {/* ================================================= */}
+                {/* FILTER */}
+                {/* ================================================= */}
 
-                        <input
-                            placeholder="Search categories..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-3 focus:bg-white focus:ring-2 focus:ring-green-500 outline-none"
-                        />
-                    </div>
+                <Card className="rounded-3xl border border-slate-200 bg-white shadow-sm">
 
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="rounded-2xl border border-slate-200 px-4 py-3 outline-none"
-                    >
-                        <option value="All Status">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
+                    <div className="p-4 sm:p-5">
 
-                {/* Table */}
-                <div className="overflow-hidden rounded-3xl border border-green-100 bg-white/80 backdrop-blur-md shadow-sm">
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[900px]">
-                            <thead className="bg-slate-50">
-                                <tr>
-                                    <th className="p-5 text-left text-sm font-semibold">
-                                        Category
-                                    </th>
+                        <div className="flex flex-col gap-3 md:flex-row">
 
-                                    <th className="p-5 text-left text-sm font-semibold">
-                                        Slug
-                                    </th>
+                            <div className="relative min-w-0 flex-1">
 
-                                    <th className="p-5 text-left text-sm font-semibold">
-                                        Products
-                                    </th>
-
-                                    <th className="p-5 text-left text-sm font-semibold">
-                                        Status
-                                    </th>
-
-                                    <th className="p-5 text-right text-sm font-semibold">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {isLoading ? (
-                                    <tr>
-                                        <td colSpan={5} className="p-10 text-center font-medium text-slate-500">
-                                            Loading categories...
-                                        </td>
-                                    </tr>
-                                ) : filteredCategories.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={5} className="p-10 text-center font-medium text-slate-500">
-                                            No categories found
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredCategories.map((category) => {
-                                        const prodCount = category.products?.length || category._count?.products || 0;
-                                        return (
-                                            <tr
-                                                key={category.id}
-                                                className="border-t hover:bg-green-50 transition-all"
-                                            >
-                                                <td className="p-5">
-                                                    <div className="flex items-center gap-3">
-                                                        {category.image ? (
-                                                            <img
-                                                                src={category.image}
-                                                                alt={category.name}
-                                                                className="h-12 w-12 rounded-2xl object-cover border shadow-sm"
-                                                            />
-                                                        ) : (
-                                                            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center shadow-lg">
-                                                                <Tag size={20} />
-                                                            </div>
-                                                        )}
-
-                                                        <div>
-                                                            <p className="font-semibold text-slate-800">
-                                                                {category.name}
-                                                            </p>
-
-                                                            <p className="text-sm text-slate-500">
-                                                                {prodCount} Products
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                                <td className="p-5 text-slate-500">
-                                                    {category.slug}
-                                                </td>
-
-                                                <td className="p-5 font-medium">
-                                                    {prodCount}
-                                                </td>
-
-                                                <td className="p-5">
-                                                    <span
-                                                        className={`px-3 py-1 rounded-full text-sm font-medium ${category.status
-                                                            ? "bg-green-100 text-green-700"
-                                                            : "bg-red-100 text-red-600"
-                                                            }`}
-                                                    >
-                                                        {category.status ? "Active" : "Inactive"}
-                                                    </span>
-                                                </td>
-
-                                                <td className="p-5">
-                                                    <div className="flex justify-end gap-2">
-
-                                                        <button
-                                                            onClick={() => {
-                                                                setSelectedCategory(category);
-                                                                setViewOpen(true);
-                                                            }}
-                                                            className="h-10 w-10 rounded-xl border border-blue-200 text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-all"
-                                                        >
-                                                            <Eye size={18} />
-                                                        </button>
-
-                                                        <button
-                                                            onClick={() => {
-                                                                setEditCategory(category);
-                                                                setEditName(category.name);
-                                                                setEditSlug(category.slug);
-                                                                setEditDescription(category.description || "");
-                                                                setEditStatus(category.status);
-                                                                setEditPreview(category.image || null);
-                                                                setEditOpen(true);
-                                                            }}
-                                                            className="h-10 w-10 rounded-xl border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-all"
-                                                        >
-                                                            <Pencil size={18} />
-                                                        </button>
-
-                                                        <button
-                                                            onClick={() => {
-                                                                setDeleteId(category.id);
-                                                                setDeleteOpen(true);
-                                                            }}
-                                                            className="h-10 w-10 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 flex items-center justify-center transition-all"
-                                                        >
-                                                            <Trash2 size={18} />
-                                                        </button>
-
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            {/* View Modal */}
-            <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-                <DialogContent className="max-w-md rounded-3xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold">Category Details</DialogTitle>
-                        <DialogDescription className="text-sm text-gray-500">
-                            Viewing detailed information about this category.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    {selectedCategory && (
-                        <div className="space-y-4 mt-2">
-                            <div className="flex justify-center">
-                                {selectedCategory.image ? (
-                                    <img
-                                        src={selectedCategory.image}
-                                        alt={selectedCategory.name}
-                                        className="h-32 w-32 object-contain rounded-2xl border bg-gray-50 p-2 shadow-sm"
-                                    />
-                                ) : (
-                                    <div className="h-32 w-32 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center shadow-lg">
-                                        <Tag size={48} />
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="border-t pt-4 space-y-2">
-                                <div>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Name</span>
-                                    <p className="font-semibold text-slate-800 text-lg">{selectedCategory.name}</p>
-                                </div>
-                                <div>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Slug</span>
-                                    <p className="font-mono text-sm text-slate-600">{selectedCategory.slug}</p>
-                                </div>
-                                <div>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Description</span>
-                                    <p className="text-slate-600 text-sm whitespace-pre-line leading-relaxed">
-                                        {selectedCategory.description || "No description provided."}
-                                    </p>
-                                </div>
-                                <div>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Status</span>
-                                    <div>
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-xs font-medium inline-block mt-1 ${selectedCategory.status
-                                                ? "bg-green-100 text-green-700"
-                                                : "bg-red-100 text-red-600"
-                                                }`}
-                                        >
-                                            {selectedCategory.status ? "Active" : "Inactive"}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
-
-            {/* Edit Modal */}
-            <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                <DialogContent className="max-w-2xl rounded-3xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold">Edit Category</DialogTitle>
-                        <DialogDescription className="text-sm text-gray-500">
-                            Modify the details of this agricultural category.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    {editCategory && (
-                        <div className="space-y-5 mt-2">
-                            <div>
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Category Name</label>
-                                <input
-                                    placeholder="Category Name"
-                                    value={editName}
-                                    onChange={(e) => {
-                                        setEditName(e.target.value);
-                                        setEditSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""));
-                                    }}
-                                    className="w-full border rounded-xl p-3 mt-1.5 outline-none focus:ring-2 focus:ring-green-500"
+                                <Search
+                                    className="
+                                        absolute
+                                        left-3
+                                        top-1/2
+                                        h-4
+                                        w-4
+                                        -translate-y-1/2
+                                        text-slate-400
+                                    "
                                 />
-                            </div>
 
-                            <div>
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Slug</label>
-                                <input
-                                    placeholder="Slug"
-                                    value={editSlug}
-                                    onChange={(e) => setEditSlug(e.target.value)}
-                                    className="w-full border rounded-xl p-3 mt-1.5 outline-none focus:ring-2 focus:ring-green-500"
+                                <Input
+                                    value={search}
+                                    onChange={(
+                                        event
+                                    ) =>
+                                        setSearch(
+                                            event
+                                                .target
+                                                .value
+                                        )
+                                    }
+                                    placeholder="Search categories..."
+                                    className="
+                                        h-11
+                                        rounded-xl
+                                        border-slate-200
+                                        pl-10
+                                        focus-visible:border-emerald-500
+                                        focus-visible:ring-emerald-100
+                                    "
                                 />
+
                             </div>
 
-                            <div>
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Description</label>
-                                <textarea
-                                    placeholder="Description"
-                                    value={editDescription}
-                                    onChange={(e) => setEditDescription(e.target.value)}
-                                    className="w-full border rounded-xl p-3 h-28 mt-1.5 outline-none focus:ring-2 focus:ring-green-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Category Image</label>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="block mt-2"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (!file) return;
-                                        setEditImageFile(file);
-                                        setEditPreview(URL.createObjectURL(file));
-                                    }}
-                                />
-                                {editPreview && (
-                                    <div className="relative mt-4 h-40 w-full rounded-xl overflow-hidden border">
-                                        <img
-                                            src={editPreview}
-                                            alt="preview"
-                                            className="h-full w-full object-cover"
-                                        />
-                                    </div>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1.5">Status</label>
-                                <select
-                                    value={String(editStatus)}
-                                    onChange={(e) => setEditStatus(e.target.value === "true")}
-                                    className="w-full border rounded-xl p-3 outline-none focus:ring-2 focus:ring-green-500"
-                                >
-                                    <option value="true">Active</option>
-                                    <option value="false">Inactive</option>
-                                </select>
-                            </div>
-
-                            <button
-                                onClick={handleUpdate}
-                                disabled={isUpdating}
-                                className="w-full bg-green-600 text-white rounded-xl py-3 font-semibold disabled:opacity-55 hover:bg-green-700 transition"
+                            <Select
+                                value={
+                                    statusFilter
+                                }
+                                onValueChange={
+                                    setStatusFilter
+                                }
                             >
-                                {isUpdating ? "Updating..." : "Save Changes"}
-                            </button>
+
+                                <SelectTrigger className="h-11 w-full rounded-xl md:w-[180px]">
+                                    <SelectValue placeholder="Status" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+
+                                    <SelectItem value="all">
+                                        All Status
+                                    </SelectItem>
+
+                                    <SelectItem value="active">
+                                        Active
+                                    </SelectItem>
+
+                                    <SelectItem value="inactive">
+                                        Inactive
+                                    </SelectItem>
+
+                                </SelectContent>
+
+                            </Select>
+
                         </div>
-                    )}
-                </DialogContent>
-            </Dialog>
 
-            {/* Delete Dialog */}
-            <Dialog open={deleteOpen} onOpenChange={setOpen => {
-                if (!open) {
-                    setDeleteOpen(false);
-                    setDeleteId(null);
-                }
-            }}>
-                <DialogContent className="max-w-md rounded-3xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-xl font-bold">Delete Category</DialogTitle>
-                        <DialogDescription className="text-sm text-slate-500 mt-2">
-                            Are you sure you want to delete this category? This action is permanent and cannot be undone.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="flex gap-3 justify-end mt-4">
-                        <button
-                            onClick={() => {
-                                setDeleteOpen(false);
-                                setDeleteId(null);
-                            }}
-                            className="px-4 py-2 border rounded-xl hover:bg-slate-50 transition font-semibold"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleDelete}
-                            disabled={isDeleting}
-                            className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition font-semibold disabled:opacity-50"
-                        >
-                            {isDeleting ? "Deleting..." : "Delete"}
-                        </button>
                     </div>
-                </DialogContent>
-            </Dialog>
+
+                </Card>
+
+                {/* ================================================= */}
+                {/* LOADING */}
+                {/* ================================================= */}
+
+                {isLoading && (
+                    <Card className="rounded-3xl border bg-white p-10 text-center">
+
+                        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+
+                        <p className="mt-3 text-sm text-slate-500">
+                            Loading categories...
+                        </p>
+
+                    </Card>
+                )}
+
+                {/* ================================================= */}
+                {/* ERROR */}
+                {/* ================================================= */}
+
+                {isError && (
+                    <Card className="rounded-3xl border border-red-200 bg-red-50 p-6">
+
+                        <p className="font-semibold text-red-700">
+                            Unable to load categories
+                        </p>
+
+                        <p className="mt-1 text-sm text-red-600">
+                            Please refresh the page
+                            and try again.
+                        </p>
+
+                    </Card>
+                )}
+
+                {/* ================================================= */}
+                {/* CATEGORY TABLE */}
+                {/* ================================================= */}
+
+                {!isLoading &&
+                    !isError && (
+                        <Card className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+
+                            {/* DESKTOP */}
+
+                            <div className="hidden overflow-x-auto md:block">
+
+                                <table className="w-full min-w-[800px]">
+
+                                    <thead>
+
+                                        <tr className="border-b bg-slate-50/80">
+
+                                            <th className="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                                Category
+                                            </th>
+
+                                            <th className="px-5 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                                                Slug
+                                            </th>
+
+                                            <th className="px-5 py-4 text-center text-xs font-bold uppercase tracking-wider text-slate-500">
+                                                Products
+                                            </th>
+
+                                            <th className="px-5 py-4 text-center text-xs font-bold uppercase tracking-wider text-slate-500">
+                                                Status
+                                            </th>
+
+                                            <th className="px-5 py-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
+                                                Actions
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        {filteredCategories.map(
+                                            (
+                                                category
+                                            ) => {
+
+                                                const isActive =
+                                                    category.status !==
+                                                    false;
+
+                                                return (
+                                                    <tr
+                                                        key={
+                                                            category.id
+                                                        }
+                                                        className="
+                                                            border-b
+                                                            last:border-0
+                                                            transition
+                                                            hover:bg-emerald-50/30
+                                                        "
+                                                    >
+
+                                                        {/* CATEGORY */}
+
+                                                        <td className="px-5 py-4">
+
+                                                            <div className="flex items-center gap-3">
+
+                                                                <CategoryImage
+                                                                    category={
+                                                                        category
+                                                                    }
+                                                                />
+
+                                                                <div className="min-w-0">
+
+                                                                    <p className="truncate font-semibold text-slate-900">
+                                                                        {
+                                                                            category.name
+                                                                        }
+                                                                    </p>
+
+                                                                    <p className="mt-0.5 max-w-[300px] truncate text-xs text-slate-500">
+                                                                        {
+                                                                            category.description ||
+                                                                            "No description provided"
+                                                                        }
+                                                                    </p>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </td>
+
+                                                        {/* SLUG */}
+
+                                                        <td className="px-5 py-4">
+
+                                                            <span className="break-all font-mono text-sm text-slate-500">
+                                                                {
+                                                                    category.slug
+                                                                }
+                                                            </span>
+
+                                                        </td>
+
+                                                        {/* PRODUCTS */}
+
+                                                        <td className="px-5 py-4 text-center">
+
+                                                            <span className="font-semibold text-slate-800">
+                                                                {
+                                                                    category
+                                                                        ._count
+                                                                        ?.products ??
+                                                                    0
+                                                                }
+                                                            </span>
+
+                                                        </td>
+
+                                                        {/* STATUS */}
+
+                                                        <td className="px-5 py-4 text-center">
+
+                                                            <StatusBadge
+                                                                active={
+                                                                    isActive
+                                                                }
+                                                            />
+
+                                                        </td>
+
+                                                        {/* ACTIONS */}
+
+                                                        <td className="px-5 py-4">
+
+                                                            <div className="flex justify-end gap-2">
+
+                                                                <ActionButton
+                                                                    label="View category"
+                                                                    onClick={() =>
+                                                                        setViewCategory(
+                                                                            category
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Eye className="h-4 w-4" />
+                                                                </ActionButton>
+
+                                                                <ActionButton
+                                                                    label="Edit category"
+                                                                    edit
+                                                                    onClick={() =>
+                                                                        setEditCategory(
+                                                                            category
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Pencil className="h-4 w-4" />
+                                                                </ActionButton>
+
+                                                            </div>
+
+                                                        </td>
+
+                                                    </tr>
+                                                );
+                                            }
+                                        )}
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                            {/* ================================================= */}
+                            {/* MOBILE */}
+                            {/* ================================================= */}
+
+                            <div className="divide-y md:hidden">
+
+                                {filteredCategories.map(
+                                    (
+                                        category
+                                    ) => {
+
+                                        const isActive =
+                                            category.status !==
+                                            false;
+
+                                        return (
+                                            <div
+                                                key={
+                                                    category.id
+                                                }
+                                                className="p-4"
+                                            >
+
+                                                <div className="flex items-start gap-3">
+
+                                                    <CategoryImage
+                                                        category={
+                                                            category
+                                                        }
+                                                    />
+
+                                                    <div className="min-w-0 flex-1">
+
+                                                        <div className="flex items-start justify-between gap-2">
+
+                                                            <div className="min-w-0">
+
+                                                                <h3 className="truncate font-semibold text-slate-900">
+                                                                    {
+                                                                        category.name
+                                                                    }
+                                                                </h3>
+
+                                                                <p className="mt-1 truncate font-mono text-xs text-slate-400">
+                                                                    {
+                                                                        category.slug
+                                                                    }
+                                                                </p>
+
+                                                            </div>
+
+                                                            <StatusBadge
+                                                                active={
+                                                                    isActive
+                                                                }
+                                                            />
+
+                                                        </div>
+
+                                                        <div className="mt-3 flex items-center justify-between gap-3">
+
+                                                            <span className="text-sm text-slate-500">
+                                                                {
+                                                                    category
+                                                                        ._count
+                                                                        ?.products ??
+                                                                    0
+                                                                }{" "}
+                                                                products
+                                                            </span>
+
+                                                            <div className="flex gap-2">
+
+                                                                <ActionButton
+                                                                    label="View"
+                                                                    onClick={() =>
+                                                                        setViewCategory(
+                                                                            category
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Eye className="h-4 w-4" />
+                                                                </ActionButton>
+
+                                                                <ActionButton
+                                                                    label="Edit"
+                                                                    edit
+                                                                    onClick={() =>
+                                                                        setEditCategory(
+                                                                            category
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Pencil className="h-4 w-4" />
+                                                                </ActionButton>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        );
+                                    }
+                                )}
+
+                            </div>
+
+                            {/* EMPTY */}
+
+                            {filteredCategories.length ===
+                                0 && (
+                                    <div className="px-6 py-16 text-center">
+
+                                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
+                                            <Tag className="h-6 w-6 text-slate-400" />
+                                        </div>
+
+                                        <h3 className="mt-4 font-semibold text-slate-900">
+                                            No categories found
+                                        </h3>
+
+                                        <p className="mt-1 text-sm text-slate-500">
+                                            Try changing
+                                            your search
+                                            or filter.
+                                        </p>
+
+                                        {search ||
+                                            statusFilter !==
+                                            "all" ? (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                className="mt-4 rounded-xl"
+                                                onClick={() => {
+                                                    setSearch(
+                                                        ""
+                                                    );
+                                                    setStatusFilter(
+                                                        "all"
+                                                    );
+                                                }}
+                                            >
+                                                Clear Filters
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                className="mt-4 rounded-xl bg-emerald-600 hover:bg-emerald-700"
+                                                onClick={() =>
+                                                    setAddOpen(
+                                                        true
+                                                    )
+                                                }
+                                            >
+                                                <Plus className="mr-2 h-4 w-4" />
+                                                Add Category
+                                            </Button>
+                                        )}
+
+                                    </div>
+                                )}
+
+                        </Card>
+                    )}
+
+                {/* ================================================= */}
+                {/* ADD CATEGORY */}
+                {/* ================================================= */}
+
+                <AddCategoryModal
+                    open={addOpen}
+                    onOpenChange={setAddOpen}
+                />
+
+                {/* ================================================= */}
+                {/* VIEW CATEGORY */}
+                {/* ================================================= */}
+
+                <CategoryViewDialog
+                    category={
+                        viewCategory
+                    }
+                    open={
+                        !!viewCategory
+                    }
+                    onOpenChange={(
+                        open
+                    ) => {
+                        if (!open) {
+                            setViewCategory(
+                                null
+                            );
+                        }
+                    }}
+                    onEdit={(
+                        category
+                    ) => {
+                        setViewCategory(
+                            null
+                        );
+
+                        setEditCategory(
+                            category
+                        );
+                    }}
+                />
+
+                {/* ================================================= */}
+                {/* EDIT CATEGORY */}
+                {/* ================================================= */}
+
+                <CategoryEditDialog
+                    category={
+                        editCategory
+                    }
+                    open={
+                        !!editCategory
+                    }
+                    onOpenChange={(
+                        open
+                    ) => {
+                        if (!open) {
+                            setEditCategory(
+                                null
+                            );
+                        }
+                    }}
+                />
+
+            </div>
         </DashboardLayout>
     );
 }
 
+/* ============================================================= */
+/* STAT CARD */
+/* ============================================================= */
+
 function StatCard({
     title,
     value,
-    icon,
+    subtitle,
+    icon: Icon,
+    iconClass,
 }: {
     title: string;
-    value: string;
-    icon: React.ReactNode;
+    value: number;
+    subtitle: string;
+    icon: React.ElementType;
+    iconClass: string;
 }) {
     return (
-        <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm hover:shadow-xl transition-all">
-            <div className="flex items-center justify-between">
-                <div>
-                    <p className="text-sm text-slate-500">{title}</p>
+        <Card
+            className="
+                rounded-3xl
+                border
+                border-slate-200
+                bg-white
+                p-5
+                shadow-sm
+                transition
+                hover:-translate-y-0.5
+                hover:shadow-md
+                sm:p-6
+            "
+        >
 
-                    <h3 className="mt-2 text-3xl font-bold text-slate-800">
+            <div className="flex items-start justify-between gap-4">
+
+                <div className="min-w-0">
+
+                    <p className="text-sm font-medium text-slate-500">
+                        {title}
+                    </p>
+
+                    <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
                         {value}
-                    </h3>
+                    </p>
+
+                    <p className="mt-2 text-xs text-slate-400">
+                        {subtitle}
+                    </p>
+
                 </div>
 
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center shadow-lg">
-                    {icon}
+                <div
+                    className={`
+                        flex
+                        h-12
+                        w-12
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-2xl
+                        ${iconClass}
+                    `}
+                >
+                    <Icon className="h-6 w-6" />
                 </div>
+
             </div>
-        </div>
+
+        </Card>
+    );
+}
+
+/* ============================================================= */
+/* CATEGORY IMAGE */
+/* ============================================================= */
+
+function CategoryImage({
+    category,
+}: {
+    category: Category;
+}) {
+    if (!category.image) {
+        return (
+            <div
+                className="
+                    flex
+                    h-12
+                    w-12
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-emerald-50
+                    text-sm
+                    font-bold
+                    uppercase
+                    text-emerald-700
+                "
+            >
+                {category.name
+                    .slice(0, 2)
+                    .toUpperCase()}
+            </div>
+        );
+    }
+
+    return (
+        <img
+            src={category.image}
+            alt={category.name}
+            className="
+                h-12
+                w-12
+                shrink-0
+                rounded-xl
+                border
+                border-slate-200
+                object-cover
+            "
+        />
+    );
+}
+
+/* ============================================================= */
+/* STATUS */
+/* ============================================================= */
+
+function StatusBadge({
+    active,
+}: {
+    active: boolean;
+}) {
+    if (active) {
+        return (
+            <Badge
+                className="
+                    rounded-full
+                    border
+                    border-emerald-200
+                    bg-emerald-50
+                    px-3
+                    py-1
+                    text-emerald-700
+                    hover:bg-emerald-50
+                "
+            >
+                <CheckCircle2 className="mr-1 h-3.5 w-3.5" />
+                Active
+            </Badge>
+        );
+    }
+
+    return (
+        <Badge
+            className="
+                rounded-full
+                border
+                border-red-200
+                bg-red-50
+                px-3
+                py-1
+                text-red-600
+                hover:bg-red-50
+            "
+        >
+            <XCircle className="mr-1 h-3.5 w-3.5" />
+            Inactive
+        </Badge>
+    );
+}
+
+/* ============================================================= */
+/* ACTION BUTTON */
+/* ============================================================= */
+
+function ActionButton({
+    children,
+    onClick,
+    label,
+    edit = false,
+}: {
+    children: React.ReactNode;
+    onClick: () => void;
+    label: string;
+    edit?: boolean;
+}) {
+    return (
+        <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label={label}
+            title={label}
+            onClick={onClick}
+            className={
+                edit
+                    ? `
+                        h-9
+                        w-9
+                        rounded-xl
+                        border-emerald-200
+                        text-emerald-600
+                        hover:bg-emerald-50
+                        hover:text-emerald-700
+                    `
+                    : `
+                        h-9
+                        w-9
+                        rounded-xl
+                        border-blue-200
+                        text-blue-600
+                        hover:bg-blue-50
+                        hover:text-blue-700
+                    `
+            }
+        >
+            {children}
+        </Button>
     );
 }
