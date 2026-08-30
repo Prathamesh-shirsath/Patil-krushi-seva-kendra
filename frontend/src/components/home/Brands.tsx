@@ -16,6 +16,7 @@ import {
 import "swiper/css";
 
 type Brand = {
+  slug: any;
   id: string;
   name: string;
   logo?: string | null;
@@ -31,7 +32,7 @@ export default function Brands() {
     isLoading,
   } = useBrands();
 
-  const activeBrands = brands.filter((brand) => brand.status === true);
+  const activeBrands = brands.filter((brand: { status: boolean; }) => brand.status === true);
 
   return (
     <section className="py-12">

@@ -2,7 +2,7 @@
 
 import AppNavbar from "../navbar/app-navbar";
 import AppSidebar from "../sidebar/app-sidebar";
-
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 interface DashboardLayoutProps {
@@ -85,7 +85,18 @@ export default function DashboardLayout({
                                         lg:p-7
                                     "
                 >
-                  {children}
+                  <div
+                    className="
+                      w-full
+                      min-w-0
+                      p-4
+                      sm:p-5
+                      md:p-6
+                      lg:p-8
+                    "
+                  >
+                    {children}
+                  </div>
                 </div>
 
               </div>
@@ -94,6 +105,8 @@ export default function DashboardLayout({
 
           </main>
 
+            </main>
+          </div>
         </div>
 
       </div>
