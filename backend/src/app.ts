@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+
+import adminAuthRoutes from "./routes/admin-auth.routes";
 import productRoutes from "./routes/product.routes";
 import categoryRoutes from "./routes/category.routes";
 import orderRoutes from "./routes/order.routes";
@@ -17,9 +19,17 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import addressRoutes from "./routes/address.routes";
 
-
 const app = express();
+
+// =====================================================
+// SECURITY
+// =====================================================
+
 app.use(helmet());
+
+// =====================================================
+// CORS
+// =====================================================
 
 app.use(
   cors({
@@ -30,34 +40,60 @@ app.use(
     credentials: true,
   })
 );
+
+// =====================================================
+// MIDDLEWARE
+// =====================================================
+
 app.use(cookieParser());
 app.use(express.json());
+
+// =====================================================
+// API ROUTES
+// =====================================================
 
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/cart", cartRoutes);
-
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/coupons", couponRoutes);
-
 app.use("/api/reviews", reviewRoutes);
-
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/banners", bannerRoutes);
 app.use("/api/statistics", statisticRoutes);
 
+// =====================================================
+// AUTHENTICATION
+// =====================================================
+
+// Customer authentication
 app.use("/api/auth", authRoutes);
+
+// Admin authentication
+app.use("/api/admin-auth", adminAuthRoutes);
+
+// =====================================================
+// USERS & ADDRESSES
+// =====================================================
+
 app.use("/api/users", userRoutes);
 app.use("/api/addresses", addressRoutes);
 
+// =====================================================
+// HEALTH CHECK
+// =====================================================
 
-app.get("/", (req, res) => {
-  res.json({
+app.get("/", (_req, res) => {
+  res.status(200).json({
     success: true,
     message: "Krushi Seva Kendra API Running",
   });
 });
+
+// =====================================================
+// EXPORT
+// =====================================================
 
 export default app;

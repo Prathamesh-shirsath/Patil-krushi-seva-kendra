@@ -2,7 +2,7 @@
 
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import StatsCard from "@/components/cards/stats-card";
-
+import AdminGuard from "@/components/auth/admin-guard";
 import SalesChart from "@/components/charts/sales-chart";
 import OrdersChart from "@/components/charts/orders-chart";
 
