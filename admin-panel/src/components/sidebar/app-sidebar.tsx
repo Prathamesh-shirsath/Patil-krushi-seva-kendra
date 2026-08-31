@@ -33,7 +33,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-  SidebarContent,
+ 
 } from "@/components/ui/sidebar";
 
 
