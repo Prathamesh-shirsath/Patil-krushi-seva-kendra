@@ -2,6 +2,8 @@
 
 import AppNavbar from "../navbar/app-navbar";
 import AppSidebar from "../sidebar/app-sidebar";
+import AdminGuard from "../auth/admin-guard";
+
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
@@ -87,15 +89,30 @@ export default function DashboardLayout({
                 >
                   <div
                     className="
+                      min-h-[calc(100vh-110px)]
                       w-full
                       min-w-0
-                      p-4
-                      sm:p-5
-                      md:p-6
-                      lg:p-8
+                      overflow-hidden
+                      rounded-2xl
+                      border
+                      border-slate-200
+                      bg-white
+                      shadow-sm
+                      sm:rounded-3xl
                     "
                   >
-                    {children}
+                    <div
+                      className="
+                        w-full
+                        min-w-0
+                        p-4
+                        sm:p-5
+                        md:p-6
+                        lg:p-8
+                      "
+                    >
+                      {children}
+                    </div>
                   </div>
                 </div>
 

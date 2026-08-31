@@ -1,16 +1,17 @@
 "use client";
 
 import {
-    Bell,
-    Search,
-    Moon,
-    Sun,
-    LogOut,
-    Settings,
-    User,
+  Bell,
+  Search,
+  Moon,
+  Sun,
+  LogOut,
+  Settings,
+  User,
 } from "lucide-react";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -19,16 +20,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import {
-    Avatar,
-    AvatarFallback,
+  Avatar,
+  AvatarFallback,
 } from "@/components/ui/avatar";
 
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 export default function AppNavbar() {
