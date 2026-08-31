@@ -1,11 +1,7 @@
 "use client";
 
 import { Package2 } from "lucide-react";
-
-import {
-    UseFormReturn,
-} from "react-hook-form";
-
+import { UseFormReturn } from "react-hook-form";
 
 import {
     Select,
@@ -15,544 +11,163 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-import {
-    Card,
-} from "@/components/ui/card";
-
-
-import {
-    Input,
-} from "@/components/ui/input";
-
-
-import {
-    Label,
-} from "@/components/ui/label";
-
-
-import {
-    ProductFormValues,
-} from "@/features/products/schemas/product.schema";
-
-
-import {
-    FieldError,
-} from "./field-error";
-
-
+import { ProductFormValues } from "@/features/products/schemas/product.schema";
+import { FieldError } from "./field-error";
 
 interface Option {
-
     id: string;
-
     name: string;
-
 }
-
-
 
 interface BasicInfoSectionProps {
-
-    form:
-    UseFormReturn<ProductFormValues>;
-
-
-    brands:
-    Option[];
-
-
-    categories:
-    Option[];
-
-
+    form: UseFormReturn<ProductFormValues>;
+    brands: Option[];
+    categories: Option[];
     disabled?: boolean;
-
 }
 
-
-
-
-
 export function BasicInfoSection({
-
     form,
-
     brands,
-
     categories,
-
     disabled = false,
-
-
 }: BasicInfoSectionProps) {
-
-
-
     const {
-
         register,
-
         watch,
-
         setValue,
-
-        formState: {
-            errors
-        },
-
+        formState: { errors },
     } = form;
 
-
-
-
-
-
-    const brandId =
-        watch("brandId");
-
-
-
-    const categoryId =
-        watch("categoryId");
-
-
-
-
-
-
+    const brandId = watch("brandId");
+    const categoryId = watch("categoryId");
 
     return (
+        <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        <Card className="rounded-3xl border shadow-sm">
+            {/* Header */}
+            <div className="border-b border-slate-100 px-5 py-4 sm:px-6">
+                <div className="flex items-center gap-3">
 
-
-            <div className="space-y-6 p-6">
-
-
-
-                <div className="flex items-center gap-4">
-
-
-                    <div
-                        className="
-                        flex
-                        h-12
-                        w-12
-                        items-center
-                        justify-center
-                        rounded-2xl
-                        bg-green-100
-                        "
-                    >
-
-                        <Package2
-                            className="
-                            h-6
-                            w-6
-                            text-green-700
-                            "
-                        />
-
-
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50">
+                        <Package2 className="h-5 w-5 text-green-600" />
                     </div>
-
-
 
                     <div>
-
-                        <h2 className="text-lg font-semibold">
-
+                        <h2 className="text-base font-semibold text-slate-900 sm:text-lg">
                             Basic Information
-
                         </h2>
 
-
-                        <p className="text-sm text-muted-foreground">
-
+                        <p className="text-xs text-slate-500 sm:text-sm">
                             Enter product basic details.
-
                         </p>
-
-
                     </div>
 
-
                 </div>
+            </div>
 
-
-
-
-
-
+            {/* Content */}
+            <div className="p-5 sm:p-6">
 
                 <div className="grid gap-5 md:grid-cols-2">
 
-
-
-
-
-
+                    {/* Product Name */}
                     <div className="md:col-span-2">
-
-
-                        <Label htmlFor="product-name">
-
+                        <Label
+                            htmlFor="product-name"
+                            className="text-sm font-medium text-slate-700"
+                        >
                             Product Name
-
                         </Label>
-
-
 
                         <Input
-
                             id="product-name"
-
                             placeholder="Enter product name"
-
                             disabled={disabled}
-
-                            className="mt-2"
-
+                            className="mt-2 h-11 rounded-xl border-slate-200 focus-visible:ring-green-500"
                             {...register("name")}
-
                         />
 
-
-
-                        <FieldError
-
-                            message={
-                                errors.name?.message
-                            }
-
-                        />
-
-
-
+                        <FieldError message={errors.name?.message} />
                     </div>
 
-
-
-
-
-
-
-
-
-
+                    {/* Brand */}
                     <div>
-
-
-                        <Label>
-
+                        <Label className="text-sm font-medium text-slate-700">
                             Brand
-
                         </Label>
 
-
-
-
                         <Select
-
-
                             disabled={disabled}
-
-
-                            value={
-                                brandId || undefined
+                            value={brandId || ""}
+                            onValueChange={(value) =>
+                                setValue("brandId", value, {
+                                    shouldDirty: true,
+                                    shouldValidate: true,
+                                })
                             }
-
-
-
-                            onValueChange={(value) => {
-
-
-                                setValue(
-
-                                    "brandId",
-
-                                    value,
-
-                                    {
-
-                                        shouldDirty: true,
-
-                                        shouldValidate: true,
-
-                                    }
-
-                                );
-
-
-                            }}
-
                         >
-
-
-
-                            <SelectTrigger className="mt-2">
-
-
-                                <SelectValue
-
-                                    placeholder="Select Brand"
-
-                                />
-
-
+                            <SelectTrigger className="mt-2 h-11 rounded-xl border-slate-200">
+                                <SelectValue placeholder="Select Brand" />
                             </SelectTrigger>
 
-
-
-
-
                             <SelectContent>
-
-
-                                {
-                                    brands.length === 0 ? (
-
-
-                                        <SelectItem
-
-                                            value="empty"
-
-                                            disabled
-
-                                        >
-
-                                            No brands available
-
-                                        </SelectItem>
-
-
-                                    ) : (
-
-
-                                        brands.map(
-                                            (brand) => (
-
-
-                                                <SelectItem
-
-                                                    key={
-                                                        brand.id
-                                                    }
-
-                                                    value={
-                                                        brand.id
-                                                    }
-
-                                                >
-
-                                                    {
-                                                        brand.name
-                                                    }
-
-                                                </SelectItem>
-
-
-                                            )
-                                        )
-
-                                    )
-                                }
-
-
+                                {brands.map((brand) => (
+                                    <SelectItem
+                                        key={brand.id}
+                                        value={brand.id}
+                                    >
+                                        {brand.name}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
-
-
-
                         </Select>
 
-
-
-
-                        <FieldError
-
-                            message={
-                                errors.brandId?.message
-                            }
-
-                        />
-
-
-
+                        <FieldError message={errors.brandId?.message} />
                     </div>
 
-
-
-
-
-
-
-
-
+                    {/* Category */}
                     <div>
-
-
-                        <Label>
-
+                        <Label className="text-sm font-medium text-slate-700">
                             Category
-
                         </Label>
 
-
-
-
-
                         <Select
-
-
                             disabled={disabled}
-
-
-                            value={
-                                categoryId || undefined
+                            value={categoryId || ""}
+                            onValueChange={(value) =>
+                                setValue("categoryId", value, {
+                                    shouldDirty: true,
+                                    shouldValidate: true,
+                                })
                             }
-
-
-
-
-                            onValueChange={(value) => {
-
-
-                                setValue(
-
-                                    "categoryId",
-
-                                    value,
-
-                                    {
-
-                                        shouldDirty: true,
-
-                                        shouldValidate: true,
-
-                                    }
-
-                                );
-
-
-                            }}
-
-
-
                         >
-
-
-
-                            <SelectTrigger className="mt-2">
-
-
-                                <SelectValue
-
-                                    placeholder="Select Category"
-
-                                />
-
-
+                            <SelectTrigger className="mt-2 h-11 rounded-xl border-slate-200">
+                                <SelectValue placeholder="Select Category" />
                             </SelectTrigger>
 
-
-
-
-
                             <SelectContent>
-
-
-
-                                {
-                                    categories.length === 0 ? (
-
-
-                                        <SelectItem
-
-                                            value="empty"
-
-                                            disabled
-
-                                        >
-
-                                            No categories available
-
-                                        </SelectItem>
-
-
-                                    ) : (
-
-
-                                        categories.map(
-                                            (category) => (
-
-
-                                                <SelectItem
-
-                                                    key={
-                                                        category.id
-                                                    }
-
-                                                    value={
-                                                        category.id
-                                                    }
-
-                                                >
-
-                                                    {
-                                                        category.name
-                                                    }
-
-                                                </SelectItem>
-
-
-                                            )
-                                        )
-
-                                    )
-                                }
-
-
-
+                                {categories.map((category) => (
+                                    <SelectItem
+                                        key={category.id}
+                                        value={category.id}
+                                    >
+                                        {category.name}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
-
-
-
                         </Select>
 
-
-
-
-
-
-                        <FieldError
-
-                            message={
-                                errors.categoryId?.message
-                            }
-
-                        />
-
-
-
+                        <FieldError message={errors.categoryId?.message} />
                     </div>
-
-
-
-
-
-
 
                 </div>
 
-
-
             </div>
-
-
-
         </Card>
-
     );
-
 }

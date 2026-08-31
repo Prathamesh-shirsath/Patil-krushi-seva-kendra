@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+
+import {
+    useEffect,
+    useState,
+} from "react";
 
 import {
     Eye,
@@ -11,17 +15,17 @@ import {
     Package2,
 } from "lucide-react";
 
-import { useProducts } from "@/hooks/use-products";
+import {
+    useProducts,
+} from "@/hooks/use-products";
 
-import type { Product } from "@/types/product";
+import type {
+    Product,
+} from "@/types/product";
 
 import DeleteProductDialog from "@/components/dialogs/delete-product-dialog";
-import ProductFilter from "@/components/filters/product-filter";
 
-import {
-    Card,
-    CardContent,
-} from "@/components/ui/card";
+import ProductFilter from "@/components/filters/product-filter";
 
 import {
     Badge,
@@ -44,7 +48,13 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
+
 const LIMIT = 10;
+
+
+/* =========================================================
+   PRODUCT IMAGE
+========================================================= */
 
 function ProductImage({
     image,
@@ -53,140 +63,382 @@ function ProductImage({
     image?: string | null;
     name: string;
 }) {
+
     if (!image) {
         return (
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-green-100 text-lg font-semibold text-green-700">
-                {name.substring(0, 2).toUpperCase()}
+            <div
+                className="
+                    flex
+                    h-12
+                    w-12
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-2xl
+                    bg-emerald-50
+                    text-sm
+                    font-bold
+                    text-emerald-700
+                    sm:h-14
+                    sm:w-14
+                    sm:text-lg
+                "
+            >
+                {name
+                    .substring(0, 2)
+                    .toUpperCase()}
             </div>
         );
     }
 
+
     return (
-        <Image
-            src={image}
-            alt={name}
-            width={56}
-            height={56}
-            className="h-14 w-14 rounded-xl border object-cover"
-        />
+        <div
+            className="
+                h-12
+                w-12
+                shrink-0
+                overflow-hidden
+                rounded-2xl
+                border
+                border-slate-200
+                bg-white
+                sm:h-14
+                sm:w-14
+            "
+        >
+            <Image
+                src={image}
+                alt={name}
+                width={56}
+                height={56}
+                className="
+                    h-full
+                    w-full
+                    object-cover
+                "
+            />
+        </div>
     );
 }
+
+
+/* =========================================================
+   STATUS BADGE
+========================================================= */
 
 function StatusBadge({
     status,
 }: {
     status: boolean;
 }) {
-    return status ? (
-        <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-            Active
-        </Badge>
-    ) : (
-        <Badge variant="secondary">
+
+    if (status) {
+        return (
+            <Badge
+                className="
+                    whitespace-nowrap
+                    rounded-full
+                    bg-emerald-100
+                    px-3
+                    py-1
+                    font-medium
+                    text-emerald-700
+                    hover:bg-emerald-100
+                "
+            >
+                Active
+            </Badge>
+        );
+    }
+
+
+    return (
+        <Badge
+            className="
+                whitespace-nowrap
+                rounded-full
+                bg-slate-100
+                px-3
+                py-1
+                font-medium
+                text-slate-600
+                hover:bg-slate-100
+            "
+        >
             Inactive
         </Badge>
     );
 }
+
+
+/* =========================================================
+   STOCK BADGE
+========================================================= */
 
 function StockBadge({
     stock,
 }: {
     stock: number;
 }) {
+
     if (stock <= 0) {
         return (
-            <Badge variant="destructive">
+            <Badge
+                className="
+                    whitespace-nowrap
+                    rounded-full
+                    bg-red-100
+                    px-3
+                    py-1
+                    font-medium
+                    text-red-700
+                    hover:bg-red-100
+                "
+            >
                 Out of Stock
             </Badge>
         );
     }
 
+
     if (stock < 10) {
         return (
-            <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
+            <Badge
+                className="
+                    whitespace-nowrap
+                    rounded-full
+                    bg-orange-100
+                    px-3
+                    py-1
+                    font-medium
+                    text-orange-700
+                    hover:bg-orange-100
+                "
+            >
                 Low Stock
             </Badge>
         );
     }
 
+
     return (
-        <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+        <Badge
+            className="
+                whitespace-nowrap
+                rounded-full
+                bg-emerald-100
+                px-3
+                py-1
+                font-medium
+                text-emerald-700
+                hover:bg-emerald-100
+            "
+        >
             In Stock
         </Badge>
     );
 }
 
+
+/* =========================================================
+   TABLE SKELETON
+========================================================= */
+
 function TableSkeleton() {
+
     return (
-        <Card>
-            <CardContent className="space-y-4 p-6">
-                {Array.from({ length: 8 }).map((_, index) => (
+        <div
+            className="
+                overflow-hidden
+                rounded-3xl
+                border
+                border-emerald-100
+                bg-white
+                shadow-sm
+            "
+        >
+
+            <div className="space-y-4 p-4 sm:p-6">
+
+                {Array.from({
+                    length: 7,
+                }).map((_, index) => (
                     <Skeleton
                         key={index}
-                        className="h-14 w-full"
+                        className="
+                            h-14
+                            w-full
+                            rounded-xl
+                        "
                     />
                 ))}
-            </CardContent>
-        </Card>
+
+            </div>
+
+        </div>
     );
 }
 
-function EmptyState() {
-    return (
-        <Card>
-            <CardContent className="flex flex-col items-center justify-center py-20">
-                <Package2 className="mb-4 h-16 w-16 text-muted-foreground" />
 
-                <h3 className="text-xl font-semibold">
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+function EmptyState() {
+
+    return (
+        <div
+            className="
+                overflow-hidden
+                rounded-3xl
+                border
+                border-emerald-100
+                bg-white
+                shadow-sm
+            "
+        >
+
+            <div
+                className="
+                    flex
+                    min-h-[280px]
+                    flex-col
+                    items-center
+                    justify-center
+                    px-5
+                    py-12
+                    text-center
+                    sm:min-h-[320px]
+                "
+            >
+
+                <div
+                    className="
+                        flex
+                        h-16
+                        w-16
+                        items-center
+                        justify-center
+                        rounded-3xl
+                        bg-emerald-50
+                        sm:h-20
+                        sm:w-20
+                    "
+                >
+                    <Package2
+                        className="
+                            h-8
+                            w-8
+                            text-emerald-600
+                            sm:h-10
+                            sm:w-10
+                        "
+                    />
+                </div>
+
+
+                <h3
+                    className="
+                        mt-5
+                        text-lg
+                        font-semibold
+                        text-slate-800
+                        sm:text-xl
+                    "
+                >
                     No Products Found
                 </h3>
 
-                <p className="mt-2 text-muted-foreground">
-                    Try changing filters or create your first product.
+
+                <p
+                    className="
+                        mt-2
+                        max-w-md
+                        text-sm
+                        text-slate-500
+                    "
+                >
+                    Try changing your filters or
+                    create your first agricultural product.
                 </p>
+
 
                 <Button
                     asChild
-                    className="mt-6"
+                    className="
+                        mt-6
+                        rounded-2xl
+                        bg-emerald-600
+                        px-6
+                        hover:bg-emerald-700
+                    "
                 >
                     <Link href="/products/new">
                         Add Product
                     </Link>
                 </Button>
-            </CardContent>
-        </Card>
+
+            </div>
+
+        </div>
     );
 }
 
+
+/* =========================================================
+   MAIN COMPONENT
+========================================================= */
+
 export default function ProductsTable() {
 
-    const [page, setPage] = useState(1);
+    const [page, setPage] =
+        useState(1);
 
-    const [search, setSearch] = useState("");
+    const [search, setSearch] =
+        useState("");
 
-    const [brandId, setBrandId] = useState("all");
+    const [brandId, setBrandId] =
+        useState("all");
 
-    const [categoryId, setCategoryId] = useState("all");
+    const [categoryId, setCategoryId] =
+        useState("all");
 
     const [deleteId, setDeleteId] =
         useState<string | null>(null);
+
 
     const {
         data,
         isLoading,
     } = useProducts({
+
         page,
+
         limit: LIMIT,
-        search,
+
+        search:
+            search.trim()
+                ? search
+                : undefined,
+
         brandId:
             brandId === "all"
                 ? undefined
                 : brandId,
+
         categoryId:
             categoryId === "all"
                 ? undefined
                 : categoryId,
+
+        includeInactive: true,
     });
+
+
+    /* =====================================================
+       RESET PAGE WHEN FILTER CHANGES
+    ===================================================== */
 
     useEffect(() => {
         setPage(1);
@@ -196,29 +448,32 @@ export default function ProductsTable() {
         categoryId,
     ]);
 
+
     const products: Product[] =
         data?.data ?? [];
 
+
     const pagination =
         data?.pagination;
-    if (isLoading) {
-        return <TableSkeleton />;
-    }
 
-    if (!products.length) {
-        return <EmptyState />;
-    }
 
     return (
-        <div className="space-y-6">
+        <div className="w-full min-w-0 space-y-4 sm:space-y-5">
+
+            {/* =================================================
+                FILTERS
+            ================================================= */}
 
             <ProductFilter
                 search={search}
                 onSearchChange={setSearch}
+
                 brandId={brandId}
                 onBrandChange={setBrandId}
+
                 categoryId={categoryId}
                 onCategoryChange={setCategoryId}
+
                 onReset={() => {
                     setSearch("");
                     setBrandId("all");
@@ -227,279 +482,776 @@ export default function ProductsTable() {
                 }}
             />
 
-            <Card>
 
-                <CardContent className="p-0">
+            {/* =================================================
+                LOADING
+            ================================================= */}
 
-                    <Table>
+            {isLoading && (
+                <TableSkeleton />
+            )}
 
-                        <TableHeader>
 
-                            <TableRow>
+            {/* =================================================
+                EMPTY
+            ================================================= */}
 
-                                <TableHead className="w-[90px]">
-                                    Image
-                                </TableHead>
+            {!isLoading &&
+                products.length === 0 && (
+                    <EmptyState />
+                )}
 
-                                <TableHead>
-                                    Product
-                                </TableHead>
 
-                                <TableHead>
-                                    Brand
-                                </TableHead>
+            {/* =================================================
+                TABLE
+            ================================================= */}
 
-                                <TableHead>
-                                    Category
-                                </TableHead>
+            {!isLoading &&
+                products.length > 0 && (
+                    <>
 
-                                <TableHead>
-                                    Pack
-                                </TableHead>
+                        <div
+                            className="
+                                w-full
+                                min-w-0
+                                overflow-hidden
+                                rounded-3xl
+                                border
+                                border-emerald-100
+                                bg-white
+                                shadow-sm
+                            "
+                        >
 
-                                <TableHead>
-                                    Price
-                                </TableHead>
+                            {/* IMPORTANT:
+                                Only table scrolls on mobile.
+                            */}
 
-                                <TableHead>
-                                    Stock
-                                </TableHead>
+                            <div
+                                className="
+                                    w-full
+                                    overflow-x-auto
+                                "
+                            >
 
-                                <TableHead>
-                                    Status
-                                </TableHead>
-
-                                <TableHead className="text-right">
-                                    Actions
-                                </TableHead>
-
-                            </TableRow>
-
-                        </TableHeader>
-
-                        <TableBody>
-
-                            {products.map((product) => (
-
-                                <TableRow
-                                    key={product.id}
-                                    className="hover:bg-muted/40"
+                                <Table
+                                    className="
+                                        min-w-[1050px]
+                                    "
                                 >
 
-                                    <TableCell>
+                                    {/* =================================================
+                                        HEADER
+                                    ================================================= */}
 
-                                        <ProductImage
-                                            image={product.image}
-                                            name={product.name}
-                                        />
+                                    <TableHeader
+                                        className="
+                                            bg-slate-50
+                                        "
+                                    >
 
-                                    </TableCell>
+                                        <TableRow
+                                            className="
+                                                border-b
+                                                border-slate-200
+                                                hover:bg-slate-50
+                                            "
+                                        >
 
-                                    <TableCell>
-
-                                        <div className="space-y-1">
-
-                                            <p className="font-semibold">
-
-                                                {product.name}
-
-                                            </p>
-
-                                            <p className="text-xs text-muted-foreground">
-
-                                                {product.slug}
-
-                                            </p>
-
-                                        </div>
-
-                                    </TableCell>
-
-                                    <TableCell>
-
-                                        {product.brandName || "-"}
-
-                                    </TableCell>
-
-                                    <TableCell>
-
-                                        {product.categoryName || "-"}
-
-                                    </TableCell>
-
-                                    <TableCell>
-
-                                        {product.packSize}
-
-                                    </TableCell>
-
-                                    <TableCell>
-
-                                        ₹{" "}
-                                        {Number(
-                                            product.price
-                                        ).toLocaleString("en-IN")}
-
-                                    </TableCell>
-
-                                    <TableCell>
-
-                                        <div className="space-y-1">
-
-                                            <p className="font-medium">
-                                                {product.stock ?? 0}
-                                            </p>
-
-                                            <StockBadge
-                                                stock={product.stock ?? 0}
-                                            />
-
-                                        </div>
-
-                                    </TableCell>
-
-                                    <TableCell>
-
-                                        <StatusBadge
-                                            status={product.status}
-                                        />
-
-                                    </TableCell>
-
-                                    <TableCell>
-
-                                        <div className="flex justify-end gap-2">
-                                            {/* View */}
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                asChild
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    w-[85px]
+                                                    px-4
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
                                             >
-                                                <Link
-                                                    href={`/products/${product.id}`}
+                                                Image
+                                            </TableHead>
+
+
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    px-4
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
+                                            >
+                                                Product
+                                            </TableHead>
+
+
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    px-4
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
+                                            >
+                                                Brand
+                                            </TableHead>
+
+
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    px-4
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
+                                            >
+                                                Category
+                                            </TableHead>
+
+
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    px-4
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
+                                            >
+                                                Pack
+                                            </TableHead>
+
+
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    px-4
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
+                                            >
+                                                Price
+                                            </TableHead>
+
+
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    px-4
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
+                                            >
+                                                Stock
+                                            </TableHead>
+
+
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    px-4
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
+                                            >
+                                                Status
+                                            </TableHead>
+
+
+                                            <TableHead
+                                                className="
+                                                    h-14
+                                                    px-4
+                                                    text-right
+                                                    text-xs
+                                                    font-semibold
+                                                    text-slate-700
+                                                    sm:h-16
+                                                    sm:px-5
+                                                    sm:text-sm
+                                                "
+                                            >
+                                                Actions
+                                            </TableHead>
+
+                                        </TableRow>
+
+                                    </TableHeader>
+
+
+                                    {/* =================================================
+                                        BODY
+                                    ================================================= */}
+
+                                    <TableBody>
+
+                                        {products.map(
+                                            (product) => (
+
+                                                <TableRow
+                                                    key={
+                                                        product.id
+                                                    }
+                                                    className="
+                                                        border-b
+                                                        border-slate-100
+                                                        transition-colors
+                                                        hover:bg-emerald-50/30
+                                                    "
                                                 >
-                                                    <Eye className="h-4 w-4" />
-                                                </Link>
-                                            </Button>
 
-                                            {/* Edit */}
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={`/products/${product.id}/edit`}
-                                                >
-                                                    <Pencil className="h-4 w-4" />
-                                                </Link>
-                                            </Button>
+                                                    {/* IMAGE */}
 
-                                            {/* Delete */}
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() =>
-                                                    setDeleteId(product.id)
-                                                }
-                                            >
-                                                <Trash2 className="h-4 w-4 text-red-600" />
-                                            </Button>
-                                        </div>
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
 
-                                    </TableCell>
+                                                        <ProductImage
+                                                            image={
+                                                                product.image
+                                                            }
+                                                            name={
+                                                                product.name
+                                                            }
+                                                        />
 
-                                </TableRow>
+                                                    </TableCell>
 
-                            ))}
 
-                        </TableBody>
+                                                    {/* PRODUCT */}
 
-                    </Table>
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
 
-                </CardContent>
+                                                        <div
+                                                            className="
+                                                                max-w-[240px]
+                                                            "
+                                                        >
 
-            </Card>
-            {/* Pagination */}
+                                                            <p
+                                                                className="
+                                                                    truncate
+                                                                    font-semibold
+                                                                    text-slate-800
+                                                                "
+                                                            >
+                                                                {
+                                                                    product.name
+                                                                }
+                                                            </p>
 
-            {pagination && (
 
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                                            <p
+                                                                className="
+                                                                    mt-1
+                                                                    truncate
+                                                                    text-xs
+                                                                    text-slate-400
+                                                                "
+                                                            >
+                                                                {
+                                                                    product.slug
+                                                                }
+                                                            </p>
 
-                    <p className="text-sm text-muted-foreground">
+                                                        </div>
 
-                        Showing{" "}
-                        <span className="font-medium">
+                                                    </TableCell>
 
-                            {(pagination.page - 1) * pagination.limit + 1}
 
-                        </span>
+                                                    {/* BRAND */}
 
-                        {" - "}
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            text-sm
+                                                            font-medium
+                                                            text-slate-600
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
+                                                        {
+                                                            product.brandName ||
+                                                            "-"
+                                                        }
+                                                    </TableCell>
 
-                        <span className="font-medium">
 
-                            {Math.min(
-                                pagination.page * pagination.limit,
-                                pagination.total
-                            )}
+                                                    {/* CATEGORY */}
 
-                        </span>
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            text-sm
+                                                            text-slate-600
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
+                                                        {
+                                                            product.categoryName ||
+                                                            "-"
+                                                        }
+                                                    </TableCell>
 
-                        {" "}of{" "}
 
-                        <span className="font-medium">
+                                                    {/* PACK */}
 
-                            {pagination.total}
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            text-sm
+                                                            font-medium
+                                                            text-slate-700
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
+                                                        {
+                                                            product.packSize ||
+                                                            "-"
+                                                        }
+                                                    </TableCell>
 
-                        </span>
 
-                        {" "}products
+                                                    {/* PRICE */}
 
-                    </p>
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            text-sm
+                                                            font-semibold
+                                                            text-slate-800
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
+                                                        ₹{" "}
+                                                        {Number(
+                                                            product.price ?? 0
+                                                        ).toLocaleString(
+                                                            "en-IN"
+                                                        )}
+                                                    </TableCell>
 
-                    <div className="flex items-center gap-2">
 
-                        <Button
-                            variant="outline"
-                            disabled={pagination.page <= 1}
-                            onClick={() =>
-                                setPage((prev) => prev - 1)
-                            }
-                        >
-                            Previous
-                        </Button>
+                                                    {/* STOCK */}
 
-                        <div className="rounded-md border px-4 py-2 text-sm font-medium">
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
 
-                            Page {pagination.page} of{" "}
-                            {pagination.totalPages}
+                                                        <div className="space-y-1.5">
+
+                                                            <p
+                                                                className="
+                                                                    text-sm
+                                                                    font-semibold
+                                                                    text-slate-800
+                                                                "
+                                                            >
+                                                                {Number(
+                                                                    product.stock ?? 0
+                                                                ).toLocaleString(
+                                                                    "en-IN"
+                                                                )}
+                                                            </p>
+
+
+                                                            <StockBadge
+                                                                stock={Number(
+                                                                    product.stock ?? 0
+                                                                )}
+                                                            />
+
+                                                        </div>
+
+                                                    </TableCell>
+
+
+                                                    {/* STATUS */}
+
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
+
+                                                        <StatusBadge
+                                                            status={
+                                                                product.status
+                                                            }
+                                                        />
+
+                                                    </TableCell>
+
+
+                                                    {/* ACTIONS */}
+
+                                                    <TableCell
+                                                        className="
+                                                            px-4
+                                                            py-3
+                                                            sm:px-5
+                                                            sm:py-4
+                                                        "
+                                                    >
+
+                                                        <div
+                                                            className="
+                                                                flex
+                                                                justify-end
+                                                                gap-2
+                                                            "
+                                                        >
+
+                                                            {/* VIEW */}
+
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                asChild
+                                                                title="View Product"
+                                                                className="
+                                                                    h-9
+                                                                    w-9
+                                                                    shrink-0
+                                                                    rounded-xl
+                                                                    border
+                                                                    border-blue-100
+                                                                    bg-white
+                                                                    text-blue-600
+                                                                    hover:bg-blue-50
+                                                                    hover:text-blue-700
+                                                                    sm:h-10
+                                                                    sm:w-10
+                                                                "
+                                                            >
+
+                                                                <Link
+                                                                    href={`/products/${product.id}`}
+                                                                >
+                                                                    <Eye
+                                                                        className="
+                                                                            h-4
+                                                                            w-4
+                                                                        "
+                                                                    />
+                                                                </Link>
+
+                                                            </Button>
+
+
+                                                            {/* EDIT */}
+
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                asChild
+                                                                title="Edit Product"
+                                                                className="
+                                                                    h-9
+                                                                    w-9
+                                                                    shrink-0
+                                                                    rounded-xl
+                                                                    border
+                                                                    border-emerald-100
+                                                                    bg-white
+                                                                    text-emerald-600
+                                                                    hover:bg-emerald-50
+                                                                    hover:text-emerald-700
+                                                                    sm:h-10
+                                                                    sm:w-10
+                                                                "
+                                                            >
+
+                                                                <Link
+                                                                    href={`/products/${product.id}/edit`}
+                                                                >
+                                                                    <Pencil
+                                                                        className="
+                                                                            h-4
+                                                                            w-4
+                                                                        "
+                                                                    />
+                                                                </Link>
+
+                                                            </Button>
+
+
+                                                            {/* DELETE */}
+
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                title="Delete Product"
+                                                                onClick={() =>
+                                                                    setDeleteId(
+                                                                        product.id
+                                                                    )
+                                                                }
+                                                                className="
+                                                                    h-9
+                                                                    w-9
+                                                                    shrink-0
+                                                                    rounded-xl
+                                                                    border
+                                                                    border-red-100
+                                                                    bg-white
+                                                                    text-red-500
+                                                                    hover:bg-red-50
+                                                                    hover:text-red-600
+                                                                    sm:h-10
+                                                                    sm:w-10
+                                                                "
+                                                            >
+
+                                                                <Trash2
+                                                                    className="
+                                                                        h-4
+                                                                        w-4
+                                                                    "
+                                                                />
+
+                                                            </Button>
+
+                                                        </div>
+
+                                                    </TableCell>
+
+                                                </TableRow>
+
+                                            )
+                                        )}
+
+                                    </TableBody>
+
+                                </Table>
+
+                            </div>
 
                         </div>
 
-                        <Button
-                            variant="outline"
-                            disabled={
-                                pagination.page >=
-                                pagination.totalPages
-                            }
-                            onClick={() =>
-                                setPage((prev) => prev + 1)
-                            }
-                        >
-                            Next
-                        </Button>
 
-                    </div>
+                        {/* =================================================
+                            PAGINATION
+                        ================================================= */}
 
-                </div>
+                        {pagination && (
+                            <div
+                                className="
+                                    flex
+                                    flex-col
+                                    gap-3
+                                    rounded-3xl
+                                    border
+                                    border-slate-100
+                                    bg-white
+                                    p-4
+                                    shadow-sm
+                                    sm:p-5
+                                    md:flex-row
+                                    md:items-center
+                                    md:justify-between
+                                "
+                            >
 
-            )}
+                                <p
+                                    className="
+                                        text-center
+                                        text-sm
+                                        text-slate-500
+                                        md:text-left
+                                    "
+                                >
+                                    Showing{" "}
 
-            {/* Delete Dialog */}
+                                    <span
+                                        className="
+                                            font-semibold
+                                            text-slate-700
+                                        "
+                                    >
+                                        {pagination.total === 0
+                                            ? 0
+                                            : (pagination.page - 1) *
+                                            pagination.limit +
+                                            1}
+                                    </span>
+
+                                    {" - "}
+
+                                    <span
+                                        className="
+                                            font-semibold
+                                            text-slate-700
+                                        "
+                                    >
+                                        {Math.min(
+                                            pagination.page *
+                                            pagination.limit,
+                                            pagination.total
+                                        )}
+                                    </span>
+
+                                    {" "}of{" "}
+
+                                    <span
+                                        className="
+                                            font-semibold
+                                            text-slate-700
+                                        "
+                                    >
+                                        {pagination.total}
+                                    </span>
+
+                                    {" "}products
+                                </p>
+
+
+                                <div
+                                    className="
+                                        flex
+                                        w-full
+                                        items-center
+                                        justify-center
+                                        gap-2
+                                        md:w-auto
+                                    "
+                                >
+
+                                    <Button
+                                        variant="outline"
+                                        disabled={
+                                            pagination.page <= 1
+                                        }
+                                        onClick={() =>
+                                            setPage(
+                                                (prev) =>
+                                                    prev - 1
+                                            )
+                                        }
+                                        className="
+                                            rounded-xl
+                                            border-slate-200
+                                        "
+                                    >
+                                        Previous
+                                    </Button>
+
+
+                                    <div
+                                        className="
+                                            whitespace-nowrap
+                                            rounded-xl
+                                            border
+                                            border-slate-200
+                                            bg-slate-50
+                                            px-3
+                                            py-2
+                                            text-xs
+                                            font-medium
+                                            text-slate-700
+                                            sm:px-4
+                                            sm:text-sm
+                                        "
+                                    >
+                                        Page{" "}
+                                        {pagination.page}{" "}
+                                        of{" "}
+                                        {pagination.totalPages}
+                                    </div>
+
+
+                                    <Button
+                                        variant="outline"
+                                        disabled={
+                                            pagination.page >=
+                                            pagination.totalPages
+                                        }
+                                        onClick={() =>
+                                            setPage(
+                                                (prev) =>
+                                                    prev + 1
+                                            )
+                                        }
+                                        className="
+                                            rounded-xl
+                                            border-slate-200
+                                        "
+                                    >
+                                        Next
+                                    </Button>
+
+                                </div>
+
+                            </div>
+                        )}
+
+                    </>
+                )}
+
+
+            {/* =================================================
+                DELETE DIALOG
+            ================================================= */}
 
             <DeleteProductDialog
-                open={!!deleteId}
+                open={Boolean(deleteId)}
                 productId={deleteId}
                 onOpenChange={(open) => {
                     if (!open) {
@@ -509,6 +1261,5 @@ export default function ProductsTable() {
             />
 
         </div>
-
     );
 }

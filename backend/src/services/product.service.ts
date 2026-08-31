@@ -1,12 +1,24 @@
 import { prisma } from "../lib/prisma";
+
 import {
   CreateProductInput,
   UpdateProductInput,
 } from "../types/product.types";
-import { generateUniqueSlug } from "../utils/slug.util";
 
-export const createProduct = async (data: CreateProductInput) => {
-  const slug = await generateUniqueSlug(data.name);
+import {
+  generateUniqueSlug,
+} from "../utils/slug.util";
+
+// =====================================================
+// CREATE PRODUCT
+// =====================================================
+
+export const createProduct = async (
+  data: CreateProductInput
+) => {
+  const slug = await generateUniqueSlug(
+    data.name
+  );
 
   return prisma.product.create({
     data: {
@@ -19,21 +31,31 @@ export const createProduct = async (data: CreateProductInput) => {
 
       packSize: data.packSize,
       price: data.price,
-      
 
-      image: data.image,
+      stock: data.stock ?? 0,
 
-      usedForCrops: data.usedForCrops,
+      image: data.image ?? null,
 
-      status: data.status,
+      usedForCrops:
+        data.usedForCrops ?? [],
+
+      status:
+        data.status ?? true,
 
       variants:
-        data.variants && data.variants.length > 0
+        data.variants &&
+          data.variants.length > 0
           ? {
-            create: data.variants.map((variant) => ({
-              packSize: variant.packSize,
-              price: variant.price,
-            })),
+            create:
+              data.variants.map(
+                (variant) => ({
+                  packSize:
+                    variant.packSize,
+
+                  price:
+                    variant.price,
+                })
+              ),
           }
           : undefined,
     },
@@ -58,87 +80,104 @@ export const createProduct = async (data: CreateProductInput) => {
   });
 };
 
+// =====================================================
+// GET ALL PRODUCTS
+// =====================================================
+
 export const getAllProducts = async (
   page = 1,
   limit = 10,
   search?: string,
   brandId?: string,
-  categoryId?: string
+  categoryId?: string,
+  includeInactive = false
 ) => {
-  const where = {
-    status: true,
+  const where: any = {
+    ...(includeInactive
+      ? {}
+      : {
+        status: true,
+      }),
 
     ...(search && {
       OR: [
         {
           name: {
             contains: search,
-            mode: "insensitive" as const,
+            mode: "insensitive",
           },
         },
+
         {
           description: {
             contains: search,
-            mode: "insensitive" as const,
+            mode: "insensitive",
           },
         },
+
         {
           packSize: {
             contains: search,
-            mode: "insensitive" as const,
+            mode: "insensitive",
           },
         },
+
         {
           brand: {
             name: {
               contains: search,
-              mode: "insensitive" as const,
+              mode: "insensitive",
             },
           },
         },
       ],
     }),
 
-    ...(brandId && { brandId }),
+    ...(brandId && {
+      brandId,
+    }),
 
-    ...(categoryId && { categoryId }),
+    ...(categoryId && {
+      categoryId,
+    }),
   };
 
-  const [products, total] = await Promise.all([
-    prisma.product.findMany({
-      where,
+  const [products, total] =
+    await Promise.all([
+      prisma.product.findMany({
+        where,
 
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
+
+          brand: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+
+          variants: true,
         },
 
-        brand: {
-          select: {
-            id: true,
-            name: true,
-          },
+        orderBy: {
+          createdAt: "desc",
         },
 
-        variants: true,
-      },
+        skip: (page - 1) * limit,
 
-      orderBy: {
-        createdAt: "desc",
-      },
+        take: limit,
+      }),
 
-      skip: (page - 1) * limit,
-
-      take: limit,
-    }),
-
-    prisma.product.count({
-      where,
-    }),
-  ]);
+      prisma.product.count({
+        where,
+      }),
+    ]);
 
   return {
     products,
@@ -147,15 +186,29 @@ export const getAllProducts = async (
       page,
       limit,
       total,
-      totalPages: Math.ceil(total / limit),
+      totalPages:
+        Math.ceil(total / limit),
     },
   };
 };
 
-export const getProductBySlug = async (slug: string) => {
-  return prisma.product.findUnique({
+// =====================================================
+// GET PRODUCT BY ID OR SLUG
+// =====================================================
+
+export const getProductBySlug = async (
+  idOrSlug: string
+) => {
+  return prisma.product.findFirst({
     where: {
-      slug,
+      OR: [
+        {
+          id: idOrSlug,
+        },
+        {
+          slug: idOrSlug,
+        },
+      ],
     },
 
     include: {
@@ -178,58 +231,138 @@ export const getProductBySlug = async (slug: string) => {
   });
 };
 
+// =====================================================
+// UPDATE PRODUCT
+// =====================================================
+
 export const updateProduct = async (
   id: string,
   data: UpdateProductInput
 ) => {
-  const updateData: any = {};
-
-  if (data.name) {
-    updateData.name = data.name;
-    updateData.slug = await generateUniqueSlug(data.name);
-  }
-
-  if (data.description !== undefined)
-    updateData.description = data.description;
-
-  if (data.categoryId !== undefined)
-    updateData.categoryId = data.categoryId;
-
-  if (data.brandId !== undefined)
-    updateData.brandId = data.brandId;
-
-  if (data.packSize !== undefined)
-    updateData.packSize = data.packSize;
-
-  if (data.price !== undefined)
-    updateData.price = data.price;
-
-  if (data.stock !== undefined)
-    updateData.stock = data.stock;
-
-  if (data.image !== undefined)
-    updateData.image = data.image;
-
-  if (data.usedForCrops !== undefined)
-    updateData.usedForCrops = data.usedForCrops;
-
-  if (data.status !== undefined)
-    updateData.status = data.status;
-
-  if (data.variants !== undefined) {
-    await prisma.productVariant.deleteMany({
+  const existing =
+    await prisma.product.findUnique({
       where: {
-        productId: id,
+        id,
       },
     });
 
+  if (!existing) {
+    throw new Error(
+      "Product not found"
+    );
+  }
+
+  const updateData: any = {};
+
+  // ---------------------------------------------------
+  // Name + slug
+  // ---------------------------------------------------
+
+  if (
+    data.name !== undefined &&
+    data.name !== existing.name
+  ) {
+    updateData.name = data.name;
+
+    updateData.slug =
+      await generateUniqueSlug(
+        data.name
+      );
+  }
+
+  // ---------------------------------------------------
+  // Basic fields
+  // ---------------------------------------------------
+
+  if (
+    data.description !== undefined
+  ) {
+    updateData.description =
+      data.description;
+  }
+
+  if (
+    data.categoryId !== undefined
+  ) {
+    updateData.categoryId =
+      data.categoryId;
+  }
+
+  if (
+    data.brandId !== undefined
+  ) {
+    updateData.brandId =
+      data.brandId;
+  }
+
+  if (
+    data.packSize !== undefined
+  ) {
+    updateData.packSize =
+      data.packSize;
+  }
+
+  if (
+    data.price !== undefined
+  ) {
+    updateData.price =
+      data.price;
+  }
+
+  if (
+    data.stock !== undefined
+  ) {
+    updateData.stock =
+      data.stock;
+  }
+
+  if (
+    data.image !== undefined
+  ) {
+    updateData.image =
+      data.image;
+  }
+
+  if (
+    data.usedForCrops !== undefined
+  ) {
+    updateData.usedForCrops =
+      data.usedForCrops;
+  }
+
+  if (
+    data.status !== undefined
+  ) {
+    updateData.status =
+      data.status;
+  }
+
+  // ---------------------------------------------------
+  // Variants
+  // ---------------------------------------------------
+
+  if (
+    data.variants !== undefined
+  ) {
     updateData.variants = {
-      create: data.variants.map((variant) => ({
-        packSize: variant.packSize,
-        price: variant.price,
-      })),
+      deleteMany: {},
+
+      create:
+        data.variants.map(
+          (variant) => ({
+            packSize:
+              variant.packSize,
+
+            price:
+              variant.price,
+          })
+        ),
     };
   }
+
+  // ---------------------------------------------------
+  // Update
+  // ---------------------------------------------------
 
   return prisma.product.update({
     where: {
@@ -258,7 +391,13 @@ export const updateProduct = async (
   });
 };
 
-export const deleteProduct = async (id: string) => {
+// =====================================================
+// DELETE / DEACTIVATE PRODUCT
+// =====================================================
+
+export const deleteProduct = async (
+  id: string
+) => {
   return prisma.product.update({
     where: {
       id,
