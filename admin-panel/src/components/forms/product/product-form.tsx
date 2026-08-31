@@ -227,35 +227,58 @@ export default function ProductForm({
         useForm<ProductFormValues>({
             resolver:
                 zodResolver(
-                    productFormSchema
-                ),
+                    productFormSchema,
+                ) as any,
 
             defaultValues: {
-                name: "",
+                name: product?.name ?? "",
 
-                description: "",
+                description:
+                    product?.description ?? "",
 
-                categoryId: product.categoryId ?? "",
+                categoryId:
+                    product?.categoryId ?? "",
 
                 brandId:
-                    product.brandId ?? "",
+                    product?.brandId ?? "",
 
-                packSize: "",
+                packSize:
+                    product?.packSize ?? "",
 
-                price: 0,
+                price: product?.price !== undefined &&
+                    product?.price !== null
+                    ? Number(product?.price)
+                    : 0,
 
-                stock: product.stock !== undefined &&
-                    product.stock !== null
-                    ? Number(product.stock)
+                stock: product?.stock !== undefined &&
+                    product?.stock !== null
+                    ? Number(product?.stock)
                     : 0,
 
                 image: undefined,
 
-                usedForCrops: [],
+                usedForCrops:
+                    Array.isArray(
+                        product?.usedForCrops
+                    )
+                        ? product?.usedForCrops
+                        : [],
 
-                status: true,
+                status:
+                    product?.status !==
+                        undefined
+                        ? Boolean(
+                            product?.status
+                        )
+                        : true,
 
-                variants: [],
+                variants:
+                    Array.isArray(
+                        product?.variants
+                    )
+                        ? product?.variants ??
+                            []
+                        : [],
             },
 
             mode: "onChange",

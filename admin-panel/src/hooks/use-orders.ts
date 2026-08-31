@@ -1,29 +1,52 @@
 import { useEffect, useState } from "react";
 
+export interface OrderAddress {
+  id: string;
+  orderId: string;
+  fullName: string;
+  phone: string;
+  state: string;
+  district: string;
+  taluka?: string;
+  village: string;
+  city?: string;
+  pincode: string;
+  addressLine: string;
+  landmark?: string;
+}
+
 export interface Order {
   id: string;
   totalAmount: number;
   status: string;
   paymentStatus: string;
   createdAt: string;
+
   user: {
     email: string;
     name: string;
     phone?: string;
   };
+
   payment: any;
   items: any[];
+
+  OrderAddress?: OrderAddress;
 }
 
-export function useOrders() { 
+export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-       const res = await fetch("http://localhost:5000/api/orders");
+        const res = await fetch(
+          "http://localhost:5000/api/orders"
+        );
+
         const json = await res.json();
+
         setOrders(json.data ?? []);
       } catch (err) {
         console.error(err);

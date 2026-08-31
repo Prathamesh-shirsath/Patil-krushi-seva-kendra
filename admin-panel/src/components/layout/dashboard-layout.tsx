@@ -122,8 +122,6 @@ export default function DashboardLayout({
 
           </main>
 
-            </main>
-          </div>
         </div>
 
       </div>

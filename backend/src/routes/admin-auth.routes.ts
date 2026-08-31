@@ -15,6 +15,6 @@ router.post("/login", adminLogin);
 router.get("/me", adminMiddleware, adminMe);
 
 // Admin Logout
-router.post("/logout", adminMiddleware, adminLogout);
+router.post("/logout", adminLogout);
 
 export default router;
