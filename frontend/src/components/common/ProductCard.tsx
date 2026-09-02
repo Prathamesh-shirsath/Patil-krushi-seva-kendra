@@ -1,6 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingCart, Star } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -47,17 +51,22 @@ export default function ProductCard({
 }: Props) {
   const isAvailable = availability === "In Stock";
 
-  const productHref = slug ? `/product/${slug}` : undefined;
+  const productHref = slug
+    ? `/product/${slug}`
+    : undefined;
 
   const productImage = getImageSrc(
     image,
     DEFAULT_PRODUCT_IMAGE
   );
 
+  // =========================================================
+  // WISHLIST
+  // =========================================================
+
   const { data: wishlist = [] } = useWishlist();
 
   const addWishlist = useAddWishlist();
-
   const removeWishlist = useRemoveWishlist();
 
   const isWishlisted = wishlist.some(
@@ -65,11 +74,84 @@ export default function ProductCard({
   );
 
   const wishlistLoading =
-    addWishlist.isPending || removeWishlist.isPending;
+    addWishlist.isPending ||
+    removeWishlist.isPending;
+
+  // =========================================================
+  // CART
+  // =========================================================
+
+  const [cartLoading, setCartLoading] =
+    useState(false);
+
+  const handleAddToCart = async () => {
+    if (!isAvailable || cartLoading) return;
+
+    try {
+      setCartLoading(true);
+
+      const response = await fetch(
+        "http://localhost:5000/api/cart",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            productId: id,
+            quantity: 1,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+            "Unable to add product to cart."
+        );
+      }
+
+      // =====================================================
+      // 🔥 CART HEADER BADGE INSTANT UPDATE
+      // =====================================================
+
+      window.dispatchEvent(
+        new Event("cart-updated")
+      );
+
+      toast.success("Product added to cart.");
+
+    } catch (error: any) {
+      console.error(
+        "Add to cart error:",
+        error
+      );
+
+      toast.error(
+        error?.message ||
+          "Unable to add product to cart."
+      );
+    } finally {
+      setCartLoading(false);
+    }
+  };
+
+  // =========================================================
+  // UI
+  // =========================================================
 
   return (
     <Card className="group flex h-full min-h-[318px] overflow-hidden rounded-xl border border-gray-200 bg-white py-0 text-sm shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-green-100 hover:shadow-xl">
+
+      {/* =====================================================
+          PRODUCT IMAGE
+      ===================================================== */}
+
       <div className="relative flex h-[150px] shrink-0 items-center justify-center overflow-hidden bg-white px-4 py-3 sm:h-[158px]">
+
         {productHref ? (
           <Link
             href={productHref}
@@ -100,7 +182,12 @@ export default function ProductCard({
         )}
       </div>
 
+      {/* =====================================================
+          PRODUCT DETAILS
+      ===================================================== */}
+
       <CardContent className="flex flex-1 flex-col px-3 pb-3 pt-0">
+
         <p className="truncate text-[10px] font-bold uppercase tracking-wide text-green-700">
           {category ?? "Product"}
         </p>
@@ -122,7 +209,10 @@ export default function ProductCard({
           {unit ? ` | ${unit}` : ""}
         </p>
 
+        {/* Rating */}
+
         <div className="mt-1 flex items-center gap-1">
+
           <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
 
           <span className="text-[11px]">
@@ -136,7 +226,10 @@ export default function ProductCard({
           )}
         </div>
 
+        {/* Price */}
+
         <div className="mt-2 flex items-baseline gap-2">
+
           <p className="text-lg font-bold">
             ₹{price}
           </p>
@@ -148,14 +241,30 @@ export default function ProductCard({
           )}
         </div>
 
+        {/* ===================================================
+            ACTION BUTTONS
+        =================================================== */}
+
         <div className="mt-auto flex items-center gap-2 pt-3">
+
+          {/* ================= ADD TO CART ================= */}
+
           <Button
-            disabled={!isAvailable}
-            className="flex-1 bg-green-700 hover:bg-green-800 text-xs px-2 sm:px-3 h-10 font-bold"
+            disabled={
+              !isAvailable ||
+              cartLoading
+            }
+            onClick={handleAddToCart}
+            className="flex-1 bg-green-700 text-xs font-bold hover:bg-green-800 px-2 sm:px-3 h-10"
           >
             <ShoppingCart className="mr-1.5 h-3.5 w-3.5 shrink-0" />
-            Add to Cart
+
+            {cartLoading
+              ? "Adding..."
+              : "Add to Cart"}
           </Button>
+
+          {/* ================= WISHLIST ================= */}
 
           <button
             disabled={wishlistLoading}
@@ -177,6 +286,7 @@ export default function ProductCard({
               }
             />
           </button>
+
         </div>
       </CardContent>
     </Card>

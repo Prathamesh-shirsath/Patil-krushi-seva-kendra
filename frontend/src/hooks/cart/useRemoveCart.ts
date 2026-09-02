@@ -10,14 +10,19 @@ export const useRemoveCart = () => {
     return useMutation({
         mutationFn: removeCartItem,
 
-        onSuccess: () => {
-            queryClient.invalidateQueries({
+        onSuccess: async () => {
+            // Cart data refresh
+            await queryClient.invalidateQueries({
                 queryKey: ["cart"],
             });
 
-            queryClient.invalidateQueries({
+            // Cart count refresh
+            await queryClient.invalidateQueries({
                 queryKey: ["cart-count"],
             });
+
+            // 🔥 Header badge instantly update
+            window.dispatchEvent(new Event("cart-updated"));
 
             toast.success("Item removed.");
         },
