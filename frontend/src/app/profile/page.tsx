@@ -20,80 +20,354 @@ export default function ProfilePage() {
     useState<ProfileSection>("profile");
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
-      <div className="mx-auto max-w-[1600px] px-4 py-8 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[300px_1fr]">
+    <main className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-green-50 via-white to-emerald-50">
+      <div
+        className="
+          mx-auto
+          w-full
+          max-w-[1600px]
+          px-3
+          py-4
+          sm:px-5
+          sm:py-6
+          lg:px-8
+          lg:py-8
+        "
+      >
+        {/* =====================================================
+            PROFILE DASHBOARD LAYOUT
+        ====================================================== */}
+        <div
+          className="
+            grid
+            w-full
+            grid-cols-1
+            gap-5
+            lg:grid-cols-[270px_minmax(0,1fr)]
+            lg:gap-6
+            xl:grid-cols-[290px_minmax(0,1fr)]
+            xl:gap-8
+          "
+        >
+          {/* =====================================================
+              LEFT SIDEBAR
+          ====================================================== */}
+          <aside
+            className="
+              w-full
+              min-w-0
+              lg:sticky
+              lg:top-24
+              lg:self-start
+              lg:max-h-[calc(100vh-120px)]
+              lg:overflow-y-auto
+              lg:pr-1
+              lg:[scrollbar-width:none]
+              [&::-webkit-scrollbar]:hidden
+            "
+          >
+            <div
+              className="
+                w-full
+                overflow-hidden
+                rounded-2xl
+                border
+                border-slate-200/80
+                bg-white
+                shadow-sm
+                transition-all
+                duration-300
+                hover:shadow-md
+                sm:rounded-3xl
+              "
+            >
+              <ProfileSidebar
+                active={section}
+                onChange={setSection}
+              />
+            </div>
+          </aside>
 
-          {/* Left Sidebar */}
-          <ProfileSidebar
-            active={section}
-            onChange={setSection}
-          />
-
-          {/* Right Content */}
-          <div className="space-y-6">
-
-            {/* Premium Profile Banner */}
-            <div className="relative overflow-hidden rounded-[32px] border border-green-100 bg-gradient-to-r from-green-100 via-white to-green-50 p-8 shadow-xl">
-              
-              <div className="relative z-10 max-w-2xl">
-                
-                <span className="inline-flex rounded-full bg-green-600 px-4 py-1.5 text-xs font-bold text-white shadow-sm">
+          {/* =====================================================
+              RIGHT CONTENT
+          ====================================================== */}
+          <section
+            className="
+              min-w-0
+              w-full
+              space-y-5
+              sm:space-y-6
+            "
+          >
+            {/* ===================================================
+                PREMIUM PROFILE BANNER
+            ==================================================== */}
+            <div
+              className="
+                relative
+                min-h-[220px]
+                w-full
+                overflow-hidden
+                rounded-2xl
+                border
+                border-green-100
+                bg-gradient-to-br
+                from-green-100
+                via-white
+                to-emerald-50
+                p-5
+                shadow-lg
+                sm:min-h-[250px]
+                sm:rounded-3xl
+                sm:p-7
+                md:p-8
+                lg:min-h-[270px]
+              "
+            >
+              {/* Content */}
+              <div
+                className="
+                  relative
+                  z-10
+                  max-w-2xl
+                "
+              >
+                {/* Badge */}
+                <span
+                  className="
+                    inline-flex
+                    items-center
+                    rounded-full
+                    bg-green-600
+                    px-3
+                    py-1
+                    text-[10px]
+                    font-bold
+                    uppercase
+                    tracking-wide
+                    text-white
+                    shadow-sm
+                    sm:px-4
+                    sm:py-1.5
+                    sm:text-xs
+                  "
+                >
                   Premium Member
                 </span>
 
-                <h1 className="mt-5 text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">
+                {/* Heading */}
+                <h1
+                  className="
+                    mt-3
+                    text-2xl
+                    font-black
+                    tracking-tight
+                    text-slate-900
+                    sm:mt-4
+                    sm:text-4xl
+                    md:text-5xl
+                  "
+                >
                   My Profile
                 </h1>
 
-                <p className="mt-3 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+                {/* Description */}
+                <p
+                  className="
+                    mt-2
+                    max-w-xl
+                    text-sm
+                    leading-6
+                    text-slate-600
+                    sm:mt-3
+                    sm:text-base
+                    sm:leading-7
+                    md:text-lg
+                  "
+                >
                   Manage your personal information, addresses,
                   wishlist and orders in one place.
                 </p>
-
               </div>
 
-              {/* Decorative Effects */}
-              <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-green-200/40 blur-3xl" />
+              {/* =================================================
+                  DECORATIVE BACKGROUND
+              ================================================== */}
 
-              <div className="absolute -bottom-20 right-32 h-52 w-52 rounded-full bg-emerald-200/30 blur-3xl" />
+              {/* Top Right Glow */}
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  -right-16
+                  -top-16
+                  h-40
+                  w-40
+                  rounded-full
+                  bg-green-200/40
+                  blur-3xl
+                  sm:-right-20
+                  sm:-top-20
+                  sm:h-64
+                  sm:w-64
+                  md:h-72
+                  md:w-72
+                "
+              />
 
-              <div className="absolute right-10 top-10 hidden h-20 w-20 rounded-full border border-green-200/50 sm:block" />
+              {/* Bottom Right Glow */}
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  -bottom-16
+                  right-4
+                  h-32
+                  w-32
+                  rounded-full
+                  bg-emerald-200/30
+                  blur-3xl
+                  sm:-bottom-20
+                  sm:right-20
+                  sm:h-48
+                  sm:w-48
+                  md:right-32
+                  md:h-52
+                  md:w-52
+                "
+              />
+
+              {/* Circle */}
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  right-4
+                  top-4
+                  hidden
+                  h-16
+                  w-16
+                  rounded-full
+                  border
+                  border-green-200/50
+                  sm:right-8
+                  sm:top-8
+                  sm:block
+                  sm:h-20
+                  sm:w-20
+                  md:right-12
+                  md:top-10
+                  md:h-24
+                  md:w-24
+                "
+              />
+
+              {/* Small Circle */}
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  bottom-6
+                  right-20
+                  hidden
+                  h-5
+                  w-5
+                  rounded-full
+                  bg-green-300/40
+                  sm:block
+                  md:right-40
+                "
+              />
             </div>
 
-            {/* Main Content Card */}
-            <Card className="rounded-[30px] border-0 bg-white p-5 shadow-xl sm:p-8">
-
-              {/* Profile */}
+            {/* ===================================================
+                MAIN CONTENT CARD
+            ==================================================== */}
+            <Card
+              className="
+                w-full
+                min-w-0
+                overflow-hidden
+                rounded-2xl
+                border
+                border-slate-200/80
+                bg-white
+                p-4
+                shadow-lg
+                transition-all
+                duration-300
+                sm:rounded-3xl
+                sm:p-6
+                md:p-8
+                lg:p-9
+              "
+            >
+              {/* =================================================
+                  PROFILE
+              ================================================== */}
               {section === "profile" && (
-                <ProfileForm />
+                <div className="w-full min-w-0">
+                  <ProfileForm />
+                </div>
               )}
 
-              {/* Addresses */}
+              {/* =================================================
+                  ADDRESSES
+              ================================================== */}
               {section === "addresses" && (
-                <AddressList />
+                <div className="w-full min-w-0">
+                  <AddressList />
+                </div>
               )}
 
-              {/* Wishlist */}
+              {/* =================================================
+                  WISHLIST
+              ================================================== */}
               {section === "wishlist" && (
-                <div className="min-h-[500px]">
-                  <h2 className="text-3xl font-black text-slate-900">
+                <div
+                  className="
+                    min-h-[300px]
+                    w-full
+                    min-w-0
+                    sm:min-h-[400px]
+                  "
+                >
+                  <h2
+                    className="
+                      text-2xl
+                      font-black
+                      tracking-tight
+                      text-slate-900
+                      sm:text-3xl
+                    "
+                  >
                     Wishlist
                   </h2>
 
-                  <p className="mt-2 text-slate-500">
+                  <p
+                    className="
+                      mt-2
+                      text-sm
+                      leading-6
+                      text-slate-500
+                      sm:text-base
+                    "
+                  >
                     Your favourite agricultural products.
                   </p>
                 </div>
               )}
 
-              {/* Orders */}
+              {/* =================================================
+                  ORDERS
+              ================================================== */}
               {section === "orders" && (
-                <OrdersList />
+                <div className="w-full min-w-0">
+                  <OrdersList />
+                </div>
               )}
-
             </Card>
-          </div>
+          </section>
         </div>
       </div>
     </main>

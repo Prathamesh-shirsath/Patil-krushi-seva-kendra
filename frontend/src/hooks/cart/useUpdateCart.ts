@@ -16,14 +16,19 @@ export const useUpdateCart = () => {
             quantity: number;
         }) => updateCartItem(itemId, quantity),
 
-        onSuccess: () => {
-            queryClient.invalidateQueries({
+        onSuccess: async () => {
+            // Cart page ka data instantly refresh
+            await queryClient.invalidateQueries({
                 queryKey: ["cart"],
             });
 
-            queryClient.invalidateQueries({
+            // Cart count query bhi refresh
+            await queryClient.invalidateQueries({
                 queryKey: ["cart-count"],
             });
+
+            // 🔥 Header badge ko instantly update karo
+            window.dispatchEvent(new Event("cart-updated"));
         },
 
         onError: (error: any) => {

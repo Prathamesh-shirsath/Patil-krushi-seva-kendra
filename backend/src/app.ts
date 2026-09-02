@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 
+// Routes
 import adminAuthRoutes from "./routes/admin-auth.routes";
 import productRoutes from "./routes/product.routes";
 import categoryRoutes from "./routes/category.routes";
@@ -53,15 +54,26 @@ app.use(express.json());
 // =====================================================
 
 app.use("/api/products", productRoutes);
+
 app.use("/api/categories", categoryRoutes);
+
 app.use("/api/orders", orderRoutes);
+
 app.use("/api/cart", cartRoutes);
+
+// Wishlist
 app.use("/api/wishlist", wishlistRoutes);
+
 app.use("/api/coupons", couponRoutes);
+
 app.use("/api/reviews", reviewRoutes);
+
 app.use("/api/dashboard", dashboardRoutes);
+
 app.use("/api/brands", brandRoutes);
+
 app.use("/api/banners", bannerRoutes);
+
 app.use("/api/statistics", statisticRoutes);
 
 // =====================================================
@@ -79,6 +91,7 @@ app.use("/api/admin-auth", adminAuthRoutes);
 // =====================================================
 
 app.use("/api/users", userRoutes);
+
 app.use("/api/addresses", addressRoutes);
 
 // =====================================================
@@ -86,7 +99,7 @@ app.use("/api/addresses", addressRoutes);
 // =====================================================
 
 app.get("/", (_req, res) => {
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "Krushi Seva Kendra API Running",
   });

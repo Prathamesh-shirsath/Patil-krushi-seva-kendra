@@ -1,5 +1,8 @@
 import { prisma } from "../lib/prisma";
 
+// ===============================
+// GET USER WISHLIST
+// ===============================
 export const getWishlist = async (userId: string) => {
   return prisma.wishlist.findMany({
     where: {
@@ -19,10 +22,14 @@ export const getWishlist = async (userId: string) => {
   });
 };
 
+// ===============================
+// ADD PRODUCT TO WISHLIST
+// ===============================
 export const addToWishlist = async (
   userId: string,
   productId: string
 ) => {
+  // Check product exists
   const product = await prisma.product.findUnique({
     where: {
       id: productId,
@@ -33,6 +40,7 @@ export const addToWishlist = async (
     throw new Error("Product not found");
   }
 
+  // Check already exists
   const exists = await prisma.wishlist.findUnique({
     where: {
       userId_productId: {
@@ -46,6 +54,7 @@ export const addToWishlist = async (
     throw new Error("Product already exists in wishlist");
   }
 
+  // Create wishlist
   return prisma.wishlist.create({
     data: {
       userId,
@@ -62,10 +71,14 @@ export const addToWishlist = async (
   });
 };
 
+// ===============================
+// REMOVE PRODUCT FROM WISHLIST
+// ===============================
 export const removeFromWishlist = async (
   userId: string,
   productId: string
 ) => {
+  // Check wishlist item exists
   const exists = await prisma.wishlist.findUnique({
     where: {
       userId_productId: {
@@ -87,6 +100,23 @@ export const removeFromWishlist = async (
       },
     },
   });
+};
 
-  return;
+// ===============================
+// CHECK PRODUCT IN WISHLIST
+// ===============================
+export const checkWishlist = async (
+  userId: string,
+  productId: string
+) => {
+  const wishlist = await prisma.wishlist.findUnique({
+    where: {
+      userId_productId: {
+        userId,
+        productId,
+      },
+    },
+  });
+
+  return !!wishlist;
 };
