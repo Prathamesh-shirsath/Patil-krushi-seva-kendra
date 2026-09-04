@@ -9,10 +9,7 @@ import {
 } from "../controllers/product.controller";
 
 import { upload } from "../middleware/upload.middleware";
-
-// Uncomment when admin auth is ready
-// import { authenticate } from "../middleware/auth.middleware";
-// import { authorize } from "../middleware/authorize.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 
 const router = Router();
 
@@ -22,40 +19,38 @@ const router = Router();
 |--------------------------------------------------------------------------
 */
 
+// Get all products
 router.get("/", getAllProductsController);
 
+// Get product by slug
 router.get("/:slug", getProductBySlugController);
 
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
 |--------------------------------------------------------------------------
-|
-| Enable authenticate & authorize middleware when Admin Authentication
-| is completed.
-|
 */
 
+// Create product
 router.post(
   "/",
-  // authenticate,
-  // authorize("ADMIN"),
+  adminMiddleware,
   upload.single("image"),
   createProductController
 );
 
+// Update product
 router.put(
   "/:id",
-  // authenticate,
-  // authorize("ADMIN"),
+  adminMiddleware,
   upload.single("image"),
   updateProductController
 );
 
+// Delete product
 router.delete(
   "/:id",
-  // authenticate,
-  // authorize("ADMIN"),
+  adminMiddleware,
   deleteProductController
 );
 

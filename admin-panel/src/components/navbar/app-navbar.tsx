@@ -10,7 +10,7 @@ import {
   User,
 } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -30,15 +30,135 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:5000/api";
+
+type AdminProfile = {
+  name: string;
+  email: string;
+  role: string;
+};
+
 export default function AppNavbar() {
   const [dark, setDark] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
+  const [adminProfile, setAdminProfile] =
+    useState<AdminProfile>({
+      name: "",
+      email: "",
+      role: "ADMIN",
+    });
+
   const router = useRouter();
+
+  // =====================================================
+  // GET ADMIN PROFILE
+  // =====================================================
+
+  const fetchAdminProfile = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/admin/profile`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to load admin profile"
+        );
+      }
+
+      setAdminProfile({
+        name: data.data?.name || "Admin",
+        email: data.data?.email || "",
+        role: data.data?.role || "ADMIN",
+      });
+    } catch (error) {
+      console.error(
+        "Failed to fetch admin profile:",
+        error
+      );
+    }
+  };
+
+  // =====================================================
+  // LOAD PROFILE
+  // =====================================================
+
+  useEffect(() => {
+    fetchAdminProfile();
+
+    // Listen for profile changes
+    const handleProfileUpdated = () => {
+      fetchAdminProfile();
+    };
+
+    window.addEventListener(
+      "admin-profile-updated",
+      handleProfileUpdated
+    );
+
+    return () => {
+      window.removeEventListener(
+        "admin-profile-updated",
+        handleProfileUpdated
+      );
+    };
+  }, []);
+
+  // =====================================================
+  // GET INITIALS
+  // =====================================================
+
+  const getInitials = (name: string) => {
+    if (!name) {
+      return "AD";
+    }
+
+    const words = name
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (words.length === 1) {
+      return words[0]
+        .slice(0, 2)
+        .toUpperCase();
+    }
+
+    return (
+      words[0][0] +
+      words[words.length - 1][0]
+    ).toUpperCase();
+  };
+
+  // =====================================================
+  // PROFILE
+  // =====================================================
+
+  const handleProfile = () => {
+    router.push("/profile");
+  };
+
+  // =====================================================
+  // SETTINGS
+  // =====================================================
+
+  const handleSettings = () => {
+    router.push("/settings");
+  };
 
   // =====================================================
   // LOGOUT
   // =====================================================
+
   const handleLogout = async () => {
     if (loggingOut) return;
 
@@ -46,7 +166,7 @@ export default function AppNavbar() {
       setLoggingOut(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/admin-auth/logout",
+        `${API_URL}/admin-auth/logout`,
         {
           method: "POST",
           credentials: "include",
@@ -56,10 +176,11 @@ export default function AppNavbar() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Logout failed");
+        throw new Error(
+          data.message || "Logout failed"
+        );
       }
 
-      // Redirect to login
       router.push("/login");
       router.refresh();
     } catch (error) {
@@ -250,6 +371,8 @@ export default function AppNavbar() {
               "
             >
 
+              {/* AVATAR */}
+
               <Avatar className="h-9 w-9 sm:h-11 sm:w-11">
 
                 <AvatarFallback
@@ -259,10 +382,12 @@ export default function AppNavbar() {
                     text-white
                   "
                 >
-                  PP
+                  {getInitials(adminProfile.name)}
                 </AvatarFallback>
 
               </Avatar>
+
+              {/* NAME + ROLE */}
 
               <div
                 className="
@@ -275,12 +400,14 @@ export default function AppNavbar() {
 
                 <p
                   className="
+                    max-w-[150px]
+                    truncate
                     text-sm
                     font-semibold
                     text-slate-900
                   "
                 >
-                  Pratham Patil
+                  {adminProfile.name || "Admin"}
                 </p>
 
                 <p
@@ -289,7 +416,9 @@ export default function AppNavbar() {
                     text-slate-500
                   "
                 >
-                  Super Admin
+                  {adminProfile.role === "ADMIN"
+                    ? "Super Admin"
+                    : adminProfile.role}
                 </p>
 
               </div>
@@ -308,21 +437,29 @@ export default function AppNavbar() {
             className="w-56 rounded-xl"
           >
 
-            <DropdownMenuItem>
+            {/* PROFILE */}
+
+            <DropdownMenuItem
+              onClick={handleProfile}
+              className="cursor-pointer"
+            >
               <User className="mr-2 h-4 w-4" />
               Profile
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
+            {/* SETTINGS */}
+
+            <DropdownMenuItem
+              onClick={handleSettings}
+              className="cursor-pointer"
+            >
               <Settings className="mr-2 h-4 w-4" />
               Settings
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 
-            {/* =================================================
-                LOGOUT
-            ================================================= */}
+            {/* LOGOUT */}
 
             <DropdownMenuItem
               onClick={handleLogout}
@@ -335,7 +472,9 @@ export default function AppNavbar() {
             >
               <LogOut className="mr-2 h-4 w-4" />
 
-              {loggingOut ? "Logging out..." : "Logout"}
+              {loggingOut
+                ? "Logging out..."
+                : "Logout"}
             </DropdownMenuItem>
 
           </DropdownMenuContent>

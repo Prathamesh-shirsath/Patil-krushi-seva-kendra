@@ -7,67 +7,24 @@ import {
   updateOrderStatusController,
 } from "../controllers/order.controller";
 
+import { authenticate } from "../middleware/auth.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
+
 const router = Router();
 
-/*
-|--------------------------------------------------------------------------
-| CREATE ORDER
-|--------------------------------------------------------------------------
-|
-| POST /api/orders
-|
-*/
+// Customer - Create Order
+router.post("/", authenticate, createOrderController);
 
-router.post(
-  "/",
-  createOrderController
-);
+// Admin - Get All Orders
+router.get("/", adminMiddleware, getAllOrdersController);
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - GET ALL ORDERS
-|--------------------------------------------------------------------------
-|
-| GET /api/orders
-|
-*/
+// Admin/Customer - Get Single Order
+router.get("/:id", authenticate, getOrderByIdController);
 
-router.get(
-  "/",
-  getAllOrdersController
-);
-
-/*
-|--------------------------------------------------------------------------
-| GET SINGLE ORDER
-|--------------------------------------------------------------------------
-|
-| GET /api/orders/:id
-|
-*/
-
-router.get(
-  "/:id",
-  getOrderByIdController
-);
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN - UPDATE ORDER STATUS
-|--------------------------------------------------------------------------
-|
-| PUT /api/orders/:id/status
-|
-| Body:
-|
-| {
-|   "status": "CONFIRMED"
-| }
-|
-*/
-
+// Admin - Update Order Status
 router.put(
   "/:id/status",
+  adminMiddleware,
   updateOrderStatusController
 );
 
