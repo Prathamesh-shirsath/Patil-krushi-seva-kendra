@@ -9,18 +9,22 @@ import {
   updateStatisticController,
 } from "../controllers/statistic.controller";
 
+import { adminMiddleware } from "../middleware/admin.middleware";
+
 const router = Router();
 
-router.get("/", getAllStatisticsController);
-
+// Public
 router.get("/public", getPublicStatisticsController);
 
-router.get("/:id", getStatisticByIdController);
+// Admin only
+router.get("/", adminMiddleware, getAllStatisticsController);
 
-router.post("/", createStatisticController);
+router.get("/:id", adminMiddleware, getStatisticByIdController);
 
-router.put("/:id", updateStatisticController);
+router.post("/", adminMiddleware, createStatisticController);
 
-router.delete("/:id", deleteStatisticController);
+router.put("/:id", adminMiddleware, updateStatisticController);
+
+router.delete("/:id", adminMiddleware, deleteStatisticController);
 
 export default router;

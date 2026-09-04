@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import {
   createCategoryController,
   getAllCategoriesController,
@@ -6,18 +7,35 @@ import {
   updateCategoryController,
   deleteCategoryController,
 } from "../controllers/category.controller";
+
 import { upload } from "../middleware/upload.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 
 const router = Router();
 
-router.post("/", upload.single("image"), createCategoryController);
-
+// Public
 router.get("/", getAllCategoriesController);
-
 router.get("/:id", getCategoryByIdController);
 
-router.put("/:id", upload.single("image"), updateCategoryController);
+// Admin only
+router.post(
+  "/",
+  adminMiddleware,
+  upload.single("image"),
+  createCategoryController
+);
 
-router.delete("/:id", deleteCategoryController);
+router.put(
+  "/:id",
+  adminMiddleware,
+  upload.single("image"),
+  updateCategoryController
+);
+
+router.delete(
+  "/:id",
+  adminMiddleware,
+  deleteCategoryController
+);
 
 export default router;

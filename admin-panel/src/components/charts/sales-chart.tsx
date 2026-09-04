@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -46,14 +45,12 @@ const data = [
 
 export default function SalesChart() {
   return (
-    <Card className="rounded-3xl shadow-sm">
-
-      <CardContent className="p-6">
-
-        <div className="mb-8 flex items-center justify-between">
-
+    <Card className="w-full min-w-0 rounded-3xl shadow-sm">
+      <CardContent className="p-4 sm:p-6">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between sm:mb-8">
           <div>
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-lg font-semibold sm:text-xl">
               Sales Overview
             </h2>
 
@@ -61,15 +58,25 @@ export default function SalesChart() {
               Weekly sales analytics
             </p>
           </div>
-
         </div>
 
-        <div className="h-[350px]">
-
-          <ResponsiveContainer width="100%" height="100%">
-
-            <LineChart data={data}>
-
+        {/* Chart */}
+        <div className="h-[280px] w-full min-w-0 sm:h-[350px]">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            minWidth={0}
+            minHeight={0}
+          >
+            <LineChart
+              data={data}
+              margin={{
+                top: 5,
+                right: 10,
+                left: 0,
+                bottom: 5,
+              }}
+            >
               <CartesianGrid
                 vertical={false}
                 strokeDasharray="3 3"
@@ -77,11 +84,22 @@ export default function SalesChart() {
 
               <XAxis
                 dataKey="date"
+                tick={{ fontSize: 12 }}
+                tickMargin={8}
               />
 
-              <YAxis />
+              <YAxis
+                tick={{ fontSize: 12 }}
+                tickFormatter={(value) => `₹${value / 1000}k`}
+                width={45}
+              />
 
-              <Tooltip />
+              <Tooltip
+                formatter={(value) => [
+                  `₹${Number(value).toLocaleString("en-IN")}`,
+                  "Sales",
+                ]}
+              />
 
               <Line
                 type="monotone"
@@ -91,16 +109,14 @@ export default function SalesChart() {
                 dot={{
                   r: 5,
                 }}
+                activeDot={{
+                  r: 7,
+                }}
               />
-
             </LineChart>
-
           </ResponsiveContainer>
-
         </div>
-
       </CardContent>
-
     </Card>
   );
 }
