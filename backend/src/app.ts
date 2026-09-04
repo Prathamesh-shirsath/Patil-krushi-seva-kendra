@@ -12,6 +12,9 @@ import cartRoutes from "./routes/cart.routes";
 import wishlistRoutes from "./routes/wishlist.routes";
 import couponRoutes from "./routes/coupon.routes";
 import reviewRoutes from "./routes/review.routes";
+import adminReviewRoutes from "./routes/admin-review.routes";
+import adminProfileRoutes from "./routes/admin-profile.routes";
+import adminCustomerRoutes from "./routes/admin-customer.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import brandRoutes from "./routes/brand.routes";
 import bannerRoutes from "./routes/banner.routes";
@@ -53,27 +56,46 @@ app.use(express.json());
 // API ROUTES
 // =====================================================
 
+// Products
 app.use("/api/products", productRoutes);
 
+// Categories
 app.use("/api/categories", categoryRoutes);
 
+// Orders
 app.use("/api/orders", orderRoutes);
 
+// Cart
 app.use("/api/cart", cartRoutes);
 
 // Wishlist
 app.use("/api/wishlist", wishlistRoutes);
 
+// Coupons
 app.use("/api/coupons", couponRoutes);
 
+// Customer Reviews
 app.use("/api/reviews", reviewRoutes);
 
+// Admin Reviews
+app.use("/api/admin/reviews", adminReviewRoutes);
+
+// Admin Profile
+app.use("/api/admin/profile", adminProfileRoutes);
+
+// Admin Customers
+app.use("/api/admin/customers", adminCustomerRoutes);
+
+// Dashboard
 app.use("/api/dashboard", dashboardRoutes);
 
+// Brands
 app.use("/api/brands", brandRoutes);
 
+// Banners
 app.use("/api/banners", bannerRoutes);
 
+// Statistics
 app.use("/api/statistics", statisticRoutes);
 
 // =====================================================
@@ -90,8 +112,10 @@ app.use("/api/admin-auth", adminAuthRoutes);
 // USERS & ADDRESSES
 // =====================================================
 
+// Users
 app.use("/api/users", userRoutes);
 
+// Addresses
 app.use("/api/addresses", addressRoutes);
 
 // =====================================================
