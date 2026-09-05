@@ -11,10 +11,13 @@ import {
   MapPin,
   Package,
   Truck,
+  Loader2,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getOrderById } from "@/services/order.service";
 
 type OrderStatus =
   | "Pending"
@@ -147,13 +150,68 @@ export default function OrderDetailsPage() {
     ? params.id[0]
     : params.id;
 
-  const orderId = rawId
-    ? `#${rawId.replace("#", "")}`
-    : "";
+  const cleanId = rawId ? rawId.replace("#", "") : "";
 
-  const order = orders.find(
-    (item) => item.id === orderId
+  const { data: dbOrder, isLoading } = useQuery({
+    queryKey: ["order", cleanId],
+    queryFn: () => getOrderById(cleanId),
+    enabled: !!cleanId && !cleanId.startsWith("PKS-"),
+  });
+
+  const mockOrder = orders.find(
+    (item) => item.id === `#${cleanId}`
   );
+
+  const order: Order | undefined = dbOrder
+    ? {
+        id: `#${dbOrder.id.slice(-6).toUpperCase()}`,
+        date: new Date(dbOrder.createdAt).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+        items: dbOrder.items?.length || 0,
+        products: (dbOrder.items || []).map((item: any) => ({
+          name: item.productName || item.product?.name || "Agro Product",
+          quantity: item.quantity,
+          price: `₹${Number(item.price).toLocaleString("en-IN")}`,
+          image: item.product?.image || "/products/fertilizer.webp",
+        })),
+        total: `₹${Number(dbOrder.grandTotal).toLocaleString("en-IN")}`,
+        payment:
+          dbOrder.paymentMethod === "COD"
+            ? "Cash on Delivery"
+            : dbOrder.paymentStatus === "SUCCESS"
+            ? "Paid Online (Razorpay)"
+            : "Pending Online Payment",
+        status:
+          dbOrder.status === "DELIVERED"
+            ? "Delivered"
+            : dbOrder.status === "SHIPPED"
+            ? "Shipped"
+            : dbOrder.status === "CONFIRMED"
+            ? "Confirmed"
+            : "Pending",
+        address: dbOrder.OrderAddress
+          ? `${dbOrder.OrderAddress.fullName}, ${dbOrder.OrderAddress.addressLine}, ${dbOrder.OrderAddress.village}, ${dbOrder.OrderAddress.district}, ${dbOrder.OrderAddress.state} - ${dbOrder.OrderAddress.pincode} (Ph: ${dbOrder.OrderAddress.phone})`
+          : "Standard Delivery Address",
+      }
+    : mockOrder;
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+        <div className="mx-auto flex min-h-[70vh] max-w-[900px] items-center justify-center px-4">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+            <p className="text-sm font-medium text-slate-600">
+              Loading order details...
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   /* ================= INVALID ORDER ================= */
 

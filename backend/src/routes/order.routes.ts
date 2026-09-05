@@ -1,31 +1,44 @@
 import { Router } from "express";
-
 import {
   createOrderController,
   getAllOrdersController,
   getOrderByIdController,
+  getUserOrdersController,
   updateOrderStatusController,
+  verifyPaymentController,
 } from "../controllers/order.controller";
-
 import { authenticate } from "../middleware/auth.middleware";
-import { adminMiddleware } from "../middleware/admin.middleware";
 
 const router = Router();
 
-// Customer - Create Order
+/*
+|--------------------------------------------------------------------------
+| CUSTOMER ROUTES
+|--------------------------------------------------------------------------
+*/
+
+// Create order & initialize Razorpay or COD
 router.post("/", authenticate, createOrderController);
 
-// Admin - Get All Orders
-router.get("/", adminMiddleware, getAllOrdersController);
+// Verify Razorpay payment signature
+router.post("/verify-payment", authenticate, verifyPaymentController);
 
-// Admin/Customer - Get Single Order
-router.get("/:id", authenticate, getOrderByIdController);
+// Get current logged-in user's orders
+router.get("/user/my-orders", authenticate, getUserOrdersController);
 
-// Admin - Update Order Status
-router.put(
-  "/:id/status",
-  adminMiddleware,
-  updateOrderStatusController
-);
+// Get single order by ID
+router.get("/:id", getOrderByIdController);
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
+
+// Get all orders (Admin)
+router.get("/", getAllOrdersController);
+
+// Update order status (Admin)
+router.put("/:id/status", updateOrderStatusController);
 
 export default router;
