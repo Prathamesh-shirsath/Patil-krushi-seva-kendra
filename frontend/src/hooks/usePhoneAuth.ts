@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
 import { auth } from "@/lib/firebase";
 import { useAuth } from "@/providers/AuthProvider";
@@ -20,6 +20,7 @@ declare global {
 
 export function usePhoneAuth() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { refreshUser } = useAuth();
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -171,7 +172,8 @@ export function usePhoneAuth() {
 
             router.refresh();
 
-            router.replace("/");
+            const targetRedirect = searchParams?.get("redirect") || "/";
+            router.replace(targetRedirect);
 
             setSuccess("Login successful.");
         } catch (err: any) {

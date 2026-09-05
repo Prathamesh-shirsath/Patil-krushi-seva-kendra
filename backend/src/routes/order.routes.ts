@@ -1,74 +1,44 @@
 import { Router } from "express";
-
 import {
   createOrderController,
   getAllOrdersController,
   getOrderByIdController,
+  getUserOrdersController,
   updateOrderStatusController,
+  verifyPaymentController,
 } from "../controllers/order.controller";
+import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
 
 /*
 |--------------------------------------------------------------------------
-| CREATE ORDER
+| CUSTOMER ROUTES
 |--------------------------------------------------------------------------
-|
-| POST /api/orders
-|
 */
 
-router.post(
-  "/",
-  createOrderController
-);
+// Create order & initialize Razorpay or COD
+router.post("/", authenticate, createOrderController);
+
+// Verify Razorpay payment signature
+router.post("/verify-payment", authenticate, verifyPaymentController);
+
+// Get current logged-in user's orders
+router.get("/user/my-orders", authenticate, getUserOrdersController);
+
+// Get single order by ID
+router.get("/:id", getOrderByIdController);
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN - GET ALL ORDERS
+| ADMIN ROUTES
 |--------------------------------------------------------------------------
-|
-| GET /api/orders
-|
 */
 
-router.get(
-  "/",
-  getAllOrdersController
-);
+// Get all orders (Admin)
+router.get("/", getAllOrdersController);
 
-/*
-|--------------------------------------------------------------------------
-| GET SINGLE ORDER
-|--------------------------------------------------------------------------
-|
-| GET /api/orders/:id
-|
-*/
-
-router.get(
-  "/:id",
-  getOrderByIdController
-);
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN - UPDATE ORDER STATUS
-|--------------------------------------------------------------------------
-|
-| PUT /api/orders/:id/status
-|
-| Body:
-|
-| {
-|   "status": "CONFIRMED"
-| }
-|
-*/
-
-router.put(
-  "/:id/status",
-  updateOrderStatusController
-);
+// Update order status (Admin)
+router.put("/:id/status", updateOrderStatusController);
 
 export default router;
