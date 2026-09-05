@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import {
   LayoutDashboard,
@@ -33,9 +34,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
- 
 } from "@/components/ui/sidebar";
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:5000/api";
 
 const sections = [
   {
@@ -112,6 +115,11 @@ const sections = [
   },
 ];
 
+type AdminProfile = {
+  name: string;
+  email: string;
+  role: string;
+};
 
 export default function AppSidebar() {
   const pathname = usePathname();
@@ -122,16 +130,114 @@ export default function AppSidebar() {
     setOpenMobile,
   } = useSidebar();
 
-  const collapsed =
-    state === "collapsed";
+  const collapsed = state === "collapsed";
 
+  // =====================================================
+  // ADMIN PROFILE
+  // =====================================================
+
+  const [adminProfile, setAdminProfile] =
+    useState<AdminProfile>({
+      name: "",
+      email: "",
+      role: "ADMIN",
+    });
+
+  // =====================================================
+  // GET ADMIN PROFILE
+  // =====================================================
+
+  const fetchAdminProfile = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/admin/profile`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to load admin profile"
+        );
+      }
+
+      setAdminProfile({
+        name: data.data?.name || "Admin",
+        email: data.data?.email || "",
+        role: data.data?.role || "ADMIN",
+      });
+    } catch (error) {
+      console.error(
+        "Sidebar profile error:",
+        error
+      );
+    }
+  };
+
+  // =====================================================
+  // LOAD PROFILE + LISTEN FOR PROFILE UPDATE
+  // =====================================================
+
+  useEffect(() => {
+    fetchAdminProfile();
+
+    const handleProfileUpdated = () => {
+      fetchAdminProfile();
+    };
+
+    window.addEventListener(
+      "admin-profile-updated",
+      handleProfileUpdated
+    );
+
+    return () => {
+      window.removeEventListener(
+        "admin-profile-updated",
+        handleProfileUpdated
+      );
+    };
+  }, []);
+
+  // =====================================================
+  // GET INITIALS
+  // =====================================================
+
+  const getInitials = (name: string) => {
+    if (!name) {
+      return "AD";
+    }
+
+    const words = name
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (words.length === 1) {
+      return words[0]
+        .slice(0, 2)
+        .toUpperCase();
+    }
+
+    return (
+      words[0][0] +
+      words[words.length - 1][0]
+    ).toUpperCase();
+  };
+
+  // =====================================================
+  // NAVIGATION
+  // =====================================================
 
   const handleNavigation = () => {
     if (isMobile) {
       setOpenMobile(false);
     }
   };
-
 
   return (
     <Sidebar
@@ -140,40 +246,37 @@ export default function AppSidebar() {
       collapsible="icon"
       className="border-r border-green-950"
     >
-
       {/* ================= HEADER ================= */}
 
       <SidebarHeader
         className="
-                    border-b
-                    border-green-900/70
-                    bg-[#072d1a]
-                    px-4
-                    py-5
-                "
+          border-b
+          border-green-900/70
+          bg-[#072d1a]
+          px-4
+          py-5
+        "
       >
-
         <div className="flex items-center gap-3">
 
           {/* Logo */}
 
           <div
             className="
-                            flex
-                            h-11
-                            w-11
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-emerald-600
-                            text-white
-                            shadow-lg
-                        "
+              flex
+              h-11
+              w-11
+              shrink-0
+              items-center
+              justify-center
+              rounded-xl
+              bg-emerald-600
+              text-white
+              shadow-lg
+            "
           >
             <Sprout className="h-6 w-6" />
           </div>
-
 
           {/* Brand */}
 
@@ -182,33 +285,33 @@ export default function AppSidebar() {
 
               <h1
                 className="
-                                    truncate
-                                    text-base
-                                    font-bold
-                                    leading-tight
-                                    tracking-tight
-                                    text-white
-                                "
+                  truncate
+                  text-base
+                  font-bold
+                  leading-tight
+                  tracking-tight
+                  text-white
+                "
               >
                 Patil
               </h1>
 
               <p
                 className="
-                                    truncate
-                                    text-[11px]
-                                    font-medium
-                                    text-emerald-300
-                                "
+                  truncate
+                  text-[11px]
+                  font-medium
+                  text-emerald-300
+                "
               >
                 Krushi Seva Kendra
               </p>
 
               <p
                 className="
-                                    text-[10px]
-                                    text-emerald-400/80
-                                "
+                  text-[10px]
+                  text-emerald-400/80
+                "
               >
                 Admin Panel
               </p>
@@ -217,55 +320,45 @@ export default function AppSidebar() {
           )}
 
         </div>
-
       </SidebarHeader>
-
 
       {/* ================= MENU ================= */}
 
       <SidebarContent
         className="
-                    bg-[#072d1a]
-                    px-2
-                    py-4
-                "
+          bg-[#072d1a]
+          px-2
+          py-4
+        "
       >
-
         {sections.map((section) => (
-
           <SidebarGroup
             key={section.title}
-            className="px-1 py-0 mb-5"
+            className="mb-5 px-1 py-0"
           >
-
             {/* Section title */}
 
             {!collapsed && (
               <SidebarGroupLabel
                 className="
-                                    mb-2
-                                    px-3
-                                    text-[10px]
-                                    font-bold
-                                    uppercase
-                                    tracking-widest
-                                    text-emerald-400/70
-                                "
+                  mb-2
+                  px-3
+                  text-[10px]
+                  font-bold
+                  uppercase
+                  tracking-widest
+                  text-emerald-400/70
+                "
               >
                 {section.title}
               </SidebarGroupLabel>
             )}
 
-
             <SidebarGroupContent>
-
               <SidebarMenu>
 
                 {section.items.map((item) => {
-
-                  const Icon =
-                    item.icon;
-
+                  const Icon = item.icon;
 
                   const isActive =
                     pathname === item.href ||
@@ -273,253 +366,222 @@ export default function AppSidebar() {
                       `${item.href}/`
                     );
 
-
                   return (
-
                     <SidebarMenuItem
                       key={item.name}
                     >
-
                       <SidebarMenuButton
                         asChild
-                        isActive={
-                          isActive
-                        }
+                        isActive={isActive}
                         tooltip={
                           collapsed
                             ? item.name
                             : undefined
                         }
                         className="
-                                                    h-11
-                                                    rounded-xl
-                                                    px-3
-                                                    text-sm
-                                                    font-medium
-                                                    text-green-100
-                                                    hover:bg-green-900/70
-                                                    hover:text-white
-                                                    data-[active=true]:bg-emerald-600
-                                                    data-[active=true]:text-white
-                                                    data-[active=true]:shadow-md
-                                                "
+                          h-11
+                          rounded-xl
+                          px-3
+                          text-sm
+                          font-medium
+                          text-green-100
+                          hover:bg-green-900/70
+                          hover:text-white
+                          data-[active=true]:bg-emerald-600
+                          data-[active=true]:text-white
+                          data-[active=true]:shadow-md
+                        "
                       >
-
                         <Link
-                          href={
-                            item.href
-                          }
+                          href={item.href}
                           onClick={
                             handleNavigation
                           }
                         >
-
                           <Icon
                             className="
-                                                            h-5
-                                                            w-5
-                                                            shrink-0
-                                                        "
+                              h-5
+                              w-5
+                              shrink-0
+                            "
                           />
-
 
                           {!collapsed && (
                             <>
                               <span className="truncate">
-                                {
-                                  item.name
-                                }
+                                {item.name}
                               </span>
-
 
                               {isActive && (
                                 <ChevronRight
                                   className="
-                                                                        ml-auto
-                                                                        h-4
-                                                                        w-4
-                                                                    "
+                                    ml-auto
+                                    h-4
+                                    w-4
+                                  "
                                 />
                               )}
                             </>
                           )}
-
                         </Link>
-
                       </SidebarMenuButton>
-
                     </SidebarMenuItem>
-
                   );
                 })}
 
               </SidebarMenu>
-
             </SidebarGroupContent>
-
           </SidebarGroup>
-
         ))}
-
       </SidebarContent>
-
 
       {/* ================= FOOTER ================= */}
 
       <SidebarFooter
         className="
-                    border-t
-                    border-green-900/70
-                    bg-[#052e16]
-                    p-3
-                "
+          border-t
+          border-green-900/70
+          bg-[#052e16]
+          p-3
+        "
       >
-
         {/* Support */}
 
         {!collapsed && (
-
           <div
             className="
-                            mb-3
-                            rounded-xl
-                            border
-                            border-green-800
-                            bg-[#0b3d23]
-                            p-3
-                        "
+              mb-3
+              rounded-xl
+              border
+              border-green-800
+              bg-[#0b3d23]
+              p-3
+            "
           >
-
             <div className="flex items-center gap-2">
 
               <div
                 className="
-                                    flex
-                                    h-8
-                                    w-8
-                                    shrink-0
-                                    items-center
-                                    justify-center
-                                    rounded-lg
-                                    bg-emerald-900
-                                    text-emerald-300
-                                "
+                  flex
+                  h-8
+                  w-8
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-lg
+                  bg-emerald-900
+                  text-emerald-300
+                "
               >
-
-                <HelpCircle
-                  className="h-4 w-4"
-                />
-
+                <HelpCircle className="h-4 w-4" />
               </div>
-
 
               <div className="min-w-0 flex-1">
 
                 <p
                   className="
-                                        truncate
-                                        text-[11px]
-                                        font-bold
-                                        text-white
-                                    "
+                    truncate
+                    text-[11px]
+                    font-bold
+                    text-white
+                  "
                 >
                   Need Help?
                 </p>
 
                 <p
                   className="
-                                        truncate
-                                        text-[10px]
-                                        text-emerald-300
-                                    "
+                    truncate
+                    text-[10px]
+                    text-emerald-300
+                  "
                 >
                   Contact Support
                 </p>
 
               </div>
 
-
               <ArrowRight
                 className="
-                                    h-4
-                                    w-4
-                                    shrink-0
-                                    text-emerald-400
-                                "
+                  h-4
+                  w-4
+                  shrink-0
+                  text-emerald-400
+                "
               />
 
             </div>
-
           </div>
-
         )}
 
-
-        {/* Admin */}
+        {/* =================================================
+            ADMIN PROFILE
+        ================================================= */}
 
         <div
           className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-xl
-                        px-2
-                        py-2
-                    "
+            flex
+            items-center
+            gap-3
+            rounded-xl
+            px-2
+            py-2
+          "
         >
+
+          {/* Avatar / Initials */}
 
           <div
             className="
-                            flex
-                            h-10
-                            w-10
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-full
-                            bg-emerald-600
-                            text-sm
-                            font-bold
-                            text-white
-                        "
+              flex
+              h-10
+              w-10
+              shrink-0
+              items-center
+              justify-center
+              rounded-full
+              bg-emerald-600
+              text-sm
+              font-bold
+              text-white
+            "
           >
-            PP
+            {getInitials(adminProfile.name)}
           </div>
 
+          {/* Name + Role */}
 
           {!collapsed && (
-
             <div className="min-w-0">
 
               <p
                 className="
-                                    truncate
-                                    text-sm
-                                    font-semibold
-                                    text-white
-                                "
+                  truncate
+                  text-sm
+                  font-semibold
+                  text-white
+                "
               >
-                Pratham Patil
+                {adminProfile.name || "Admin"}
               </p>
 
               <p
                 className="
-                                    truncate
-                                    text-xs
-                                    text-green-200
-                                "
+                  truncate
+                  text-xs
+                  text-green-200
+                "
               >
-                Super Admin
+                {adminProfile.role === "ADMIN"
+                  ? "Super Admin"
+                  : adminProfile.role}
               </p>
 
             </div>
-
           )}
 
         </div>
-
       </SidebarFooter>
-
     </Sidebar>
   );
 }

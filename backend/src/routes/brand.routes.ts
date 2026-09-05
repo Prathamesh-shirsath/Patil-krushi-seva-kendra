@@ -1,39 +1,39 @@
 import { Router } from "express";
 
 import {
-    createBrandController,
-    getAllBrandsController,
-    updateBrandController,
-    deleteBrandController,
+  createBrandController,
+  getAllBrandsController,
+  updateBrandController,
+  deleteBrandController,
 } from "../controllers/brand.controller";
 
-import { upload }
-    from "../middleware/upload.middleware";
+import { upload } from "../middleware/upload.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 
 const router = Router();
 
-router.post(
-    "/",
-    upload.single("logo"),
-    createBrandController
-);
+// Public
+router.get("/", getAllBrandsController);
 
-router.get(
-    "/",
-    getAllBrandsController
+// Admin only
+router.post(
+  "/",
+  adminMiddleware,
+  upload.single("logo"),
+  createBrandController
 );
 
 router.put(
-    "/:id",
-    upload.single("logo"),
-    updateBrandController
+  "/:id",
+  adminMiddleware,
+  upload.single("logo"),
+  updateBrandController
 );
 
 router.delete(
-    "/:id",
-    deleteBrandController
+  "/:id",
+  adminMiddleware,
+  deleteBrandController
 );
-
-
 
 export default router;

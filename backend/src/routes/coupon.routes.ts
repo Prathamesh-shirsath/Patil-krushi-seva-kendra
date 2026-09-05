@@ -1,16 +1,32 @@
 import { Router } from "express";
+
 import {
   createCouponController,
   getAllCouponsController,
   deleteCouponController,
 } from "../controllers/coupon.controller";
 
+import { adminMiddleware } from "../middleware/admin.middleware";
+
 const router = Router();
 
-router.post("/", createCouponController);
+// Admin only
+router.post(
+  "/",
+  adminMiddleware,
+  createCouponController
+);
 
-router.get("/", getAllCouponsController);
+router.get(
+  "/",
+  adminMiddleware,
+  getAllCouponsController
+);
 
-router.delete("/:id", deleteCouponController);
+router.delete(
+  "/:id",
+  adminMiddleware,
+  deleteCouponController
+);
 
 export default router;

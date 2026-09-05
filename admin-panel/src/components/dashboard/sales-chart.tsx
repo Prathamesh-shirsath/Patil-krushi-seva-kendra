@@ -21,10 +21,10 @@ const data = [
 
 export default function SalesChart() {
   return (
-    <div className="rounded-3xl border bg-white p-6 shadow-sm">
-
+    <div className="w-full min-w-0 overflow-hidden rounded-3xl border bg-white p-4 shadow-sm sm:p-6">
+      {/* Header */}
       <div className="mb-6">
-        <h2 className="text-xl font-bold">
+        <h2 className="text-lg font-bold sm:text-xl">
           Sales Overview
         </h2>
 
@@ -33,14 +33,26 @@ export default function SalesChart() {
         </p>
       </div>
 
-      <div className="h-[350px]">
-
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data}>
-
+      {/* Chart */}
+      <div className="h-[280px] w-full min-w-0 sm:h-[350px]">
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+          minWidth={0}
+          minHeight={0}
+        >
+          <AreaChart
+            data={data}
+            margin={{
+              top: 5,
+              right: 10,
+              left: 0,
+              bottom: 5,
+            }}
+          >
             <defs>
               <linearGradient
-                id="green"
+                id="salesGradient"
                 x1="0"
                 y1="0"
                 x2="0"
@@ -60,27 +72,41 @@ export default function SalesChart() {
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+            />
 
-            <XAxis dataKey="month" />
+            <XAxis
+              dataKey="month"
+              tick={{ fontSize: 12 }}
+              tickMargin={8}
+            />
 
-            <YAxis />
+            <YAxis
+              width={50}
+              tick={{ fontSize: 12 }}
+              tickFormatter={(value) => `₹${value / 1000}k`}
+            />
 
-            <Tooltip />
+            <Tooltip
+              formatter={(value) => [
+                `₹${Number(value).toLocaleString("en-IN")}`,
+                "Revenue",
+              ]}
+            />
 
             <Area
               type="monotone"
               dataKey="revenue"
               stroke="#16a34a"
-              fill="url(#green)"
+              fill="url(#salesGradient)"
               strokeWidth={3}
+              activeDot={{ r: 6 }}
             />
-
           </AreaChart>
         </ResponsiveContainer>
-
       </div>
-
     </div>
   );
 }
