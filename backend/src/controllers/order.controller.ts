@@ -21,7 +21,7 @@ export const createOrderController = async (
   res: Response
 ) => {
   try {
-    const userId = res.locals.user?.userId || req.body.userId;
+    const userId = res.locals.user?.userId;
 
     if (!userId) {
       return res.status(401).json({
@@ -87,7 +87,17 @@ export const verifyPaymentController = async (
       });
     }
 
+    const userId = res.locals.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required.",
+      });
+    }
+
     const updatedOrder = await verifyOrderPayment({
+      userId,
       orderId,
       razorpayOrderId,
       razorpayPaymentId,
@@ -101,6 +111,13 @@ export const verifyPaymentController = async (
     });
   } catch (error: any) {
     console.error("Verify payment error:", error);
+
+    if (error?.message === "Order not found.") {
+      return res.status(404).json({
+        success: false,
+        message: error.message,
+      });
+    }
 
     return res.status(400).json({
       success: false,
@@ -186,7 +203,16 @@ export const getOrderByIdController = async (
   res: Response
 ) => {
   try {
-    const order = await getOrderById(req.params.id as string);
+    const userId = res.locals.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required.",
+      });
+    }
+
+    const order = await getOrderById(req.params.id as string, userId);
 
     if (!order) {
       return res.status(404).json({

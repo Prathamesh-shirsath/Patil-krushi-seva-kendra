@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -9,57 +10,120 @@ import {
   Package,
   ShoppingBag,
   Truck,
+  Loader2,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getOrderById } from "@/services/order.service";
+import type { Order, OrderStatus, PaymentMethod, PaymentStatus } from "@/types/order";
 
-const trackingSteps = [
-  {
-    title: "Order Placed",
-    description: "Your order has been successfully placed.",
-    date: "16 Aug 2026 • 10:24 AM",
-    icon: ShoppingBag,
-    completed: true,
+const statusConfig: Record<
+  OrderStatus,
+  { label: string; icon: typeof Clock3; description: string }
+> = {
+  PENDING: {
+    label: "Pending",
+    icon: Clock3,
+    description: "Your order has been placed and is awaiting confirmation.",
   },
-  {
-    title: "Order Confirmed",
-    description: "The seller has confirmed your order.",
-    date: "16 Aug 2026 • 11:10 AM",
+  CONFIRMED: {
+    label: "Confirmed",
     icon: CheckCircle2,
-    completed: true,
+    description: "Your order has been confirmed.",
   },
-  {
-    title: "Packed",
-    description: "Your products have been packed and are ready to ship.",
-    date: "16 Aug 2026 • 04:30 PM",
-    icon: Package,
-    completed: true,
-  },
-  {
-    title: "Shipped",
-    description: "Your order is on the way.",
-    date: "17 Aug 2026 • 09:15 AM",
+  SHIPPED: {
+    label: "Shipped",
     icon: Truck,
-    completed: true,
+    description: "Your order has been shipped.",
   },
-  {
-    title: "Out for Delivery",
-    description: "Your package will reach you soon.",
-    date: "Expected today",
-    icon: MapPin,
-    completed: false,
-  },
-  {
-    title: "Delivered",
-    description: "Your order will be delivered to your address.",
-    date: "Expected today",
+  DELIVERED: {
+    label: "Delivered",
     icon: CheckCircle2,
-    completed: false,
+    description: "Your order has been delivered.",
   },
-];
+  CANCELLED: {
+    label: "Cancelled",
+    icon: Clock3,
+    description: "This order has been cancelled.",
+  },
+};
 
 export default function TrackOrderPage() {
+  const params = useParams();
+  const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const orderId = rawId ?? "";
+  const {
+    data: order,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["order", orderId],
+    queryFn: () => getOrderById(orderId),
+    enabled: Boolean(orderId),
+  });
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+        <div className="mx-auto flex min-h-[70vh] max-w-[900px] items-center justify-center px-4">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+            <p className="text-sm font-medium text-slate-600">
+              Loading order status...
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (isError || !order) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+        <div className="mx-auto flex min-h-[70vh] max-w-[900px] items-center justify-center px-4">
+          <Card className="w-full rounded-[32px] border-slate-200 bg-white p-8 text-center shadow-xl">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-600">
+              <Package className="h-8 w-8" />
+            </div>
+            <h1 className="mt-5 text-2xl font-black text-slate-900">
+              Order Not Found
+            </h1>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+              This order was not found or you don't have access to it.
+            </p>
+            <Link href="/orders" className="mt-6 inline-block">
+              <Button className="h-11 rounded-xl bg-emerald-700 px-6 font-bold text-white hover:bg-emerald-800">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to My Orders
+              </Button>
+            </Link>
+          </Card>
+        </div>
+      </main>
+    );
+  }
+
+  const status = statusConfig[order.status];
+  const StatusIcon = status.icon;
+  const trackingSteps = [
+    {
+      title: "Order Placed",
+      description: "Your order was successfully placed.",
+      date: formatDateTime(order.createdAt),
+      icon: ShoppingBag,
+      completed: true,
+    },
+    {
+      title: `Current Status: ${status.label}`,
+      description: "This is the latest status available for your order.",
+      date: `Last updated ${formatDateTime(order.updatedAt)}`,
+      icon: StatusIcon,
+      completed: true,
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
       <div className="mx-auto max-w-[1400px] px-4 py-8 lg:px-8">
@@ -80,7 +144,7 @@ export default function TrackOrderPage() {
 
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-emerald-50 backdrop-blur-xl">
               <Truck className="h-4 w-4" />
-              Live Order Tracking
+              Order Status
             </div>
 
             <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
@@ -91,17 +155,7 @@ export default function TrackOrderPage() {
                 </h1>
 
                 <p className="mt-2 text-sm text-emerald-50/70">
-                  Order #PKS-10231
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-400/10 px-5 py-3 backdrop-blur">
-                <p className="text-xs font-medium text-emerald-100/60">
-                  Estimated Delivery
-                </p>
-
-                <p className="mt-1 font-black text-white">
-                  18 Aug 2026
+                  Order #{order.id}
                 </p>
               </div>
 
@@ -126,11 +180,11 @@ export default function TrackOrderPage() {
             <div className="mb-8">
 
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-                Shipment Progress
+                Order Progress
               </p>
 
               <h2 className="mt-1 text-2xl font-black text-slate-950">
-                Order Journey
+                Order Status Timeline
               </h2>
 
             </div>
@@ -194,12 +248,6 @@ export default function TrackOrderPage() {
                         {step.description}
                       </p>
 
-                      {step.title === "Shipped" && (
-                        <span className="mt-3 inline-flex rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-bold text-violet-700">
-                          Package is in transit
-                        </span>
-                      )}
-
                     </div>
 
                   </div>
@@ -219,7 +267,7 @@ export default function TrackOrderPage() {
               <div className="flex items-center gap-4">
 
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-700 text-white shadow-lg shadow-emerald-700/20">
-                  <Truck className="h-7 w-7" />
+                  <StatusIcon className="h-7 w-7" />
                 </div>
 
                 <div>
@@ -228,7 +276,7 @@ export default function TrackOrderPage() {
                   </p>
 
                   <h3 className="mt-1 text-xl font-black text-emerald-950">
-                    Shipped
+                    {status.label}
                   </h3>
                 </div>
 
@@ -237,8 +285,7 @@ export default function TrackOrderPage() {
               <div className="mt-5 rounded-2xl bg-white/80 p-4">
 
                 <p className="text-sm leading-6 text-slate-500">
-                  Your order has left the seller and is currently
-                  on its way to your delivery location.
+                  {status.description}
                 </p>
 
               </div>
@@ -264,45 +311,55 @@ export default function TrackOrderPage() {
 
                 <div>
                   <p className="font-bold text-slate-800">
-                    Customer
+                    {order.OrderAddress?.fullName ??
+                      order.user.name ??
+                      "Customer information unavailable"}
                   </p>
 
                   <p className="mt-1 text-sm leading-6 text-slate-500">
-                    Sambhaji Nagar, Maharashtra
+                    {formatOrderAddress(order)}
                   </p>
+
+                  {(order.OrderAddress?.phone || order.user.phone || order.user.email) && (
+                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                      {[order.OrderAddress?.phone ?? order.user.phone, order.user.email]
+                        .filter(Boolean)
+                        .join(" • ")}
+                    </p>
+                  )}
                 </div>
 
               </div>
 
             </Card>
 
-            {/* Tracking Info */}
+            {/* Order Info */}
             <Card className="rounded-[30px] border-slate-200/80 bg-white p-6 shadow-[0_10px_40px_-18px_rgba(15,23,42,0.2)]">
 
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-                Shipment Details
+                Order Details
               </p>
 
               <div className="mt-5 space-y-4">
 
                 <InfoRow
                   label="Order ID"
-                  value="#PKS-10231"
+                  value={order.id}
                 />
 
                 <InfoRow
-                  label="Courier"
-                  value="Patil Express"
+                  label="Status"
+                  value={status.label}
                 />
 
                 <InfoRow
-                  label="Tracking ID"
-                  value="PKS983721"
+                  label="Payment Method"
+                  value={getPaymentMethodLabel(order.paymentMethod)}
                 />
 
                 <InfoRow
-                  label="Payment"
-                  value="Cash on Delivery"
+                  label="Payment Status"
+                  value={formatPaymentStatus(order.paymentStatus)}
                 />
 
               </div>
@@ -348,4 +405,42 @@ function InfoRow({
 
     </div>
   );
+}
+
+function formatDateTime(value: string) {
+  return new Date(value).toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function formatOrderAddress(order: Order) {
+  const address = order.OrderAddress;
+
+  if (!address) {
+    return "Delivery address unavailable.";
+  }
+
+  return [
+    address.addressLine,
+    address.village,
+    address.taluka,
+    address.city,
+    address.district,
+    address.state,
+    address.pincode,
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
+
+function getPaymentMethodLabel(paymentMethod: PaymentMethod) {
+  return paymentMethod === "COD" ? "Cash on Delivery" : "Razorpay";
+}
+
+function formatPaymentStatus(paymentStatus: PaymentStatus) {
+  return paymentStatus.charAt(0) + paymentStatus.slice(1).toLowerCase();
 }

@@ -11,145 +11,82 @@ import {
   CreditCard,
   ArrowRight,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/providers/AuthProvider";
+import { getUserOrders } from "@/services/order.service";
+import type { Order, OrderStatus } from "@/types/order";
 import Link from "next/link";
 
-type OrderStatus =
-  | "Pending"
-  | "Confirmed"
-  | "Shipped"
-  | "Delivered";
-
-type Product = {
-  name: string;
-  quantity: number;
-  price: string;
-  image: string;
-};
-
-type Order = {
-  id: string;
-  date: string;
-  items: number;
-  products: Product[];
-  total: string;
-  payment: string;
-  status: OrderStatus;
-  address: string;
-};
-
-const orders: Order[] = [
-  {
-    id: "#PKS-10245",
-    date: "16 Aug 2026",
-    items: 3,
-    products: [
-      {
-        name: "Premium Crop Fertilizer",
-        quantity: 1,
-        price: "₹799",
-        image: "/products/fertilizer.webp",
-      },
-      {
-        name: "Cotton Seeds",
-        quantity: 1,
-        price: "₹650",
-        image: "/products/cotton-seeds.webp",
-      },
-      {
-        name: "Plant Growth Booster",
-        quantity: 1,
-        price: "₹400",
-        image: "/products/growth-booster.webp",
-      },
-    ],
-    total: "₹1,849",
-    payment: "Paid Online",
-    status: "Delivered",
-    address: "Sambhaji Nagar, Maharashtra",
-  },
-  {
-    id: "#PKS-10231",
-    date: "12 Aug 2026",
-    items: 2,
-    products: [
-      {
-        name: "Organic Fertilizer",
-        quantity: 1,
-        price: "₹699",
-        image: "/products/organic-fertilizer.webp",
-      },
-      {
-        name: "Insect Control Solution",
-        quantity: 1,
-        price: "₹600",
-        image: "/products/insecticide.webp",
-      },
-    ],
-    total: "₹1,299",
-    payment: "Cash on Delivery",
-    status: "Shipped",
-    address: "Sambhaji Nagar, Maharashtra",
-  },
-  {
-    id: "#PKS-10198",
-    date: "08 Aug 2026",
-    items: 1,
-    products: [
-      {
-        name: "Premium Vegetable Seeds",
-        quantity: 1,
-        price: "₹499",
-        image: "/products/seeds.webp",
-      },
-    ],
-    total: "₹499",
-    payment: "Paid Online",
-    status: "Confirmed",
-    address: "Sambhaji Nagar, Maharashtra",
-  },
-];
-
-const statusConfig = {
-  Pending: {
+const statusConfig: Record<
+  OrderStatus,
+  { label: string; icon: typeof Clock3; className: string }
+> = {
+  PENDING: {
+    label: "Pending",
     icon: Clock3,
     className:
       "border-amber-200 bg-amber-50 text-amber-700",
   },
 
-  Confirmed: {
+  CONFIRMED: {
+    label: "Confirmed",
     icon: CheckCircle2,
     className:
       "border-blue-200 bg-blue-50 text-blue-700",
   },
 
-  Shipped: {
+  SHIPPED: {
+    label: "Shipped",
     icon: Truck,
     className:
       "border-violet-200 bg-violet-50 text-violet-700",
   },
 
-  Delivered: {
+  DELIVERED: {
+    label: "Delivered",
     icon: CheckCircle2,
     className:
       "border-emerald-200 bg-emerald-50 text-emerald-700",
   },
+
+  CANCELLED: {
+    label: "Cancelled",
+    icon: Clock3,
+    className:
+      "border-red-200 bg-red-50 text-red-700",
+  },
 };
 
 export default function OrdersList() {
+  const { user, loading: authLoading } = useAuth();
+  const {
+    data: orders = [],
+    isLoading: ordersLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["user-orders", user?.id],
+    queryFn: getUserOrders,
+    enabled: !authLoading && Boolean(user),
+  });
+
+  const isLoading = authLoading || ordersLoading;
+  const hasOrdersData = Boolean(user) && !isLoading && !isError;
   const totalOrders = orders.length;
 
   const deliveredOrders = orders.filter(
-    (order) => order.status === "Delivered"
+    (order) => order.status === "DELIVERED"
   ).length;
 
   const activeOrders = orders.filter(
     (order) =>
-      order.status === "Confirmed" ||
-      order.status === "Shipped" ||
-      order.status === "Pending"
+      order.status !== "DELIVERED" && order.status !== "CANCELLED"
+  ).length;
+
+  const inTransitOrders = orders.filter(
+    (order) => order.status === "SHIPPED"
   ).length;
 
   return (
@@ -179,17 +116,17 @@ export default function OrdersList() {
 
             <HeroStat
               label="Total Orders"
-              value={String(totalOrders)}
+              value={hasOrdersData ? String(totalOrders) : "—"}
             />
 
             <HeroStat
               label="Active"
-              value={String(activeOrders)}
+              value={hasOrdersData ? String(activeOrders) : "—"}
             />
 
             <HeroStat
               label="Delivered"
-              value={String(deliveredOrders)}
+              value={hasOrdersData ? String(deliveredOrders) : "—"}
             />
 
           </div>
@@ -213,19 +150,19 @@ export default function OrdersList() {
         <StatCard
           icon={<ShoppingBag className="h-5 w-5" />}
           title="Total Orders"
-          value={String(totalOrders)}
+          value={hasOrdersData ? String(totalOrders) : "—"}
         />
 
         <StatCard
           icon={<Truck className="h-5 w-5" />}
           title="In Transit"
-          value="1"
+          value={hasOrdersData ? String(inTransitOrders) : "—"}
         />
 
         <StatCard
           icon={<CheckCircle2 className="h-5 w-5" />}
           title="Successfully Delivered"
-          value={String(deliveredOrders)}
+          value={hasOrdersData ? String(deliveredOrders) : "—"}
         />
 
       </div>
@@ -251,7 +188,11 @@ export default function OrdersList() {
         </div>
 
         <span className="inline-flex w-fit rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-700">
-          {totalOrders} Orders
+          {hasOrdersData
+            ? `${totalOrders} Orders`
+            : isLoading
+            ? "Loading orders..."
+            : "Orders unavailable"}
         </span>
 
       </div>
@@ -260,7 +201,21 @@ export default function OrdersList() {
 
       <div className="space-y-6">
 
-        {orders.map((order) => {
+        {isLoading && <OrdersStateCard message="Loading your orders..." />}
+
+        {!isLoading && !user && (
+          <OrdersStateCard message="Please sign in to view your orders." />
+        )}
+
+        {!isLoading && user && isError && (
+          <OrdersStateCard message="We couldn't load your orders. Please try again." />
+        )}
+
+        {!isLoading && user && !isError && orders.length === 0 && (
+          <OrdersStateCard message="You haven't placed any orders yet." />
+        )}
+
+        {!isLoading && !isError && orders.map((order) => {
 
           const status = statusConfig[order.status];
 
@@ -283,7 +238,7 @@ export default function OrdersList() {
                     <div className="flex flex-wrap items-center gap-3">
 
                       <h3 className="text-lg font-black tracking-tight text-emerald-950">
-                        {order.id}
+                        Order #{order.id.slice(-6).toUpperCase()}
                       </h3>
 
                       <span
@@ -291,20 +246,20 @@ export default function OrdersList() {
                       >
                         <StatusIcon className="h-3.5 w-3.5" />
 
-                        {order.status}
+                        {status.label}
                       </span>
 
                     </div>
 
                     <p className="mt-2 text-sm text-slate-500">
-                      Ordered on {order.date}
+                      Ordered on {formatOrderDate(order.createdAt)}
 
                       <span className="mx-1 text-slate-300">
                         •
                       </span>
 
-                      {order.items}{" "}
-                      {order.items === 1 ? "item" : "items"}
+                      {order.items.length}{" "}
+                      {order.items.length === 1 ? "item" : "items"}
                     </p>
 
                   </div>
@@ -316,7 +271,7 @@ export default function OrdersList() {
                     </p>
 
                     <p className="mt-1 text-2xl font-black text-emerald-700">
-                      {order.total}
+                      {formatCurrency(order.grandTotal)}
                     </p>
 
                   </div>
@@ -331,23 +286,25 @@ export default function OrdersList() {
 
                 <div className="space-y-3">
 
-                  {order.products.map((product) => (
+                  {order.items.map((item) => (
 
                     <div
-                      key={product.name}
+                      key={item.id}
                       className="group/product flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-3 transition-all duration-200 hover:border-emerald-100 hover:bg-emerald-50/30"
                     >
 
                       <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-green-100 ring-1 ring-emerald-100">
 
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="h-full w-full object-cover"
-                          onError={(event) => {
-                            event.currentTarget.style.display = "none";
-                          }}
-                        />
+                        {item.product.image && (
+                          <img
+                            src={item.product.image}
+                            alt={item.productName}
+                            className="h-full w-full object-cover"
+                            onError={(event) => {
+                              event.currentTarget.style.display = "none";
+                            }}
+                          />
+                        )}
 
                         <Package className="h-7 w-7 text-emerald-600" />
 
@@ -356,17 +313,17 @@ export default function OrdersList() {
                       <div className="min-w-0 flex-1">
 
                         <h4 className="truncate text-sm font-bold text-slate-800">
-                          {product.name}
+                          {item.productName}
                         </h4>
 
                         <p className="mt-1 text-xs text-slate-400">
-                          Quantity: {product.quantity}
+                          Quantity: {item.quantity}
                         </p>
 
                       </div>
 
                       <p className="text-sm font-black text-slate-800">
-                        {product.price}
+                        {formatCurrency(item.price)}
                       </p>
 
                     </div>
@@ -392,7 +349,7 @@ export default function OrdersList() {
                       </p>
 
                       <p className="mt-1 truncate text-sm font-semibold text-slate-700">
-                        {order.address}
+                        {formatOrderAddress(order)}
                       </p>
 
                     </div>
@@ -412,7 +369,7 @@ export default function OrdersList() {
                       </p>
 
                       <p className="mt-1 text-sm font-semibold text-slate-700">
-                        {order.payment}
+                        {getPaymentLabel(order)}
                       </p>
 
                     </div>
@@ -428,7 +385,7 @@ export default function OrdersList() {
                   {/* View Details */}
 
                   <Link
-                    href={`/orders/${order.id.replace("#", "")}`}
+                    href={`/orders/${order.id}`}
                     className="w-full sm:w-auto"
                   >
                     <Button
@@ -443,9 +400,10 @@ export default function OrdersList() {
 
                   {/* Track Order */}
 
-                  {order.status === "Shipped" && (
+                  {(order.status === "CONFIRMED" ||
+                    order.status === "SHIPPED") && (
                     <Link
-                      href={`/orders/${order.id.replace("#", "")}/track`}
+                      href={`/orders/${order.id}/track`}
                       className="w-full sm:w-auto"
                     >
                       <Button className="h-11 w-full rounded-xl bg-emerald-700 px-6 font-bold text-white shadow-lg shadow-emerald-700/20 transition-all hover:-translate-y-0.5 hover:bg-emerald-800 sm:w-auto">
@@ -457,7 +415,7 @@ export default function OrdersList() {
 
                   {/* Buy Again */}
 
-                  {order.status === "Delivered" && (
+                  {order.status === "DELIVERED" && (
                     <Button className="h-11 w-full rounded-xl bg-emerald-700 px-6 font-bold text-white shadow-lg shadow-emerald-700/20 transition-all hover:-translate-y-0.5 hover:bg-emerald-800 sm:w-auto">
 
                       Buy Again
@@ -478,6 +436,70 @@ export default function OrdersList() {
       </div>
 
     </div>
+  );
+}
+
+function formatOrderDate(createdAt: string) {
+  return new Date(createdAt).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function formatCurrency(amount: string) {
+  return `₹${Number(amount).toLocaleString("en-IN")}`;
+}
+
+function formatOrderAddress(order: Order) {
+  const address = order.OrderAddress;
+
+  if (!address) {
+    return "Delivery address unavailable.";
+  }
+
+  return [
+    address.fullName,
+    address.addressLine,
+    address.village,
+    address.taluka,
+    address.city,
+    address.district,
+    address.state,
+    address.pincode,
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
+
+function getPaymentLabel(order: Order) {
+  if (order.paymentMethod === "COD") {
+    return "Cash on Delivery";
+  }
+
+  if (order.paymentStatus === "SUCCESS") {
+    return "Paid Online (Razorpay)";
+  }
+
+  if (order.paymentStatus === "FAILED") {
+    return "Online Payment Failed";
+  }
+
+  if (order.paymentStatus === "REFUNDED") {
+    return "Payment Refunded";
+  }
+
+  return "Online Payment Pending";
+}
+
+function OrdersStateCard({ message }: { message: string }) {
+  return (
+    <Card className="rounded-[30px] border border-slate-200/80 bg-white p-8 text-center shadow-[0_10px_40px_-18px_rgba(15,23,42,0.2)]">
+      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+        <Package className="h-6 w-6" />
+      </div>
+      <p className="mt-4 text-sm font-semibold text-slate-600">{message}</p>
+    </Card>
   );
 }
 

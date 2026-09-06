@@ -18,128 +18,45 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getOrderById } from "@/services/order.service";
+import type { Order, OrderStatus, PaymentMethod, PaymentStatus } from "@/types/order";
 
-type OrderStatus =
-  | "Pending"
-  | "Confirmed"
-  | "Shipped"
-  | "Delivered";
-
-type Product = {
-  name: string;
-  quantity: number;
-  price: string;
-  image: string;
-};
-
-type Order = {
-  id: string;
-  date: string;
-  items: number;
-  products: Product[];
-  total: string;
-  payment: string;
-  status: OrderStatus;
-  address: string;
-};
-
-const orders: Order[] = [
-  {
-    id: "#PKS-10245",
-    date: "16 Aug 2026",
-    items: 3,
-    products: [
-      {
-        name: "Premium Crop Fertilizer",
-        quantity: 1,
-        price: "₹799",
-        image: "/products/fertilizer.webp",
-      },
-      {
-        name: "Cotton Seeds",
-        quantity: 1,
-        price: "₹650",
-        image: "/products/cotton-seeds.webp",
-      },
-      {
-        name: "Plant Growth Booster",
-        quantity: 1,
-        price: "₹400",
-        image: "/products/growth-booster.webp",
-      },
-    ],
-    total: "₹1,849",
-    payment: "Paid Online",
-    status: "Delivered",
-    address: "Sambhaji Nagar, Maharashtra",
-  },
-
-  {
-    id: "#PKS-10231",
-    date: "12 Aug 2026",
-    items: 2,
-    products: [
-      {
-        name: "Organic Fertilizer",
-        quantity: 1,
-        price: "₹699",
-        image: "/products/organic-fertilizer.webp",
-      },
-      {
-        name: "Insect Control Solution",
-        quantity: 1,
-        price: "₹600",
-        image: "/products/insecticide.webp",
-      },
-    ],
-    total: "₹1,299",
-    payment: "Cash on Delivery",
-    status: "Shipped",
-    address: "Sambhaji Nagar, Maharashtra",
-  },
-
-  {
-    id: "#PKS-10198",
-    date: "08 Aug 2026",
-    items: 1,
-    products: [
-      {
-        name: "Premium Vegetable Seeds",
-        quantity: 1,
-        price: "₹499",
-        image: "/products/seeds.webp",
-      },
-    ],
-    total: "₹499",
-    payment: "Paid Online",
-    status: "Confirmed",
-    address: "Sambhaji Nagar, Maharashtra",
-  },
-];
-
-const statusConfig = {
-  Pending: {
+const statusConfig: Record<
+  OrderStatus,
+  { label: string; icon: typeof Clock3; className: string }
+> = {
+  PENDING: {
+    label: "Pending",
     icon: Clock3,
     className:
       "border-amber-200 bg-amber-50 text-amber-700",
   },
 
-  Confirmed: {
+  CONFIRMED: {
+    label: "Confirmed",
     icon: CheckCircle2,
     className:
       "border-blue-200 bg-blue-50 text-blue-700",
   },
 
-  Shipped: {
+  SHIPPED: {
+    label: "Shipped",
     icon: Truck,
     className:
       "border-violet-200 bg-violet-50 text-violet-700",
   },
 
-  Delivered: {
+  DELIVERED: {
+    label: "Delivered",
     icon: CheckCircle2,
     className:
       "border-emerald-200 bg-emerald-50 text-emerald-700",
+  },
+
+  CANCELLED: {
+    label: "Cancelled",
+    icon: Clock3,
+    className:
+      "border-red-200 bg-red-50 text-red-700",
   },
 };
 
@@ -150,53 +67,17 @@ export default function OrderDetailsPage() {
     ? params.id[0]
     : params.id;
 
-  const cleanId = rawId ? rawId.replace("#", "") : "";
+  const orderId = rawId ?? "";
 
-  const { data: dbOrder, isLoading } = useQuery({
-    queryKey: ["order", cleanId],
-    queryFn: () => getOrderById(cleanId),
-    enabled: !!cleanId && !cleanId.startsWith("PKS-"),
+  const {
+    data: order,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["order", orderId],
+    queryFn: () => getOrderById(orderId),
+    enabled: Boolean(orderId),
   });
-
-  const mockOrder = orders.find(
-    (item) => item.id === `#${cleanId}`
-  );
-
-  const order: Order | undefined = dbOrder
-    ? {
-        id: `#${dbOrder.id.slice(-6).toUpperCase()}`,
-        date: new Date(dbOrder.createdAt).toLocaleDateString("en-IN", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
-        items: dbOrder.items?.length || 0,
-        products: (dbOrder.items || []).map((item: any) => ({
-          name: item.productName || item.product?.name || "Agro Product",
-          quantity: item.quantity,
-          price: `₹${Number(item.price).toLocaleString("en-IN")}`,
-          image: item.product?.image || "/products/fertilizer.webp",
-        })),
-        total: `₹${Number(dbOrder.grandTotal).toLocaleString("en-IN")}`,
-        payment:
-          dbOrder.paymentMethod === "COD"
-            ? "Cash on Delivery"
-            : dbOrder.paymentStatus === "SUCCESS"
-            ? "Paid Online (Razorpay)"
-            : "Pending Online Payment",
-        status:
-          dbOrder.status === "DELIVERED"
-            ? "Delivered"
-            : dbOrder.status === "SHIPPED"
-            ? "Shipped"
-            : dbOrder.status === "CONFIRMED"
-            ? "Confirmed"
-            : "Pending",
-        address: dbOrder.OrderAddress
-          ? `${dbOrder.OrderAddress.fullName}, ${dbOrder.OrderAddress.addressLine}, ${dbOrder.OrderAddress.village}, ${dbOrder.OrderAddress.district}, ${dbOrder.OrderAddress.state} - ${dbOrder.OrderAddress.pincode} (Ph: ${dbOrder.OrderAddress.phone})`
-          : "Standard Delivery Address",
-      }
-    : mockOrder;
 
   if (isLoading) {
     return (
@@ -215,7 +96,7 @@ export default function OrderDetailsPage() {
 
   /* ================= INVALID ORDER ================= */
 
-  if (!order) {
+  if (isError || !order) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
         <div className="mx-auto flex min-h-[70vh] max-w-[900px] items-center justify-center px-4">
@@ -231,8 +112,8 @@ export default function OrderDetailsPage() {
             </h1>
 
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-              We couldn't find this order. Please return to
-              your orders and select an available order.
+              This order was not found or you don't have access to it.
+              Please return to your orders and select an available order.
             </p>
 
             <Link href="/orders" className="mt-6 inline-block">
@@ -281,11 +162,11 @@ export default function OrderDetailsPage() {
               </div>
 
               <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
-                {order.id}
+                Order #{order.id}
               </h1>
 
               <p className="mt-2 text-sm text-emerald-50/70">
-                Placed on {order.date}
+                Placed on {formatDateTime(order.createdAt)}
               </p>
 
             </div>
@@ -296,11 +177,13 @@ export default function OrderDetailsPage() {
                 className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold ${status.className}`}
               >
                 <StatusIcon className="h-4 w-4" />
-                {order.status}
+                {status.label}
               </span>
 
               <Button
                 variant="outline"
+                disabled
+                title="Invoice is not available for this order."
                 className="rounded-xl border-white/20 bg-white/10 text-white backdrop-blur hover:bg-white/20 hover:text-white"
               >
                 <Download className="mr-2 h-4 w-4" />
@@ -340,36 +223,38 @@ export default function OrderDetailsPage() {
                   </p>
 
                   <h2 className="mt-1 text-2xl font-black text-slate-950">
-                    Order Items ({order.items})
+                    Order Items ({order.items.length})
                   </h2>
 
                 </div>
 
                 <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
-                  {order.items} Items
+                  {order.items.length} Items
                 </span>
 
               </div>
 
               <div className="mt-6 space-y-3">
 
-                {order.products.map((product) => (
+                {order.items.map((item) => (
 
                   <div
-                    key={product.name}
+                    key={item.id}
                     className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-slate-50/60 p-4 transition-all hover:border-emerald-100 hover:bg-emerald-50/30"
                   >
 
                     <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white ring-1 ring-emerald-100">
 
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="h-full w-full object-cover"
-                        onError={(event) => {
-                          event.currentTarget.style.display = "none";
-                        }}
-                      />
+                      {item.product.image && (
+                        <img
+                          src={item.product.image}
+                          alt={item.productName}
+                          className="h-full w-full object-cover"
+                          onError={(event) => {
+                            event.currentTarget.style.display = "none";
+                          }}
+                        />
+                      )}
 
                       <Package className="absolute h-7 w-7 text-emerald-600" />
 
@@ -378,17 +263,17 @@ export default function OrderDetailsPage() {
                     <div className="min-w-0 flex-1">
 
                       <h3 className="truncate font-bold text-slate-800">
-                        {product.name}
+                        {item.productName}
                       </h3>
 
                       <p className="mt-1 text-sm text-slate-500">
-                        Quantity: {product.quantity}
+                        Quantity: {item.quantity}
                       </p>
 
                     </div>
 
                     <p className="font-black text-slate-900">
-                      {product.price}
+                      {formatCurrency(item.price)}
                     </p>
 
                   </div>
@@ -426,12 +311,22 @@ export default function OrderDetailsPage() {
               <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50 p-5">
 
                 <p className="font-bold text-slate-800">
-                  Customer
+                  {order.OrderAddress?.fullName ??
+                    order.user.name ??
+                    "Customer information unavailable"}
                 </p>
 
                 <p className="mt-1 text-sm leading-6 text-slate-500">
-                  {order.address}
+                  {formatOrderAddress(order)}
                 </p>
+
+                {(order.user.phone || order.user.email) && (
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    {[order.user.phone, order.user.email]
+                      .filter(Boolean)
+                      .join(" • ")}
+                  </p>
+                )}
 
               </div>
 
@@ -454,45 +349,15 @@ export default function OrderDetailsPage() {
                 <TimelineItem
                   title="Order Placed"
                   description="Your order was successfully placed."
-                  date={order.date}
+                  date={formatDateTime(order.createdAt)}
                   completed
                 />
 
                 <TimelineItem
-                  title="Order Confirmed"
-                  description="The seller confirmed your order."
-                  date={order.status !== "Pending" ? order.date : "Pending"}
-                  completed={
-                    order.status !== "Pending"
-                  }
-                />
-
-                <TimelineItem
-                  title="Shipped"
-                  description="Your order has been shipped."
-                  date={
-                    order.status === "Shipped" ||
-                    order.status === "Delivered"
-                      ? "17 Aug 2026"
-                      : "Pending"
-                  }
-                  completed={
-                    order.status === "Shipped" ||
-                    order.status === "Delivered"
-                  }
-                />
-
-                <TimelineItem
-                  title="Delivered"
-                  description="Your order has been delivered successfully."
-                  date={
-                    order.status === "Delivered"
-                      ? "18 Aug 2026"
-                      : "Pending"
-                  }
-                  completed={
-                    order.status === "Delivered"
-                  }
+                  title={`Current Status: ${status.label}`}
+                  description="This is the latest status available for your order."
+                  date={`Last updated ${formatDateTime(order.updatedAt)}`}
+                  completed
                   last
                 />
 
@@ -522,18 +387,18 @@ export default function OrderDetailsPage() {
 
                 <SummaryRow
                   label="Subtotal"
-                  value={order.total}
+                  value={formatCurrency(order.subTotal)}
                 />
 
                 <SummaryRow
                   label="Shipping Charge"
-                  value="₹0"
+                  value={formatCurrency(order.deliveryCharge)}
                 />
 
                 <SummaryRow
                   label="Discount"
-                  value="- ₹0"
-                  green
+                  value={`- ${formatCurrency(order.discount)}`}
+                  green={Number(order.discount) > 0}
                 />
 
                 <div className="border-t border-slate-100 pt-4">
@@ -545,7 +410,7 @@ export default function OrderDetailsPage() {
                     </span>
 
                     <span className="text-2xl font-black text-emerald-700">
-                      {order.total}
+                      {formatCurrency(order.grandTotal)}
                     </span>
 
                   </div>
@@ -584,29 +449,21 @@ export default function OrderDetailsPage() {
 
                 <SummaryRow
                   label="Method"
-                  value={order.payment}
+                  value={getPaymentMethodLabel(order.paymentMethod)}
                 />
 
                 <SummaryRow
                   label="Payment Status"
-                  value={
-                    order.payment === "Cash on Delivery"
-                      ? "Pending"
-                      : "Paid"
-                  }
-                  green={
-                    order.payment !== "Cash on Delivery"
-                  }
+                  value={formatPaymentStatus(order.paymentStatus)}
+                  green={order.paymentStatus === "SUCCESS"}
                 />
 
-                <SummaryRow
-                  label="Transaction ID"
-                  value={
-                    order.payment === "Cash on Delivery"
-                      ? "COD"
-                      : "UPI5588744877"
-                  }
-                />
+                {getTransactionId(order) && (
+                  <SummaryRow
+                    label="Transaction ID"
+                    value={getTransactionId(order)!}
+                  />
+                )}
 
               </div>
 
@@ -614,10 +471,10 @@ export default function OrderDetailsPage() {
 
             {/* Track Button */}
 
-            {(order.status === "Shipped" ||
-              order.status === "Confirmed") && (
+            {(order.status === "SHIPPED" ||
+              order.status === "CONFIRMED") && (
               <Link
-                href={`/orders/${order.id.replace("#", "")}/track`}
+                href={`/orders/${order.id}/track`}
               >
                 <Button className="h-12 w-full rounded-xl bg-emerald-700 font-bold text-white shadow-lg shadow-emerald-700/20 transition-all hover:-translate-y-0.5 hover:bg-emerald-800">
                   <Truck className="mr-2 h-5 w-5" />
@@ -644,6 +501,52 @@ export default function OrderDetailsPage() {
 
     </main>
   );
+}
+
+function formatDateTime(value: string) {
+  return new Date(value).toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function formatCurrency(amount: string) {
+  return `₹${Number(amount).toLocaleString("en-IN")}`;
+}
+
+function formatOrderAddress(order: Order) {
+  const address = order.OrderAddress;
+
+  if (!address) {
+    return "Delivery address unavailable.";
+  }
+
+  return [
+    address.addressLine,
+    address.village,
+    address.taluka,
+    address.city,
+    address.district,
+    address.state,
+    address.pincode,
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
+
+function getPaymentMethodLabel(paymentMethod: PaymentMethod) {
+  return paymentMethod === "COD" ? "Cash on Delivery" : "Razorpay";
+}
+
+function formatPaymentStatus(paymentStatus: PaymentStatus) {
+  return paymentStatus.charAt(0) + paymentStatus.slice(1).toLowerCase();
+}
+
+function getTransactionId(order: Order) {
+  return order.payment?.transactionId ?? order.payment?.razorpayPaymentId;
 }
 
 /* ================= TIMELINE ================= */
