@@ -1,6 +1,22 @@
 import api from "@/lib/axios";
+import type {
+  Order,
+  OrderApiResponse,
+  PaymentMethod,
+} from "@/types/order";
 
-export type PaymentMethod = "RAZORPAY" | "COD";
+export type {
+  Order,
+  OrderAddress,
+  OrderApiResponse,
+  OrderCustomer,
+  OrderItem,
+  OrderProduct,
+  OrderStatus,
+  Payment,
+  PaymentMethod,
+  PaymentStatus,
+} from "@/types/order";
 
 export interface CreateOrderItemInput {
   productId: string;
@@ -29,29 +45,25 @@ export interface CreateOrderPayload {
 
 export interface RazorpayOrderData {
   id: string;
+  entity: string;
   amount: number;
+  amount_paid: number;
+  amount_due: number;
   currency: string;
   receipt: string;
+  status: string;
+  attempts: number;
+  notes: Record<string, string>;
+  created_at: number;
 }
 
 export interface CreateOrderResponse {
   success: boolean;
   data: {
-    order: {
-      id: string;
-      grandTotal: number | string;
-      subTotal: number | string;
-      deliveryCharge: number | string;
-      discount: number | string;
-      status: string;
-      paymentStatus: string;
-      paymentMethod: string;
-      OrderAddress?: CreateOrderAddressInput;
-      items?: any[];
-    };
+    order: Order;
     razorpayOrder?: RazorpayOrderData;
     keyId?: string;
-    isCod?: boolean;
+    isCod?: true;
   };
 }
 
@@ -71,17 +83,17 @@ export const createOrder = async (
 
 export const verifyPayment = async (
   payload: VerifyPaymentPayload
-): Promise<{ success: boolean; data: any }> => {
+): Promise<OrderApiResponse> => {
   const response = await api.post("/orders/verify-payment", payload);
   return response.data;
 };
 
-export const getOrderById = async (orderId: string): Promise<any> => {
+export const getOrderById = async (orderId: string): Promise<Order> => {
   const response = await api.get(`/orders/${orderId}`);
   return response.data.data;
 };
 
-export const getUserOrders = async (): Promise<any[]> => {
+export const getUserOrders = async (): Promise<Order[]> => {
   const response = await api.get("/orders/user/my-orders");
   return response.data.data;
 };

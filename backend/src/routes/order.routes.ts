@@ -8,6 +8,7 @@ import {
   verifyPaymentController,
 } from "../controllers/order.controller";
 import { authenticate } from "../middleware/auth.middleware";
+import { adminMiddleware } from "../middleware/admin.middleware";
 
 const router = Router();
 
@@ -27,7 +28,7 @@ router.post("/verify-payment", authenticate, verifyPaymentController);
 router.get("/user/my-orders", authenticate, getUserOrdersController);
 
 // Get single order by ID
-router.get("/:id", getOrderByIdController);
+router.get("/:id", authenticate, getOrderByIdController);
 
 /*
 |--------------------------------------------------------------------------
@@ -36,9 +37,9 @@ router.get("/:id", getOrderByIdController);
 */
 
 // Get all orders (Admin)
-router.get("/", getAllOrdersController);
+router.get("/", adminMiddleware, getAllOrdersController);
 
 // Update order status (Admin)
-router.put("/:id/status", updateOrderStatusController);
+router.put("/:id/status", adminMiddleware, updateOrderStatusController);
 
 export default router;

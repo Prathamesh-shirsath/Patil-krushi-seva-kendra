@@ -82,23 +82,28 @@ export const createOrder = async (data: CreateOrderInput) => {
   let shippingAddress: CreateOrderAddressInput | null = null;
 
   if (data.addressId) {
-    const savedAddress = await prisma.address.findUnique({
-      where: { id: data.addressId },
+    const savedAddress = await prisma.address.findFirst({
+      where: {
+        id: data.addressId,
+        userId: data.userId,
+      },
     });
-    if (savedAddress) {
-      shippingAddress = {
-        fullName: savedAddress.fullName,
-        phone: savedAddress.phone,
-        state: savedAddress.state,
-        district: savedAddress.district,
-        taluka: savedAddress.taluka,
-        village: savedAddress.village,
-        city: savedAddress.city,
-        pincode: savedAddress.pincode,
-        addressLine: savedAddress.addressLine,
-        landmark: savedAddress.landmark,
-      };
+    if (!savedAddress) {
+      throw new Error("Address not found.");
     }
+
+    shippingAddress = {
+      fullName: savedAddress.fullName,
+      phone: savedAddress.phone,
+      state: savedAddress.state,
+      district: savedAddress.district,
+      taluka: savedAddress.taluka,
+      village: savedAddress.village,
+      city: savedAddress.city,
+      pincode: savedAddress.pincode,
+      addressLine: savedAddress.addressLine,
+      landmark: savedAddress.landmark,
+    };
   }
 
   if (!shippingAddress && data.address) {
@@ -226,16 +231,30 @@ export const createOrder = async (data: CreateOrderInput) => {
 */
 
 export const verifyOrderPayment = async ({
+  userId,
   orderId,
   razorpayOrderId,
   razorpayPaymentId,
   razorpaySignature,
 }: {
+  userId: string;
   orderId: string;
   razorpayOrderId: string;
   razorpayPaymentId: string;
   razorpaySignature: string;
 }) => {
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      userId,
+    },
+    select: { id: true },
+  });
+
+  if (!order) {
+    throw new Error("Order not found.");
+  }
+
   const isValid = verifyRazorpaySignature({
     razorpayOrderId,
     razorpayPaymentId,
@@ -328,10 +347,11 @@ export const getAllOrders = async () => {
 |--------------------------------------------------------------------------
 */
 
-export const getOrderById = async (id: string) => {
-  return prisma.order.findUnique({
+export const getOrderById = async (id: string, userId: string) => {
+  return prisma.order.findFirst({
     where: {
       id,
+      userId,
     },
     include: orderInclude,
   });
