@@ -73,9 +73,9 @@ export default function ContactPage() {
         products and expert guidance for your farming needs.
       </p>
 
-      <div className="flex gap-5 mt-6">
+      <div className="mt-6 flex flex-col gap-5 md:flex-row">
 
-        <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 flex items-center gap-3 shadow-sm">
+        <div className="flex min-w-0 items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
           <div className="bg-green-100 p-2 rounded-full">
             <FiHeadphones className="text-green-700 w-6 h-6" />
           </div>
@@ -92,7 +92,7 @@ export default function ContactPage() {
         </div>
 
 
-        <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 flex items-center gap-3 shadow-sm">
+        <div className="flex min-w-0 items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
           <div className="bg-green-100 p-2 rounded-full">
             <FiUsers className="text-green-700 w-6 h-6" />
           </div>
@@ -373,7 +373,7 @@ export default function ContactPage() {
 
               {/* Store Hours */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <div className="bg-green-100 rounded-full p-2">
@@ -384,11 +384,11 @@ export default function ContactPage() {
                       <p className="font-semibold text-gray-800 text-sm">Store Hours</p>
                     </div>
                     <div className="space-y-1 text-sm">
-                      <div className="flex justify-between">
+                      <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-gray-500">Mon – Sat</span>
                         <span className="font-medium text-gray-700">9:00 AM – 7:00 PM</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-gray-500">Sunday</span>
                         <span className="font-medium text-gray-700">10:00 AM – 4:00 PM</span>
                       </div>
