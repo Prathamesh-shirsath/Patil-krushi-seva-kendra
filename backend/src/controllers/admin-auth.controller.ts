@@ -1,89 +1,117 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import { prisma } from "../lib/prisma";
+import { getAuth } from "firebase-admin/auth";
+
+import "../config/firebase-admin";
 import { generateToken } from "../utils/jwt";
 
 // =====================================================
 // ADMIN LOGIN
+// Firebase Email + Password
 // =====================================================
 
 export const adminLogin = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { idToken } = req.body;
 
-    if (!email || !password) {
+    if (!idToken) {
       return res.status(400).json({
         success: false,
-        message: "Email and password are required.",
+        message: "Firebase ID token is required.",
       });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    // =====================================================
+    // VERIFY FIREBASE ID TOKEN
+    // =====================================================
 
-    const user = await prisma.user.findUnique({
-      where: {
-        email: normalizedEmail,
-      },
-    });
+    const decodedToken = await getAuth().verifyIdToken(idToken);
 
-    if (!user || !user.password) {
+    if (!decodedToken.uid) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password.",
+        message: "Invalid Firebase authentication.",
       });
     }
 
-    // Only ADMIN can access admin panel
-    if (user.role !== "ADMIN") {
+    // =====================================================
+    // EMAIL + PASSWORD = ADMIN
+    // =====================================================
+
+    // Firebase Email/Password accounts are used only
+    // for Admin Panel authentication in this project.
+    //
+    // Customer authentication continues to use
+    // Firebase Phone OTP separately.
+
+    if (!decodedToken.email) {
       return res.status(403).json({
         success: false,
-        message: "Admin access required.",
+        message: "Admin email account required.",
       });
     }
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      user.password
+    // =====================================================
+    // CHECK FIREBASE PROVIDER
+    // =====================================================
+
+    const firebaseUser = await getAuth().getUser(
+      decodedToken.uid
     );
 
-    if (!passwordMatch) {
-      return res.status(401).json({
+    const passwordProvider = firebaseUser.providerData.some(
+      (provider) => provider.providerId === "password"
+    );
+
+    if (!passwordProvider) {
+      return res.status(403).json({
         success: false,
-        message: "Invalid email or password.",
+        message: "Admin Email + Password account required.",
       });
     }
 
-    // Generate JWT
+    // =====================================================
+    // CREATE APPLICATION SESSION JWT
+    // =====================================================
+
     const token = generateToken({
-      userId: user.id,
-      firebaseUid: user.firebaseUid ?? "",
-      role: user.role,
+      userId: firebaseUser.uid,
+      firebaseUid: firebaseUser.uid,
+      role: "ADMIN",
     });
 
-    // Store JWT in HTTP-only cookie
-    res.cookie("token", token, {
+    // =====================================================
+    // ADMIN COOKIE
+    // =====================================================
+
+    res.cookie("admin_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
+      path: "/",
     });
+
+    // =====================================================
+    // SUCCESS
+    // =====================================================
 
     return res.status(200).json({
       success: true,
       message: "Admin login successful.",
       user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+        firebaseUid: firebaseUser.uid,
+        name: firebaseUser.displayName ?? "",
+        email: firebaseUser.email ?? "",
+        role: "ADMIN",
+        image: firebaseUser.photoURL ?? null,
       },
     });
   } catch (error) {
-    console.error("Admin login error:", error);
+    console.error("Firebase admin login error:", error);
 
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
-      message: "Internal server error.",
+      message: "Invalid or expired Firebase authentication.",
     });
   }
 };
@@ -96,7 +124,6 @@ export const adminMe = async (_req: Request, res: Response) => {
   try {
     const admin = res.locals.user;
 
-    // Middleware se authenticated admin nahi mila
     if (!admin || admin.role !== "ADMIN") {
       return res.status(403).json({
         success: false,
@@ -104,37 +131,62 @@ export const adminMe = async (_req: Request, res: Response) => {
       });
     }
 
-    // Database se latest admin information
-    const user = await prisma.user.findUnique({
-      where: {
-        id: admin.userId,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        image: true,
-      },
-    });
+    // =====================================================
+    // GET CURRENT FIREBASE ADMIN
+    // =====================================================
 
-    if (!user || user.role !== "ADMIN") {
+    const firebaseUser = await getAuth().getUser(
+      admin.firebaseUid
+    );
+
+    // =====================================================
+    // VERIFY EMAIL + PASSWORD PROVIDER
+    // =====================================================
+
+    if (!firebaseUser.email) {
       return res.status(403).json({
         success: false,
-        message: "Admin not found.",
+        message: "Admin email account required.",
       });
     }
 
+    const passwordProvider = firebaseUser.providerData.some(
+      (provider) => provider.providerId === "password"
+    );
+
+    if (!passwordProvider) {
+      return res.status(403).json({
+        success: false,
+        message: "Admin Email + Password account required.",
+      });
+    }
+
+    // =====================================================
+    // CURRENT ADMIN RESPONSE
+    // =====================================================
+
     return res.status(200).json({
       success: true,
-      user,
+      user: {
+        firebaseUid: firebaseUser.uid,
+        name: firebaseUser.displayName ?? "",
+        email: firebaseUser.email ?? "",
+        phone: firebaseUser.phoneNumber ?? null,
+        image: firebaseUser.photoURL ?? null,
+        role: "ADMIN",
+        disabled: firebaseUser.disabled,
+        createdAt:
+          firebaseUser.metadata.creationTime ?? null,
+        lastLoginAt:
+          firebaseUser.metadata.lastSignInTime ?? null,
+      },
     });
   } catch (error) {
     console.error("Admin me error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal server error.",
+      message: "Unable to fetch admin information.",
     });
   }
 };
@@ -144,10 +196,11 @@ export const adminMe = async (_req: Request, res: Response) => {
 // =====================================================
 
 export const adminLogout = async (_req: Request, res: Response) => {
-  res.clearCookie("token", {
+  res.clearCookie("admin_token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
+    path: "/",
   });
 
   return res.status(200).json({

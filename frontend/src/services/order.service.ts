@@ -77,8 +77,18 @@ export interface VerifyPaymentPayload {
 export const createOrder = async (
   payload: CreateOrderPayload
 ): Promise<CreateOrderResponse> => {
-  const response = await api.post("/orders", payload);
-  return response.data;
+  try {
+    const response = await api.post("/orders", payload);
+    return response.data;
+  } catch (error: any) {
+    console.error("Create Order Failed");
+    console.error("Payload:", payload);
+    console.error("Status:", error.response?.status);
+    console.error("Response:", error.response?.data);
+    console.error("Headers:", error.response?.headers);
+
+    throw error;
+  }
 };
 
 export const verifyPayment = async (

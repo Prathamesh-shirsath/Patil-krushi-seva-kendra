@@ -22,6 +22,8 @@ import statisticRoutes from "./routes/statistic.routes";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import addressRoutes from "./routes/address.routes";
+import adminManagementRoutes from "./routes/admin-management.routes";
+
 
 const app = express();
 
@@ -117,6 +119,8 @@ app.use("/api/users", userRoutes);
 
 // Addresses
 app.use("/api/addresses", addressRoutes);
+
+app.use("/api/admin/admins", adminManagementRoutes);
 
 // =====================================================
 // HEALTH CHECK
