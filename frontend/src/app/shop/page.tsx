@@ -43,56 +43,26 @@ import {
   mapProductsToProductCards,
 } from "@/lib/product-mappers";
 
+import { useLanguage } from "@/i18n/useLanguage";
+
+import {
+  FILTER_ALL,
+  matchesAvailabilityFilter,
+  STOCK_IN,
+  STOCK_OUT,
+  type AvailabilityFilter,
+} from "@/lib/shop-filters";
+
 const PAGE_SIZE = 12;
 
-const sortOptions = [
-  {
-    label: "Featured",
-    value: "featured",
-  },
-  {
-    label: "Price: Low to High",
-    value: "price-low",
-  },
-  {
-    label: "Price: High to Low",
-    value: "price-high",
-  },
-  {
-    label: "Top Rated",
-    value: "rating",
-  },
-];
-
-const shopBenefits = [
-  {
-    title: "100% Original Products",
-    description: "Best quality guaranteed",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Fast & Safe Delivery",
-    description: "Quick delivery at your door",
-    icon: Truck,
-  },
-  {
-    title: "Secure Payments",
-    description: "100% secure payments",
-    icon: CreditCard,
-  },
-  {
-    title: "Easy Returns",
-    description: "Hassle-free returns",
-    icon: RefreshCw,
-  },
-  {
-    title: "Expert Support",
-    description: "24/7 customer support",
-    icon: Headphones,
-  },
-];
+const SORT_FEATURED = "featured";
+const SORT_PRICE_LOW = "price-low";
+const SORT_PRICE_HIGH = "price-high";
+const SORT_RATING = "rating";
 
 export default function ShopPage() {
+  const { t } = useLanguage();
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -116,16 +86,16 @@ export default function ShopPage() {
    * Local filters
    */
   const [selectedCategory, setSelectedCategory] =
-    useState("All Categories");
+    useState(FILTER_ALL);
 
   const [selectedBrand, setSelectedBrand] =
-    useState("All Brands");
+    useState(FILTER_ALL);
 
   const [selectedProductType, setSelectedProductType] =
-    useState("All Product Types");
+    useState(FILTER_ALL);
 
   const [selectedAvailability, setSelectedAvailability] =
-    useState("All Availability");
+    useState<AvailabilityFilter>(FILTER_ALL);
 
   const [minPrice, setMinPrice] =
     useState(0);
@@ -134,7 +104,65 @@ export default function ShopPage() {
     useState(0);
 
   const [sortBy, setSortBy] =
-    useState("featured");
+    useState(SORT_FEATURED);
+
+  const sortOptions = useMemo(
+    () => [
+      {
+        label: t.shop.sort.featured,
+        value: SORT_FEATURED,
+      },
+      {
+        label: t.shop.sort.priceLow,
+        value: SORT_PRICE_LOW,
+      },
+      {
+        label: t.shop.sort.priceHigh,
+        value: SORT_PRICE_HIGH,
+      },
+      {
+        label: t.shop.sort.rating,
+        value: SORT_RATING,
+      },
+    ],
+    [t]
+  );
+
+  const shopBenefits = useMemo(
+    () => [
+      {
+        title: t.shop.benefits.originalProducts,
+        description:
+          t.shop.benefits.originalProductsDescription,
+        icon: ShieldCheck,
+      },
+      {
+        title: t.shop.benefits.fastDelivery,
+        description:
+          t.shop.benefits.fastDeliveryDescription,
+        icon: Truck,
+      },
+      {
+        title: t.shop.benefits.securePayments,
+        description:
+          t.shop.benefits.securePaymentsDescription,
+        icon: CreditCard,
+      },
+      {
+        title: t.shop.benefits.easyReturns,
+        description:
+          t.shop.benefits.easyReturnsDescription,
+        icon: RefreshCw,
+      },
+      {
+        title: t.shop.benefits.expertSupport,
+        description:
+          t.shop.benefits.expertSupportDescription,
+        icon: Headphones,
+      },
+    ],
+    [t]
+  );
 
   const [currentPage, setCurrentPage] =
     useState(1);
@@ -196,7 +224,7 @@ export default function ShopPage() {
    */
   useEffect(() => {
     if (!brandIdFromUrl) {
-      setSelectedBrand("All Brands");
+      setSelectedBrand(FILTER_ALL);
       return;
     }
 
@@ -272,12 +300,14 @@ export default function ShopPage() {
     useMemo(
       () => [
         {
-          label: "All Categories",
+          value: FILTER_ALL,
+          label: t.shop.filterAll.categories,
           count: products.length,
         },
 
         ...categoryValues.map(
           (category) => ({
+            value: category,
             label: category,
             count: products.filter(
               (product) =>
@@ -290,6 +320,7 @@ export default function ShopPage() {
       [
         products,
         categoryValues,
+        t,
       ]
     );
 
@@ -317,12 +348,14 @@ export default function ShopPage() {
     useMemo(
       () => [
         {
-          label: "All Brands",
+          value: FILTER_ALL,
+          label: t.shop.filterAll.brands,
           count: products.length,
         },
 
         ...brandValues.map(
           (brand) => ({
+            value: brand,
             label: brand,
             count: products.filter(
               (product) =>
@@ -335,6 +368,7 @@ export default function ShopPage() {
       [
         products,
         brandValues,
+        t,
       ]
     );
 
@@ -344,12 +378,16 @@ export default function ShopPage() {
    * ---------------------------------------------------------
    */
   const productTypes: FilterOption[] =
-    [
-      {
-        label: "All Product Types",
-        count: products.length,
-      },
-    ];
+    useMemo(
+      () => [
+        {
+          value: FILTER_ALL,
+          label: t.shop.filterAll.productTypes,
+          count: products.length,
+        },
+      ],
+      [products.length, t]
+    );
 
   /**
    * ---------------------------------------------------------
@@ -360,29 +398,30 @@ export default function ShopPage() {
     useMemo(
       () => [
         {
-          label: "All Availability",
+          value: FILTER_ALL,
+          label: t.shop.filterAll.availability,
           count: products.length,
         },
 
         {
-          label: "In Stock",
+          value: STOCK_IN,
+          label: t.shop.stock.inStock,
           count: products.filter(
             (product) =>
-              product.availability ===
-              "In Stock"
+              product.availability === STOCK_IN
           ).length,
         },
 
         {
-          label: "Out of Stock",
+          value: STOCK_OUT,
+          label: t.shop.stock.outOfStock,
           count: products.filter(
             (product) =>
-              product.availability ===
-              "Out of Stock"
+              product.availability === STOCK_OUT
           ).length,
         },
       ],
-      [products]
+      [products, t]
     );
 
   /**
@@ -395,8 +434,7 @@ export default function ShopPage() {
       return products
         .filter((product) => {
           const categoryMatch =
-            selectedCategory ===
-            "All Categories" ||
+            selectedCategory === FILTER_ALL ||
             product.category ===
             selectedCategory;
 
@@ -411,20 +449,18 @@ export default function ShopPage() {
           const brandMatch =
             brandIdFromUrl
               ? true
-              : selectedBrand ===
-              "All Brands" ||
+              : selectedBrand === FILTER_ALL ||
               product.brand ===
               selectedBrand;
 
           const availabilityMatch =
-            selectedAvailability ===
-            "All Availability" ||
-            product.availability ===
-            selectedAvailability;
+            matchesAvailabilityFilter(
+              product.availability,
+              selectedAvailability
+            );
 
           const productTypeMatch =
-            selectedProductType ===
-            "All Product Types";
+            selectedProductType === FILTER_ALL;
 
           const productPrice =
             Number(product.price) || 0;
@@ -447,8 +483,7 @@ export default function ShopPage() {
         })
         .sort((a, b) => {
           if (
-            sortBy ===
-            "price-low"
+            sortBy === SORT_PRICE_LOW
           ) {
             return (
               a.price -
@@ -457,8 +492,7 @@ export default function ShopPage() {
           }
 
           if (
-            sortBy ===
-            "price-high"
+            sortBy === SORT_PRICE_HIGH
           ) {
             return (
               b.price -
@@ -467,7 +501,7 @@ export default function ShopPage() {
           }
 
           if (
-            sortBy === "rating"
+            sortBy === SORT_RATING
           ) {
             return (
               b.rating -
@@ -549,21 +583,13 @@ export default function ShopPage() {
    * from URL.
    */
   const clearFilters = () => {
-    setSelectedCategory(
-      "All Categories"
-    );
+    setSelectedCategory(FILTER_ALL);
 
-    setSelectedBrand(
-      "All Brands"
-    );
+    setSelectedBrand(FILTER_ALL);
 
-    setSelectedProductType(
-      "All Product Types"
-    );
+    setSelectedProductType(FILTER_ALL);
 
-    setSelectedAvailability(
-      "All Availability"
-    );
+    setSelectedAvailability(FILTER_ALL);
 
     setMinPrice(0);
     setMaxPriceValue(0);
@@ -711,7 +737,7 @@ export default function ShopPage() {
           <div className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-green-700 border-t-transparent" />
 
           <p className="mt-3 text-sm text-gray-500">
-            Loading products...
+            {t.shop.loading}
           </p>
         </div>
       </main>
@@ -728,11 +754,11 @@ export default function ShopPage() {
       <main className="bg-white">
         <div className="mx-auto max-w-[1500px] px-4 py-20 text-center">
           <h2 className="text-lg font-semibold text-red-600">
-            Unable to load products
+            {t.shop.errorTitle}
           </h2>
 
           <p className="mt-2 text-sm text-gray-500">
-            Please try again later.
+            {t.shop.errorMessage}
           </p>
         </div>
       </main>
@@ -750,13 +776,11 @@ export default function ShopPage() {
       <section className="border-b bg-white">
         <div className="mx-auto w-full max-w-[1500px] px-4 py-5 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-bold text-gray-950 sm:text-3xl">
-            Shop
+            {t.shop.title}
           </h1>
 
           <p className="mt-1 max-w-2xl text-sm text-gray-600">
-            High quality agricultural
-            products for better yield
-            and healthy crops.
+            {t.shop.subtitle}
           </p>
         </div>
       </section>
@@ -793,7 +817,7 @@ export default function ShopPage() {
                     "
                   >
                     <SlidersHorizontal className="mr-2 h-4 w-4" />
-                    Filters
+                    {t.shop.filters}
                   </Button>
                 </SheetTrigger>
 
@@ -816,15 +840,15 @@ export default function ShopPage() {
 
               {/* Product Count */}
               <p className="order-3 w-full text-xs text-gray-600 sm:order-none sm:w-auto">
-                Showing{" "}
+                {t.shop.showing}{" "}
                 <span className="font-semibold text-gray-900">
                   {visibleProducts.length}
                 </span>{" "}
-                of{" "}
+                {t.shop.of}{" "}
                 <span className="font-semibold text-gray-900">
                   {filteredProducts.length}
                 </span>{" "}
-                products
+                {t.shop.products}
               </p>
 
               {/* Sort + View */}
@@ -833,7 +857,7 @@ export default function ShopPage() {
                   htmlFor="shop-sort"
                   className="hidden text-xs font-medium text-gray-500 sm:block"
                 >
-                  Sort by:
+                  {t.shop.sortBy}
                 </label>
 
                 <select
@@ -848,7 +872,8 @@ export default function ShopPage() {
                   }
                   className="
                     h-9
-                    max-w-[155px]
+                    max-w-[min(100%,11rem)]
+                    sm:max-w-[12.5rem]
                     rounded-lg
                     border
                     border-gray-200
@@ -890,7 +915,7 @@ export default function ShopPage() {
                       bg-green-700
                       text-white
                     "
-                    aria-label="Grid view"
+                    aria-label={t.shop.viewGrid}
                   >
                     <LayoutGrid className="h-4 w-4" />
                   </button>
@@ -908,7 +933,7 @@ export default function ShopPage() {
                       border-gray-200
                       text-gray-500
                     "
-                    aria-label="List view"
+                    aria-label={t.shop.viewList}
                   >
                     <List className="h-4 w-4" />
                   </button>
@@ -944,14 +969,11 @@ export default function ShopPage() {
                   "
                 >
                   <h2 className="text-lg font-semibold text-gray-950">
-                    No products found
+                    {t.shop.emptyTitle}
                   </h2>
 
                   <p className="mt-2 max-w-md text-sm text-gray-500">
-                    No products are
-                    available for
-                    the selected
-                    filters.
+                    {t.shop.emptyMessage}
                   </p>
 
                   <Button
@@ -962,7 +984,7 @@ export default function ShopPage() {
                       clearFilters
                     }
                   >
-                    Clear Filters
+                    {t.shop.clearFilters}
                   </Button>
                 </div>
               )}
@@ -1014,15 +1036,13 @@ export default function ShopPage() {
       <section className="mx-auto w-full max-w-[1500px] px-4 pb-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-4 border-t border-gray-100 py-5 sm:grid-cols-2 lg:grid-cols-5">
           {shopBenefits.map(
-            (benefit) => {
+            (benefit, index) => {
               const Icon =
                 benefit.icon;
 
               return (
                 <div
-                  key={
-                    benefit.title
-                  }
+                  key={index}
                   className="flex min-w-0 items-start gap-3"
                 >
                   <div className="shrink-0 rounded-full bg-green-50 p-2 text-green-700">

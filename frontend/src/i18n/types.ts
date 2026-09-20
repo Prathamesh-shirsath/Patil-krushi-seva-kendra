@@ -34,6 +34,90 @@ export type TranslationDictionary = {
     brandLabel: string;
     productFallback: string;
     genericBrand: string;
+    toast: {
+      addedToCart: string;
+      addToCartFailed: string;
+    };
+  };
+  shop: {
+    title: string;
+    subtitle: string;
+    loading: string;
+    errorTitle: string;
+    errorMessage: string;
+    filters: string;
+    clearFilters: string;
+    clearAllFilters: string;
+    showing: string;
+    of: string;
+    products: string;
+    sortBy: string;
+    sort: {
+      featured: string;
+      priceLow: string;
+      priceHigh: string;
+      rating: string;
+    };
+    viewGrid: string;
+    viewList: string;
+    emptyTitle: string;
+    emptyMessage: string;
+    emptyHint: string;
+    filterAll: {
+      categories: string;
+      brands: string;
+      productTypes: string;
+      availability: string;
+    };
+    stock: {
+      inStock: string;
+      outOfStock: string;
+    };
+    sections: {
+      categories: string;
+      brands: string;
+      priceRange: string;
+      productType: string;
+      availability: string;
+    };
+    price: {
+      to: string;
+      minPlaceholder: string;
+      maxPlaceholder: string;
+    };
+    benefits: {
+      originalProducts: string;
+      originalProductsDescription: string;
+      fastDelivery: string;
+      fastDeliveryDescription: string;
+      securePayments: string;
+      securePaymentsDescription: string;
+      easyReturns: string;
+      easyReturnsDescription: string;
+      expertSupport: string;
+      expertSupportDescription: string;
+    };
+    aria: {
+      closeFilters: string;
+      minPrice: string;
+      maxPrice: string;
+    };
+    categoriesPage: {
+      title: string;
+      subtitle: string;
+      searchPlaceholder: string;
+      loading: string;
+      errorTitle: string;
+      errorMessage: string;
+      noCategories: string;
+      categoryProducts: string;
+      categoryLabel: string;
+      productsAvailable: string;
+      selectCategoryTitle: string;
+      selectCategoryMessage: string;
+      currentCategory: string;
+      loadingProducts: string;
+    };
   };
   account: {
     login: string;

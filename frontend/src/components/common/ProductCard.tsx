@@ -18,6 +18,11 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useAddWishlist } from "@/hooks/useAddWishlist";
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
 import { useLanguage } from "@/i18n/useLanguage";
+import {
+  isProductInStock,
+  STOCK_IN,
+  type StockStatus,
+} from "@/lib/shop-filters";
 
 type Props = {
   id: string;
@@ -29,7 +34,7 @@ type Props = {
   rating?: number;
   reviewCount?: number;
   originalPrice?: number;
-  availability?: "In Stock" | "Out of Stock";
+  availability?: StockStatus;
   badge?: string;
   unit?: string;
   slug?: string;
@@ -45,14 +50,14 @@ export default function ProductCard({
   rating = 4.5,
   reviewCount,
   originalPrice,
-  availability = "In Stock",
+  availability = STOCK_IN,
   badge = "New",
   unit,
   slug,
 }: Props) {
   const { t } = useLanguage();
 
-  const isAvailable = availability === "In Stock";
+  const isAvailable = isProductInStock(availability);
 
   const productHref = slug
     ? `/product/${slug}`
@@ -125,7 +130,7 @@ export default function ProductCard({
         new Event("cart-updated")
       );
 
-      toast.success("Product added to cart.");
+      toast.success(t.common.toast.addedToCart);
 
     } catch (error: any) {
       console.error(
@@ -135,7 +140,7 @@ export default function ProductCard({
 
       toast.error(
         error?.message ||
-          "Unable to add product to cart."
+          t.common.toast.addToCartFailed
       );
     } finally {
       setCartLoading(false);
@@ -270,7 +275,9 @@ export default function ProductCard({
           {/* ================= WISHLIST ================= */}
 
           <button
+            type="button"
             disabled={wishlistLoading}
+            aria-label={t.wishlist.label}
             onClick={() => {
               if (isWishlisted) {
                 removeWishlist.mutate(id);

@@ -4,6 +4,11 @@ import {
   DEFAULT_PRODUCT_IMAGE,
   getImageSrc,
 } from "@/lib/image-fallbacks";
+import {
+  STOCK_IN,
+  STOCK_OUT,
+  type StockStatus,
+} from "@/lib/shop-filters";
 
 export type ProductCardProduct = {
   id: string;
@@ -14,9 +19,7 @@ export type ProductCardProduct = {
   brand: string;
   category: string;
 
-  availability:
-  | "In Stock"
-  | "Out of Stock";
+  availability: StockStatus;
 
   rating: number;
   reviewCount: number;
@@ -58,9 +61,7 @@ export function mapProductToProductCard(
       "Agriculture",
 
     availability:
-      stock > 0
-        ? "In Stock"
-        : "Out of Stock",
+      stock > 0 ? STOCK_IN : STOCK_OUT,
 
     rating: 4.5,
 
