@@ -8,6 +8,7 @@ import {
   Monitor,
   Sprout,
 } from "lucide-react";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const milestones = [
   {
@@ -38,6 +39,35 @@ const milestones = [
 ];
 
 export default function JourneyTimeline() {
+  const { t } = useLanguage();
+
+  const milestones = [
+    {
+      year: "2018",
+      title: t.about.journey.milestones.year2018,
+      icon: Store,
+    },
+    {
+      year: "2020",
+      title: t.about.journey.milestones.year2020,
+      icon: Users,
+    },
+    {
+      year: "2022",
+      title: t.about.journey.milestones.year2022,
+      icon: Package,
+    },
+    {
+      year: "2024",
+      title: t.about.journey.milestones.year2024,
+      icon: Monitor,
+    },
+    {
+      year: "2025",
+      title: t.about.journey.milestones.year2025,
+      icon: Sprout,
+    },
+  ];
   return (
     <section className="py-20 bg-gradient-to-b from-white to-green-50">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -45,16 +75,15 @@ export default function JourneyTimeline() {
         {/* Header */}
         <div className="text-center mb-14">
           <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700 font-semibold">
-            🌱 OUR JOURNEY
+            🌱 {t.about.journey.badge}
           </span>
 
           <h2 className="mt-4 text-4xl md:text-5xl font-extrabold text-gray-900">
-            Growing Together With Farmers
+            {t.about.journey.title}
           </h2>
 
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-            Our journey reflects our commitment to helping farmers
-            achieve better productivity through trusted agricultural solutions.
+            {t.about.journey.description}
           </p>
         </div>
 

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
+import { useLanguage } from "@/i18n/useLanguage";
 
 interface Props {
   wishlistId: string;
@@ -40,6 +41,7 @@ export default function WishlistCard({
   product,
   listView = false,
 }: Props) {
+  const { t } = useLanguage();
   const removeMutation = useRemoveWishlist();
 
   return (
@@ -78,7 +80,7 @@ export default function WishlistCard({
 
         {product.packSize && (
           <p className="mt-2 text-sm text-muted-foreground">
-            Pack Size : {product.packSize}
+            {t.wishlist.card.packSize || t.cart.item.packSize} {product.packSize}
           </p>
         )}
 
@@ -89,7 +91,7 @@ export default function WishlistCard({
         <div className={`mt-auto grid gap-3 pt-6 ${listView ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2"}`}>
           <Button>
             <ShoppingCart className="mr-2 h-4 w-4" />
-            Add Cart
+            {t.wishlist.card.addCart}
           </Button>
 
           <Link
@@ -101,7 +103,7 @@ export default function WishlistCard({
               className="w-full"
             >
               <Eye className="mr-2 h-4 w-4" />
-              View
+              {t.wishlist.card.view}
             </Button>
           </Link>
         </div>
@@ -117,8 +119,8 @@ export default function WishlistCard({
           <Heart className="mr-2 h-4 w-4 fill-current" />
 
           {removeMutation.isPending
-            ? "Removing..."
-            : "Remove"}
+            ? t.wishlist.card.removing
+            : t.wishlist.card.remove || t.cart.item.remove}
         </Button>
       </div>
     </div>

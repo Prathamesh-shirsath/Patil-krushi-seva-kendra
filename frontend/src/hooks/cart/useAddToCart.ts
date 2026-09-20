@@ -3,9 +3,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addToCart } from "@/services/cart.service";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export const useAddToCart = () => {
     const queryClient = useQueryClient();
+    const { t } = useLanguage();
 
     return useMutation({
         mutationFn: ({
@@ -25,13 +27,13 @@ export const useAddToCart = () => {
                 queryKey: ["cart-count"],
             });
 
-            toast.success("Product added to cart.");
+            toast.success(t.common.toast.addedToCart);
         },
 
         onError: (error: any) => {
             toast.error(
                 error?.response?.data?.message ??
-                "Unable to add product."
+                t.common.toast.addToCartFailed
             );
         },
     });

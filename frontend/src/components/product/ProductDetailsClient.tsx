@@ -28,6 +28,8 @@ import { useAddWishlist } from "@/hooks/useAddWishlist";
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
 import { useAddToCart } from "@/hooks/cart/useAddToCart";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n/useLanguage";
+import Link from "next/link";
 
 type ProductDetailsClientProps = {
   product: Product;
@@ -35,35 +37,6 @@ type ProductDetailsClientProps = {
 };
 
 type ProductTab = "description" | "specifications" | "usage";
-
-const trustItems = [
-  {
-    title: "Genuine Products",
-    description: "Original products sourced for reliable farming.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Fast Delivery",
-    description: "Quick dispatch and careful handling.",
-    icon: Truck,
-  },
-  {
-    title: "Secure Payments",
-    description: "Protected checkout for every order.",
-    icon: CreditCard,
-  },
-  {
-    title: "Expert Support",
-    description: "Guidance from agriculture product experts.",
-    icon: Headphones,
-  },
-];
-
-const tabs: Array<{ id: ProductTab; label: string }> = [
-  { id: "description", label: "Description" },
-  { id: "specifications", label: "Specifications" },
-  { id: "usage", label: "Usage Guide" },
-];
 
 function toNumber(value: Product["price"]) {
   return Number(value);
@@ -85,10 +58,50 @@ export default function ProductDetailsClient({
   product,
   relatedProducts,
 }: ProductDetailsClientProps) {
+  const { t } = useLanguage();
   const galleryImages = useMemo(() => getGalleryImages(product), [product]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<ProductTab>("description");
+
+  const trustItems = useMemo(
+    () => [
+      {
+        id: "originalProducts",
+        title: t.shop.benefits.originalProducts,
+        description: t.shop.benefits.originalProductsDescription,
+        icon: ShieldCheck,
+      },
+      {
+        id: "fastDelivery",
+        title: t.shop.benefits.fastDelivery,
+        description: t.shop.benefits.fastDeliveryDescription,
+        icon: Truck,
+      },
+      {
+        id: "securePayments",
+        title: t.shop.benefits.securePayments,
+        description: t.shop.benefits.securePaymentsDescription,
+        icon: CreditCard,
+      },
+      {
+        id: "expertSupport",
+        title: t.shop.benefits.expertSupport,
+        description: t.shop.benefits.expertSupportDescription,
+        icon: Headphones,
+      },
+    ],
+    [t]
+  );
+
+  const tabs = useMemo<{ id: ProductTab; label: string }[]>(
+    () => [
+      { id: "description", label: t.product.details.tabs.description },
+      { id: "specifications", label: t.product.details.tabs.specifications },
+      { id: "usage", label: t.product.details.tabs.usageGuide },
+    ],
+    [t]
+  );
 
   const mainImage = getImageSrc(
     galleryImages[activeImageIndex],
@@ -103,17 +116,17 @@ export default function ProductDetailsClient({
     typeof product.stock === "number"
       ? product.stock > 0
       : product.status ?? product.isActive ?? true;
-  const stockLabel = isAvailable ? "In Stock" : "Out of Stock";
+  const stockLabel = isAvailable ? t.shop.stock.inStock : t.shop.stock.outOfStock;
   const maxQuantity =
     typeof product.stock === "number" && product.stock > 0
       ? product.stock
       : 1;
-  const brandName = product.brand?.name ?? "Generic";
+  const brandName = product.brand?.name ?? t.common.genericBrand;
   const usageGuide =
     product.uses ||
     (product.usedForCrops?.length
-      ? `Recommended for: ${product.usedForCrops.join(", ")}`
-      : "Usage guide will be updated soon.");
+      ? `${t.product.details.recommendedFor}${product.usedForCrops.join(", ")}`
+      : t.product.details.emptyUsageGuide);
 
   // ===========================
   // Wishlist
@@ -165,6 +178,12 @@ export default function ProductDetailsClient({
 
   return (
     <>
+      <div className="mb-6 text-xs text-gray-500">
+        <Link href="/" className="hover:text-green-700">{t.navigation.home}</Link> <span className="mx-2">/</span>
+        <Link href="/shop" className="hover:text-green-700">{t.navigation.shop}</Link> <span className="mx-2">/</span>
+        <span className="text-gray-800">{product.name}</span>
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr_320px]">
         <div>
           <div className="relative flex min-h-[320px] items-center justify-center rounded-lg border border-gray-200 bg-white p-4 sm:min-h-[430px] sm:p-6">
@@ -183,7 +202,7 @@ export default function ProductDetailsClient({
                   type="button"
                   onClick={showPreviousImage}
                   className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/90 text-gray-700 shadow-sm transition-colors hover:bg-green-50 hover:text-green-700"
-                  aria-label="Previous image"
+                  aria-label={t.product.aria.previousImage}
                 >
                   ‹
                 </button>
@@ -191,7 +210,7 @@ export default function ProductDetailsClient({
                   type="button"
                   onClick={showNextImage}
                   className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white/90 text-gray-700 shadow-sm transition-colors hover:bg-green-50 hover:text-green-700"
-                  aria-label="Next image"
+                  aria-label={t.product.aria.nextImage}
                 >
                   ›
                 </button>
@@ -209,7 +228,7 @@ export default function ProductDetailsClient({
                     ? "border-green-700 ring-2 ring-green-100"
                     : "border-gray-200 hover:border-green-300"
                   }`}
-                aria-label={`View product image ${index + 1}`}
+                aria-label={`${t.product.aria.viewImage} ${index + 1}`}
               >
                 <Image
                   src={image}
@@ -233,7 +252,7 @@ export default function ProductDetailsClient({
           </h1>
 
           <p className="mt-3 text-sm text-gray-600">
-            Brand:{" "}
+            {t.common.brandLabel}{" "}
             <span className="font-semibold text-gray-900">{brandName}</span>
           </p>
 
@@ -260,7 +279,7 @@ export default function ProductDetailsClient({
 
           <div className="mt-6">
             <p className="mb-2 text-sm font-semibold text-gray-900">
-              Quantity
+              {t.product.details.quantity}
             </p>
             <div className="inline-flex h-11 items-center overflow-hidden rounded border border-gray-200">
               <button
@@ -268,7 +287,7 @@ export default function ProductDetailsClient({
                 onClick={decreaseQuantity}
                 disabled={quantity === 1}
                 className="flex h-11 w-11 items-center justify-center text-gray-600 transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:text-gray-300"
-                aria-label="Decrease quantity"
+                aria-label={t.product.aria.decreaseQuantity}
               >
                 <Minus className="h-4 w-4" />
               </button>
@@ -280,7 +299,7 @@ export default function ProductDetailsClient({
                 onClick={increaseQuantity}
                 disabled={quantity >= maxQuantity}
                 className="flex h-11 w-11 items-center justify-center text-gray-600 transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:text-gray-300"
-                aria-label="Increase quantity"
+                aria-label={t.product.aria.increaseQuantity}
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -299,17 +318,17 @@ export default function ProductDetailsClient({
                   },
                   {
                     onSuccess: () => {
-                      toast.success("Product added to cart");
+                      toast.success(t.common.toast.addedToCart);
                     },
                     onError: () => {
-                      toast.error("Failed to add product");
+                      toast.error(t.common.toast.addToCartFailed);
                     },
                   }
                 );
               }}>
               <ShoppingCart className="mr-2 h-4 w-4" />
 
-              {cartLoading ? "Adding..." : "Add to Cart"}
+              {cartLoading ? t.common.addingToCart : t.common.addToCart}
             </Button>
 
             <Button
@@ -331,10 +350,10 @@ export default function ProductDetailsClient({
               />
 
               {wishlistLoading
-                ? "Please Wait..."
+                ? t.product.details.pleaseWait
                 : isWishlisted
-                  ? "Remove Wishlist"
-                  : "Add to Wishlist"}
+                  ? t.product.details.removeWishlist
+                  : t.product.details.addWishlist}
             </Button>
           </div>
         </div>
@@ -342,7 +361,7 @@ export default function ProductDetailsClient({
         <Card className="h-fit rounded-lg border border-gray-200 py-0 shadow-sm">
           <CardContent className="p-5">
             <h2 className="text-lg font-bold text-gray-950">
-              Why shop with us
+              {t.product.details.whyShopWithUs}
             </h2>
 
             <div className="mt-5 space-y-5">
@@ -350,7 +369,7 @@ export default function ProductDetailsClient({
                 const Icon = item.icon;
 
                 return (
-                  <div key={item.title} className="flex gap-3">
+                  <div key={item.id} className="flex gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-50 text-green-700">
                       <Icon className="h-5 w-5" />
                     </div>
@@ -391,7 +410,7 @@ export default function ProductDetailsClient({
           {activeTab === "description" ? (
             <section>
               <h2 className="text-base font-bold text-gray-950">
-                Description
+                {t.product.details.tabs.description}
               </h2>
               <p className="mt-3 text-sm leading-7 text-gray-600">
                 {product.description}
@@ -402,15 +421,15 @@ export default function ProductDetailsClient({
           {activeTab === "specifications" ? (
             <section>
               <h2 className="text-base font-bold text-gray-950">
-                Specifications
+                {t.product.details.tabs.specifications}
               </h2>
               <div className="mt-3 space-y-3 text-sm leading-7 text-gray-600">
                 <p>
-                  {product.features ?? "Product features will be updated soon."}
+                  {product.features ?? t.product.details.emptyFeatures}
                 </p>
                 <p>
                   {product.cropRecommendation ??
-                    "Crop recommendations will be updated soon."}
+                    t.product.details.emptyCropRecommendations}
                 </p>
               </div>
             </section>
@@ -419,7 +438,7 @@ export default function ProductDetailsClient({
           {activeTab === "usage" ? (
             <section>
               <h2 className="text-base font-bold text-gray-950">
-                Usage Guide
+                {t.product.details.tabs.usageGuide}
               </h2>
               <p className="mt-3 text-sm leading-7 text-gray-600">
                 {usageGuide}
@@ -431,7 +450,7 @@ export default function ProductDetailsClient({
 
       <section className="mt-10">
         <h2 className="text-2xl font-bold text-gray-950">
-          You May Also Like
+          {t.product.details.youMayAlsoLike}
         </h2>
 
         <div className="mt-5 flex gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-4">

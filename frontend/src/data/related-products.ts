@@ -1,5 +1,6 @@
 import type { ShopProduct } from "@/components/shop/ProductGrid";
 import { DEFAULT_PRODUCT_IMAGE } from "@/lib/image-fallbacks";
+import { STOCK_IN } from "@/lib/shop-filters";
 
 export const relatedProducts: ShopProduct[] = [
   {
@@ -11,7 +12,7 @@ export const relatedProducts: ShopProduct[] = [
     image: DEFAULT_PRODUCT_IMAGE,
     brand: "AgriCore",
     category: "Organic Products",
-    availability: "In Stock",
+    availability: STOCK_IN,
     rating: 4.4,
     reviewCount: 32,
     badge: "Popular",
@@ -25,7 +26,7 @@ export const relatedProducts: ShopProduct[] = [
     image: DEFAULT_PRODUCT_IMAGE,
     brand: "FarmPlus",
     category: "Fertilizers",
-    availability: "In Stock",
+    availability: STOCK_IN,
     rating: 4.5,
     reviewCount: 41,
     badge: "New",
@@ -39,7 +40,7 @@ export const relatedProducts: ShopProduct[] = [
     image: DEFAULT_PRODUCT_IMAGE,
     brand: "GreenField",
     category: "Plant Protection",
-    availability: "In Stock",
+    availability: STOCK_IN,
     rating: 4.3,
     reviewCount: 27,
     unit: "500 ml",
@@ -52,7 +53,7 @@ export const relatedProducts: ShopProduct[] = [
     image: DEFAULT_PRODUCT_IMAGE,
     brand: "AquaGrow",
     category: "Irrigation",
-    availability: "In Stock",
+    availability: STOCK_IN,
     rating: 4.2,
     reviewCount: 19,
     badge: "Tool",

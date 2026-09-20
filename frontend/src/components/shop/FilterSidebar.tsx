@@ -9,7 +9,10 @@ import {
 
 import { useState } from "react";
 
+import { useLanguage } from "@/i18n/useLanguage";
+
 export interface FilterOption {
+  value: string;
   label: string;
   count: number;
 }
@@ -168,6 +171,8 @@ export default function FilterSidebar({
   onClear,
   onClose,
 }: FilterSidebarProps) {
+  const { t } = useLanguage();
+
   const [openSections, setOpenSections] = useState({
     categories: true,
     brands: true,
@@ -264,8 +269,6 @@ export default function FilterSidebar({
         shadow-sm
       "
     >
-      {/* Header */}
-
       <div
         className="
           flex
@@ -295,7 +298,7 @@ export default function FilterSidebar({
           </div>
 
           <h2 className="truncate text-sm font-bold text-gray-950">
-            Filters
+            {t.shop.filters}
           </h2>
         </div>
 
@@ -316,7 +319,7 @@ export default function FilterSidebar({
               hover:bg-gray-100
               hover:text-gray-700
             "
-            aria-label="Close filters"
+            aria-label={t.shop.aria.closeFilters}
           >
             <X className="h-4 w-4" />
           </button>
@@ -324,11 +327,9 @@ export default function FilterSidebar({
       </div>
 
       <div className="divide-y divide-gray-100 px-4">
-        {/* Categories */}
-
         <section className="py-4">
           <SectionHeader
-            title="Categories"
+            title={t.shop.sections.categories}
             open={openSections.categories}
             onClick={() =>
               toggleSection("categories")
@@ -339,15 +340,15 @@ export default function FilterSidebar({
             <div className="mt-3 space-y-1">
               {categories.map((option) => (
                 <OptionRow
-                  key={option.label}
+                  key={option.value}
                   option={option}
                   selected={
                     selectedCategory ===
-                    option.label
+                    option.value
                   }
                   onClick={() =>
                     onCategoryChange(
-                      option.label
+                      option.value
                     )
                   }
                 />
@@ -356,11 +357,9 @@ export default function FilterSidebar({
           )}
         </section>
 
-        {/* Brands */}
-
         <section className="py-4">
           <SectionHeader
-            title="Brands"
+            title={t.shop.sections.brands}
             open={openSections.brands}
             onClick={() =>
               toggleSection("brands")
@@ -371,15 +370,15 @@ export default function FilterSidebar({
             <div className="mt-3 max-h-44 space-y-1 overflow-y-auto pr-1">
               {brands.map((option) => (
                 <OptionRow
-                  key={option.label}
+                  key={option.value}
                   option={option}
                   selected={
                     selectedBrand ===
-                    option.label
+                    option.value
                   }
                   onClick={() =>
                     onBrandChange(
-                      option.label
+                      option.value
                     )
                   }
                 />
@@ -388,11 +387,9 @@ export default function FilterSidebar({
           )}
         </section>
 
-        {/* Price */}
-
         <section className="py-4">
           <SectionHeader
-            title="Price Range"
+            title={t.shop.sections.priceRange}
             open={openSections.price}
             onClick={() =>
               toggleSection("price")
@@ -401,8 +398,6 @@ export default function FilterSidebar({
 
           {openSections.price && (
             <div className="mt-4 space-y-4">
-              {/* Range */}
-
               <div className="relative px-1">
                 <input
                   type="range"
@@ -427,7 +422,7 @@ export default function FilterSidebar({
                     cursor-pointer
                     accent-green-700
                   "
-                  aria-label="Minimum price"
+                  aria-label={t.shop.aria.minPrice}
                 />
 
                 <input
@@ -454,7 +449,7 @@ export default function FilterSidebar({
                     cursor-pointer
                     accent-green-700
                   "
-                  aria-label="Maximum price"
+                  aria-label={t.shop.aria.maxPrice}
                 />
               </div>
 
@@ -474,8 +469,6 @@ export default function FilterSidebar({
                 </span>
               </div>
 
-              {/* Inputs */}
-
               <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                 <input
                   type="text"
@@ -490,7 +483,7 @@ export default function FilterSidebar({
                       event.target.value
                     )
                   }
-                  placeholder="Rs. Min"
+                  placeholder={t.shop.price.minPlaceholder}
                   className="
                     h-9
                     min-w-0
@@ -509,7 +502,7 @@ export default function FilterSidebar({
                 />
 
                 <span className="shrink-0 text-xs text-gray-400">
-                  to
+                  {t.shop.price.to}
                 </span>
 
                 <input
@@ -526,7 +519,7 @@ export default function FilterSidebar({
                       event.target.value
                     )
                   }
-                  placeholder="Rs. Max"
+                  placeholder={t.shop.price.maxPlaceholder}
                   className="
                     h-9
                     min-w-0
@@ -548,11 +541,9 @@ export default function FilterSidebar({
           )}
         </section>
 
-        {/* Product Type */}
-
         <section className="py-4">
           <SectionHeader
-            title="Product Type"
+            title={t.shop.sections.productType}
             open={
               openSections.productType
             }
@@ -568,15 +559,15 @@ export default function FilterSidebar({
               {productTypes.map(
                 (option) => (
                   <OptionRow
-                    key={option.label}
+                    key={option.value}
                     option={option}
                     selected={
                       selectedProductType ===
-                      option.label
+                      option.value
                     }
                     onClick={() =>
                       onProductTypeChange(
-                        option.label
+                        option.value
                       )
                     }
                   />
@@ -586,11 +577,9 @@ export default function FilterSidebar({
           )}
         </section>
 
-        {/* Availability */}
-
         <section className="py-4">
           <SectionHeader
-            title="Availability"
+            title={t.shop.sections.availability}
             open={
               openSections.availability
             }
@@ -606,15 +595,15 @@ export default function FilterSidebar({
               {availabilityOptions.map(
                 (option) => (
                   <OptionRow
-                    key={option.label}
+                    key={option.value}
                     option={option}
                     selected={
                       selectedAvailability ===
-                      option.label
+                      option.value
                     }
                     onClick={() =>
                       onAvailabilityChange(
-                        option.label
+                        option.value
                       )
                     }
                   />
@@ -623,8 +612,6 @@ export default function FilterSidebar({
             </div>
           )}
         </section>
-
-        {/* Clear */}
 
         <div className="py-4">
           <button
@@ -648,7 +635,7 @@ export default function FilterSidebar({
               hover:bg-green-50
             "
           >
-            Clear All Filters
+            {t.shop.clearAllFilters}
           </button>
         </div>
       </div>

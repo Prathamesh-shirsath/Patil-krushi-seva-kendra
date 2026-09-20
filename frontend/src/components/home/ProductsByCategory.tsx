@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { useCategories } from "@/hooks/use-categories";
 import { getImageSrc } from "@/lib/image-fallbacks";
 import type { Category } from "@/services/category.service";
+import { useLanguage } from "@/i18n/useLanguage";
 
 function getProductCount(category: Category) {
   return category._count?.products ?? category.products?.length ?? 0;
@@ -25,6 +26,8 @@ function ProductsByCategorySkeleton() {
 }
 
 export default function ProductsByCategory() {
+  const { t } = useLanguage();
+
   const {
     data: categories = [],
     isLoading,
@@ -39,17 +42,17 @@ export default function ProductsByCategory() {
     <section className="w-full bg-white py-14 md:py-16">
       <div className="mx-auto w-full max-w-[1500px] px-4 md:px-8 lg:px-12">
         <div className="mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between">
-          <div>
+          <div className="min-w-0">
             <span className="inline-block rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
-              Products by Category
+              {t.home.productsByCategory.eyebrow}
             </span>
 
             <h2 className="mt-4 text-3xl font-extrabold text-gray-900 md:text-5xl">
-              Explore Farming Essentials
+              {t.home.productsByCategory.title}
             </h2>
 
             <p className="mt-3 max-w-2xl text-gray-600">
-              Browse popular product groups and find the right solutions for your farm.
+              {t.home.productsByCategory.description}
             </p>
           </div>
 
@@ -57,7 +60,7 @@ export default function ProductsByCategory() {
             href="/categories"
             className="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-green-700 transition-colors hover:text-green-800"
           >
-            View All Categories
+            {t.home.productsByCategory.viewAllCategories}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -98,7 +101,10 @@ export default function ProductsByCategory() {
                       </h3>
 
                       <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-                        {productCount} {productCount === 1 ? "Product" : "Products"}
+                        {productCount}{" "}
+                        {productCount === 1
+                          ? t.home.productsByCategory.product
+                          : t.home.productsByCategory.products}
                       </p>
                     </div>
                   </Card>
@@ -109,7 +115,7 @@ export default function ProductsByCategory() {
 
         {!isLoading && availableCategories.length === 0 ? (
           <p className="mt-4 text-sm text-gray-500">
-            No categories available.
+            {t.home.productsByCategory.noCategories}
           </p>
         ) : null}
       </div>

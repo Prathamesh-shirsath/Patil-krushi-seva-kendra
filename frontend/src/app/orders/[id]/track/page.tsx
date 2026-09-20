@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getOrderById } from "@/services/order.service";
 import type { Order, OrderStatus, PaymentMethod, PaymentStatus } from "@/types/order";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const statusConfig: Record<
   OrderStatus,
@@ -51,6 +52,7 @@ const statusConfig: Record<
 };
 
 export default function TrackOrderPage() {
+  const { t } = useLanguage();
   const params = useParams();
   const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
   const orderId = rawId ?? "";
@@ -71,7 +73,7 @@ export default function TrackOrderPage() {
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
             <p className="text-sm font-medium text-slate-600">
-              Loading order status...
+              {t.orders.track.loading}
             </p>
           </div>
         </div>
@@ -88,15 +90,15 @@ export default function TrackOrderPage() {
               <Package className="h-8 w-8" />
             </div>
             <h1 className="mt-5 text-2xl font-black text-slate-900">
-              Order Not Found
+              {t.orders.details.notFoundTitle}
             </h1>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-              This order was not found or you don't have access to it.
+              {t.orders.details.notFoundDesc}
             </p>
             <Link href="/orders" className="mt-6 inline-block">
               <Button className="h-11 rounded-xl bg-emerald-700 px-6 font-bold text-white hover:bg-emerald-800">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to My Orders
+                {t.orders.details.backToOrders}
               </Button>
             </Link>
           </Card>
@@ -107,18 +109,21 @@ export default function TrackOrderPage() {
 
   const status = statusConfig[order.status];
   const StatusIcon = status.icon;
+  const statusLabel = t.orders.status[order.status.toLowerCase() as keyof typeof t.orders.status] || status.label;
+  const statusDesc = t.orders.status[`${order.status.toLowerCase()}Desc` as keyof typeof t.orders.status] || status.description;
+
   const trackingSteps = [
     {
-      title: "Order Placed",
-      description: "Your order was successfully placed.",
+      title: t.orders.details.orderPlaced,
+      description: t.orders.details.orderPlacedDesc,
       date: formatDateTime(order.createdAt),
       icon: ShoppingBag,
       completed: true,
     },
     {
-      title: `Current Status: ${status.label}`,
-      description: "This is the latest status available for your order.",
-      date: `Last updated ${formatDateTime(order.updatedAt)}`,
+      title: `${t.orders.details.currentStatus}: ${statusLabel}`,
+      description: statusDesc,
+      date: t.orders.track.currentStatus + " " + formatDateTime(order.updatedAt),
       icon: StatusIcon,
       completed: true,
     },
@@ -134,7 +139,7 @@ export default function TrackOrderPage() {
           className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition-colors hover:text-emerald-700"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to My Orders
+          {t.orders.details.backToOrders}
         </Link>
 
         {/* Premium Header */}
@@ -144,18 +149,18 @@ export default function TrackOrderPage() {
 
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-emerald-50 backdrop-blur-xl">
               <Truck className="h-4 w-4" />
-              Order Status
+              {t.orders.track.orderStatus}
             </div>
 
             <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
 
               <div>
                 <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
-                  Track Your Order
+                  {t.orders.track.trackYourOrder}
                 </h1>
 
                 <p className="mt-2 text-sm text-emerald-50/70">
-                  Order #{order.id}
+                  {t.orders.list.orderNum}{order.id}
                 </p>
               </div>
 
@@ -180,11 +185,11 @@ export default function TrackOrderPage() {
             <div className="mb-8">
 
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-                Order Progress
+                {t.orders.details.orderProgress}
               </p>
 
               <h2 className="mt-1 text-2xl font-black text-slate-950">
-                Order Status Timeline
+                {t.orders.track.orderStatusTimeline}
               </h2>
 
             </div>
@@ -272,11 +277,11 @@ export default function TrackOrderPage() {
 
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-                    Current Status
+                    {t.orders.track.currentStatus}
                   </p>
 
                   <h3 className="mt-1 text-xl font-black text-emerald-950">
-                    {status.label}
+                    {statusLabel}
                   </h3>
                 </div>
 
@@ -285,7 +290,7 @@ export default function TrackOrderPage() {
               <div className="mt-5 rounded-2xl bg-white/80 p-4">
 
                 <p className="text-sm leading-6 text-slate-500">
-                  {status.description}
+                  {statusDesc}
                 </p>
 
               </div>
@@ -296,11 +301,11 @@ export default function TrackOrderPage() {
             <Card className="rounded-[30px] border-slate-200/80 bg-white p-6 shadow-[0_10px_40px_-18px_rgba(15,23,42,0.2)]">
 
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-                Shipping
+                {t.orders.details.shipping}
               </p>
 
               <h2 className="mt-1 text-xl font-black text-slate-950">
-                Delivery Address
+                {t.orders.details.deliveryAddress}
               </h2>
 
               <div className="mt-5 flex gap-3 rounded-2xl bg-slate-50 p-4">
@@ -313,11 +318,11 @@ export default function TrackOrderPage() {
                   <p className="font-bold text-slate-800">
                     {order.OrderAddress?.fullName ??
                       order.user.name ??
-                      "Customer information unavailable"}
+                      t.orders.details.customerInfoUnavailable}
                   </p>
 
                   <p className="mt-1 text-sm leading-6 text-slate-500">
-                    {formatOrderAddress(order)}
+                    {formatOrderAddress(order, t)}
                   </p>
 
                   {(order.OrderAddress?.phone || order.user.phone || order.user.email) && (
@@ -337,29 +342,29 @@ export default function TrackOrderPage() {
             <Card className="rounded-[30px] border-slate-200/80 bg-white p-6 shadow-[0_10px_40px_-18px_rgba(15,23,42,0.2)]">
 
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-                Order Details
+                {t.orders.track.orderDetails}
               </p>
 
               <div className="mt-5 space-y-4">
 
                 <InfoRow
-                  label="Order ID"
+                  label={t.orders.track.orderId}
                   value={order.id}
                 />
 
                 <InfoRow
-                  label="Status"
-                  value={status.label}
+                  label={t.orders.track.status}
+                  value={statusLabel}
                 />
 
                 <InfoRow
-                  label="Payment Method"
-                  value={getPaymentMethodLabel(order.paymentMethod)}
+                  label={t.orders.track.paymentMethod}
+                  value={getPaymentMethodLabel(order.paymentMethod, t)}
                 />
 
                 <InfoRow
-                  label="Payment Status"
-                  value={formatPaymentStatus(order.paymentStatus)}
+                  label={t.orders.track.paymentStatus}
+                  value={formatPaymentStatus(order.paymentStatus, t)}
                 />
 
               </div>
@@ -373,7 +378,7 @@ export default function TrackOrderPage() {
                 className="h-12 w-full rounded-xl border-slate-200 font-bold text-slate-700 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Orders
+                {t.orders.details.backToOrders}
               </Button>
             </Link>
 
@@ -417,11 +422,11 @@ function formatDateTime(value: string) {
   });
 }
 
-function formatOrderAddress(order: Order) {
+function formatOrderAddress(order: Order, t: any) {
   const address = order.OrderAddress;
 
   if (!address) {
-    return "Delivery address unavailable.";
+    return t.orders.list.addressUnavailable || "Delivery address unavailable.";
   }
 
   return [
@@ -437,10 +442,13 @@ function formatOrderAddress(order: Order) {
     .join(", ");
 }
 
-function getPaymentMethodLabel(paymentMethod: PaymentMethod) {
-  return paymentMethod === "COD" ? "Cash on Delivery" : "Razorpay";
+function getPaymentMethodLabel(paymentMethod: PaymentMethod, t: any) {
+  return paymentMethod === "COD" ? t.orders.payment.methodCod : t.orders.payment.methodRazorpay;
 }
 
-function formatPaymentStatus(paymentStatus: PaymentStatus) {
+function formatPaymentStatus(paymentStatus: PaymentStatus, t: any) {
+  if (paymentStatus === "SUCCESS") return "Success";
+  if (paymentStatus === "FAILED") return "Failed";
+  if (paymentStatus === "REFUNDED") return "Refunded";
   return paymentStatus.charAt(0) + paymentStatus.slice(1).toLowerCase();
 }

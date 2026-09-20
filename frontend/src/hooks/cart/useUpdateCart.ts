@@ -3,9 +3,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateCartItem } from "@/services/cart.service";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export const useUpdateCart = () => {
     const queryClient = useQueryClient();
+    const { t } = useLanguage();
 
     return useMutation({
         mutationFn: ({
@@ -34,7 +36,7 @@ export const useUpdateCart = () => {
         onError: (error: any) => {
             toast.error(
                 error?.response?.data?.message ??
-                "Unable to update cart."
+                t.cart.toast.updateFailed
             );
         },
     });

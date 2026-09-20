@@ -22,8 +22,10 @@ import {
 } from "react-icons/fa";
 import { DEFAULT_BANNER_IMAGE } from "@/lib/image-fallbacks";
 import { useBanners } from "@/hooks/use-banners";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function ContactPage() {
+  const { t } = useLanguage();
   const { data: contactBanners = [] } = useBanners("CONTACT_HERO");
   const contactBanner = contactBanners[0];
   const contactHeroDesktopImage = contactBanner?.image || DEFAULT_BANNER_IMAGE;
@@ -61,16 +63,15 @@ export default function ContactPage() {
 
     <div className="p-10">
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-        We’re Here to Help You
+        {t.contact.hero.title}
       </h1>
 
       <h2 className="text-xl font-semibold text-green-700 mt-2">
-        Have questions or need assistance?
+        {t.contact.hero.subtitle}
       </h2>
 
       <p className="text-gray-600 mt-4 leading-6">
-        Our team is always ready to support you with the best
-        products and expert guidance for your farming needs.
+        {t.contact.hero.description}
       </p>
 
       <div className="mt-6 flex flex-col gap-5 md:flex-row">
@@ -82,11 +83,11 @@ export default function ContactPage() {
 
           <div>
             <p className="font-semibold text-sm">
-              Expert Support
+              {t.contact.hero.expertSupport}
             </p>
 
             <p className="text-xs text-gray-500">
-              24/7 Assistance
+              {t.contact.hero.assistance}
             </p>
           </div>
         </div>
@@ -99,11 +100,11 @@ export default function ContactPage() {
 
           <div>
             <p className="font-semibold text-sm">
-              Farmer First
+              {t.contact.hero.farmerFirst}
             </p>
 
             <p className="text-xs text-gray-500">
-              Your success is our priority
+              {t.contact.hero.successPriority}
             </p>
           </div>
         </div>
@@ -113,14 +114,14 @@ export default function ContactPage() {
     <div>
       <Image
         src={contactHeroDesktopImage}
-        alt="Farm Support"
+        alt={t.contact.accessibility.farmSupport}
         width={700}
         height={400}
         className="hidden h-[260px] w-full object-cover md:block md:h-[320px]"
       />
       <Image
         src={contactHeroMobileImage}
-        alt="Farm Support"
+        alt={t.contact.accessibility.farmSupport}
         width={700}
         height={400}
         className="h-[260px] w-full object-cover md:hidden"
@@ -143,7 +144,7 @@ export default function ContactPage() {
 
         <div>
           <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
-            Call Us
+            {t.contact.cards.callUs}
           </p>
           <p className="font-semibold text-gray-800">
             +91 92090 61629
@@ -154,11 +155,8 @@ export default function ContactPage() {
                 <p className="font-semibold text-gray-800">
                   +91 8010070680
                 </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Mon–Sat: 9:00 AM – 7:00 PM
-          </p>
-          <p className="text-xs text-gray-500">
-            Sunday: 10:00 AM – 4:00 PM
+          <p className="text-xs text-gray-500 mt-1 whitespace-pre-line">
+            {t.contact.cards.callHours}
           </p>
         </div>
       </div>
@@ -174,20 +172,19 @@ export default function ContactPage() {
 
         <div>
           <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1 ">
-            WhatsApp Us
-                </p>
+            {t.contact.cards.whatsappUs}
+          </p>
                 
           <p className="font-semibold text-gray-800 ">
                   +91 92090 61629
                   
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            Quick support on WhatsApp
-                </p>
-                <button className="mt-2 text-xs font-medium text-white bg-[#1a4d2e] hover:bg-green-800 px-3 py-1.5 rounded-lg transition-colors "  >
-                  Chat on WhatsApp →
-                  
-                </button>
+            {t.contact.cards.whatsappDescription}
+          </p>
+          <button className="mt-2 text-xs font-medium text-white bg-[#1a4d2e] hover:bg-green-800 px-3 py-1.5 rounded-lg transition-colors "  >
+            {t.contact.cards.whatsappCta}
+          </button>
           
         </div>
       </div>
@@ -201,13 +198,13 @@ export default function ContactPage() {
 
         <div>
           <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
-            Email Us
+            {t.contact.cards.emailUs}
           </p>
           <p className="font-semibold text-gray-800 text-[11px]">
             support@patilkrushisevakendra.com
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            We reply within 24 hours
+            {t.contact.cards.emailDescription}
           </p>
         </div>
       </div>
@@ -221,7 +218,7 @@ export default function ContactPage() {
 
         <div>
           <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">
-            Visit Our Store
+            {t.contact.cards.visitStore}
           </p>
           <p className="font-semibold text-gray-800 text-sm">
             Patil Krushi Seva Kendra,
@@ -246,56 +243,56 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-1">Send Us a Message</h2>
-              <p className="text-gray-500 text-sm mb-6">Fill out the form and our team will get back to you.</p>
+              <h2 className="text-2xl font-bold text-gray-800 mb-1">{t.contact.form.title}</h2>
+              <p className="text-gray-500 text-sm mb-6">{t.contact.form.description}</p>
 
               {submitted && (
                 <div className="mb-5 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm font-medium">
-                  ✓ Message sent successfully! We&apos;ll get back to you soon.
+                  {t.contact.form.success}
                 </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Your Name <span className="text-red-500">*</span>
+                    {t.contact.form.labels.name} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Enter your name"
+                    placeholder={t.contact.form.placeholders.name}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address <span className="text-red-500">*</span>
+                    {t.contact.form.labels.email} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="Enter your email"
+                    placeholder={t.contact.form.placeholders.email}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t.contact.form.labels.phone}</label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="Enter your phone number"
+                    placeholder={t.contact.form.placeholders.phone}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Subject <span className="text-red-500">*</span>
+                    {t.contact.form.labels.subject} <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="subject"
@@ -303,26 +300,26 @@ export default function ContactPage() {
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition bg-white"
                   >
-                    <option value="">Select a subject</option>
-                    <option value="product-inquiry">Product Inquiry</option>
-                    <option value="order-support">Order Support</option>
-                    <option value="expert-advice">Expert Farming Advice</option>
-                    <option value="return-refund">Return &amp; Refund</option>
-                    <option value="other">Other</option>
+                    <option value="">{t.contact.form.subjects.select}</option>
+                    <option value="product-inquiry">{t.contact.form.subjects.productInquiry}</option>
+                    <option value="order-support">{t.contact.form.subjects.orderSupport}</option>
+                    <option value="expert-advice">{t.contact.form.subjects.farmingAdvice}</option>
+                    <option value="return-refund">{t.contact.form.subjects.returnRefund}</option>
+                    <option value="other">{t.contact.form.subjects.other}</option>
                   </select>
                 </div>
               </div>
 
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Message <span className="text-red-500">*</span>
+                  {t.contact.form.labels.message} <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
                   rows={5}
-                  placeholder="Type your message here..."
+                  placeholder={t.contact.form.placeholders.message}
                   className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition resize-none"
                 />
               </div>
@@ -334,7 +331,7 @@ export default function ContactPage() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
-                Send Message
+                {t.contact.form.submit}
               </button>
             </div>
 
@@ -343,7 +340,7 @@ export default function ContactPage() {
               {/* Map */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-5 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-800">Our Location</h2>
+                  <h2 className="text-xl font-bold text-gray-800">{t.contact.location.title}</h2>
                 </div>
                 <div className="relative h-64">
                   <iframe
@@ -354,7 +351,7 @@ export default function ContactPage() {
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Store Location"
+                    title={t.contact.accessibility.storeLocation}
                   />
                 </div>
                 <div className="p-4 bg-gray-50">
@@ -366,7 +363,7 @@ export default function ContactPage() {
                     rel="noopener noreferrer"
                     className="inline-block mt-2 text-xs font-medium text-white bg-[#1a4d2e] hover:bg-green-800 px-3 py-1.5 rounded-lg transition-colors"
                   >
-                    Open in Google Maps →
+                    {t.contact.location.mapsCta}
                   </a>
                 </div>
               </div>
@@ -381,16 +378,16 @@ export default function ContactPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <p className="font-semibold text-gray-800 text-sm">Store Hours</p>
+                      <p className="font-semibold text-gray-800 text-sm">{t.contact.location.storeHours}</p>
                     </div>
                     <div className="space-y-1 text-sm">
                       <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-gray-500">Mon – Sat</span>
-                        <span className="font-medium text-gray-700">9:00 AM – 7:00 PM</span>
+                        <span className="text-gray-500">{t.contact.location.mondaySaturday}</span>
+                        <span className="font-medium text-gray-700">{t.contact.location.mondaySaturdayHours}</span>
                       </div>
                       <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-gray-500">Sunday</span>
-                        <span className="font-medium text-gray-700">10:00 AM – 4:00 PM</span>
+                        <span className="text-gray-500">{t.contact.location.sunday}</span>
+                        <span className="font-medium text-gray-700">{t.contact.location.sundayHours}</span>
                       </div>
                     </div>
                   </div>
@@ -401,9 +398,9 @@ export default function ContactPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                       </div>
-                      <p className="font-semibold text-gray-800 text-sm">Shop Online 24/7</p>
+                      <p className="font-semibold text-gray-800 text-sm">{t.contact.location.online247}</p>
                     </div>
-                    <p className="text-sm text-gray-500">Place your order anytime on our website.</p>
+                    <p className="text-sm text-gray-500">{t.contact.location.onlineDescription}</p>
                   </div>
                 </div>
               </div>
@@ -420,28 +417,28 @@ export default function ContactPage() {
       {[
         {
           icon: FiShield,
-          label: "100% Original Products",
-          sub: "Best quality guaranteed"
+          label: t.contact.trust.originalProducts,
+          sub: t.contact.trust.originalProductsDescription
         },
         {
           icon: FiZap,
-          label: "Fast & Safe Delivery",
-          sub: "Quick delivery at your door"
+          label: t.contact.trust.fastDelivery,
+          sub: t.contact.trust.fastDeliveryDescription
         },
         {
           icon: FiUserCheck,
-          label: "Expert Farmer Support",
-          sub: "24/7 expert guidance"
+          label: t.contact.trust.expertSupport,
+          sub: t.contact.trust.expertSupportDescription
         },
         {
           icon: FiRefreshCw,
-          label: "Easy Returns",
-          sub: "Hassle free returns"
+          label: t.contact.trust.easyReturns,
+          sub: t.contact.trust.easyReturnsDescription
         },
         {
           icon: FiLock,
-          label: "Secure Payments",
-          sub: "100% secure payments"
+          label: t.contact.trust.securePayments,
+          sub: t.contact.trust.securePaymentsDescription
         }
       ].map((item) => {
         const Icon = item.icon;

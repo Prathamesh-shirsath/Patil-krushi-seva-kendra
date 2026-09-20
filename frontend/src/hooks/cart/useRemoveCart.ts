@@ -3,9 +3,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeCartItem } from "@/services/cart.service";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export const useRemoveCart = () => {
     const queryClient = useQueryClient();
+    const { t } = useLanguage();
 
     return useMutation({
         mutationFn: removeCartItem,
@@ -24,13 +26,13 @@ export const useRemoveCart = () => {
             // 🔥 Header badge instantly update
             window.dispatchEvent(new Event("cart-updated"));
 
-            toast.success("Item removed.");
+            toast.success(t.cart.toast.removed);
         },
 
         onError: (error: any) => {
             toast.error(
                 error?.response?.data?.message ??
-                "Unable to remove item."
+                t.cart.toast.removeFailed
             );
         },
     });

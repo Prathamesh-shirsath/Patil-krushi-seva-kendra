@@ -7,6 +7,7 @@ import { Address } from "@/types/address";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/i18n/useLanguage";
 
 interface AddressCardProps {
     address: Address;
@@ -21,6 +22,7 @@ export default function AddressCard({
     onDelete,
     onSetDefault,
 }: AddressCardProps) {
+    const { t } = useLanguage();
     return (
         <Card className="rounded-xl p-5 transition-shadow hover:shadow-md">
             <div className="flex items-start justify-between">
@@ -31,7 +33,7 @@ export default function AddressCard({
                         </h3>
 
                         {address.isDefault && (
-                            <Badge>Default</Badge>
+                            <Badge>{t.profile.addresses.isDefault}</Badge>
                         )}
                     </div>
 
@@ -72,7 +74,7 @@ export default function AddressCard({
                         onClick={() => onSetDefault(address.id)}
                     >
                         <CheckCircle2 className="mr-2 h-4 w-4" />
-                        Set Default
+                        {t.profile.addresses.setDefault}
                     </Button>
                 )}
 
@@ -82,7 +84,7 @@ export default function AddressCard({
                     onClick={() => onEdit(address)}
                 >
                     <Pencil className="mr-2 h-4 w-4" />
-                    Edit
+                    {t.profile.addresses.edit}
                 </Button>
 
                 <Button
@@ -91,7 +93,7 @@ export default function AddressCard({
                     onClick={() => onDelete(address.id)}
                 >
                     <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
+                    {t.profile.addresses.delete}
                 </Button>
             </div>
         </Card>

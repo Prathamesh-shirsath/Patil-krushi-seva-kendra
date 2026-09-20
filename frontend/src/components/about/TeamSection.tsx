@@ -2,6 +2,7 @@
 "use client";
 
 import Image from "next/image";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const team = [
   {
@@ -22,6 +23,25 @@ const team = [
 ];
 
 export default function TeamSection() {
+  const { t } = useLanguage();
+
+  const team = [
+    {
+      name: t.about.team.members.expert.name,
+      role: t.about.team.members.expert.role,
+      image: "/about/team.jpg",
+    },
+    {
+      name: t.about.team.members.support.name,
+      role: t.about.team.members.support.role,
+      image: "/about/team.jpg",
+    },
+    {
+      name: t.about.team.members.logistics.name,
+      role: t.about.team.members.logistics.role,
+      image: "/about/team.jpg",
+    },
+  ];
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -29,17 +49,15 @@ export default function TeamSection() {
         {/* Header */}
         <div className="text-center mb-14">
           <span className="inline-block rounded-full bg-green-100 px-4 py-2 text-green-700 font-semibold">
-            👥 OUR TEAM
+            👥 {t.about.team.badge}
           </span>
 
           <h2 className="mt-4 text-4xl md:text-5xl font-extrabold text-gray-900">
-            Meet The Team Behind Our Success
+            {t.about.team.title}
           </h2>
 
           <p className="mt-4 text-gray-600 max-w-3xl mx-auto">
-            Our dedicated team works tirelessly to provide
-            quality agricultural products and exceptional service
-            to farmers across the region.
+            {t.about.team.description}
           </p>
         </div>
 

@@ -10,6 +10,7 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
+import { useLanguage } from "@/i18n/useLanguage";
 
 type WishlistItem = {
   id: string;
@@ -19,6 +20,7 @@ type WishlistItem = {
 };
 
 export default function WishlistHero() {
+  const { t } = useLanguage();
   const [wishlistCount, setWishlistCount] = useState(0);
   const [wishlistValue, setWishlistValue] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -27,7 +29,7 @@ export default function WishlistHero() {
     const fetchWishlist = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/wishlist",
+          "/api/wishlist",
           {
             method: "GET",
             credentials: "include",
@@ -91,13 +93,13 @@ export default function WishlistHero() {
             href="/"
             className="transition hover:text-green-700"
           >
-            Home
+            {t.navigation.home}
           </Link>
 
           <ArrowRight className="h-4 w-4" />
 
           <span className="font-semibold text-green-700">
-            Wishlist
+            {t.wishlist.label}
           </span>
         </motion.div>
 
@@ -109,21 +111,19 @@ export default function WishlistHero() {
           >
             <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
               <Sparkles className="h-4 w-4" />
-              Premium Wishlist
+              {t.wishlist.hero.premiumBadge}
             </div>
 
             <h1 className="text-4xl font-black leading-tight text-gray-900 md:text-5xl xl:text-6xl">
-              Save Products
+              {t.wishlist.hero.title1}
 
               <span className="block bg-gradient-to-r from-green-700 via-lime-600 to-emerald-500 bg-clip-text text-transparent">
-                You Love 🌿
+                {t.wishlist.hero.title2}
               </span>
             </h1>
 
             <p className="mt-6 max-w-xl text-lg leading-8 text-gray-600">
-              Keep all your favourite fertilizers, pesticides,
-              seeds and farming essentials in one beautiful place.
-              Add them to your cart anytime with a single click.
+              {t.wishlist.hero.description}
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">
@@ -131,14 +131,14 @@ export default function WishlistHero() {
                 href="/shop"
                 className="rounded-xl bg-green-700 px-7 py-4 font-semibold text-white transition hover:bg-green-800"
               >
-                Continue Shopping
+                {t.common.continueShopping}
               </Link>
 
               <button
                 type="button"
                 className="rounded-xl border border-green-600 bg-white px-7 py-4 font-semibold text-green-700 transition hover:bg-green-50"
               >
-                Share Wishlist
+                {t.wishlist.hero.share}
               </button>
             </div>
           </motion.div>
@@ -155,7 +155,7 @@ export default function WishlistHero() {
               number={
                 loading ? "..." : wishlistCount.toString()
               }
-              title="Saved Products"
+              title={t.wishlist.stats.savedProducts}
               color="rose"
             />
 
@@ -167,7 +167,7 @@ export default function WishlistHero() {
                   ? "..."
                   : `₹${formattedWishlistValue}`
               }
-              title="Wishlist Value"
+              title={t.wishlist.stats.wishlistValue}
               color="green"
             />
 
@@ -175,7 +175,7 @@ export default function WishlistHero() {
             <StatCard
               icon={<Sparkles />}
               number="—"
-              title="Offers Available"
+              title={t.wishlist.stats.offers}
               color="amber"
             />
 
@@ -183,7 +183,7 @@ export default function WishlistHero() {
             <StatCard
               icon={<ShoppingBag />}
               number="—"
-              title="Back In Stock"
+              title={t.wishlist.stats.backInStock}
               color="blue"
             />
           </motion.div>

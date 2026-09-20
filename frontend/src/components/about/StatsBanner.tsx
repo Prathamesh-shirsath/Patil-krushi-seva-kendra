@@ -1,5 +1,6 @@
 
 "use client";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const stats = [
   {
@@ -21,6 +22,26 @@ const stats = [
 ];
 
 export default function StatsBanner() {
+  const { t } = useLanguage();
+
+  const stats = [
+    {
+      number: "10,000+",
+      label: t.about.stats.labels.farmers,
+    },
+    {
+      number: "500+",
+      label: t.about.stats.labels.products,
+    },
+    {
+      number: "50+",
+      label: t.about.stats.labels.brands,
+    },
+    {
+      number: "100%",
+      label: t.about.stats.labels.genuine,
+    },
+  ];
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -28,16 +49,15 @@ export default function StatsBanner() {
         {/* Header */}
         <div className="text-center mb-14">
           <span className="inline-block px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold">
-            📊 OUR IMPACT
+            📊 {t.about.stats.badge}
           </span>
 
           <h2 className="mt-4 text-4xl md:text-5xl font-extrabold text-gray-900">
-            Numbers That Reflect Our Success
+            {t.about.stats.title}
           </h2>
 
           <p className="mt-4 text-gray-600 max-w-3xl mx-auto">
-            Our commitment to quality and service has helped us
-            build trust among thousands of farmers.
+            {t.about.stats.description}
           </p>
         </div>
 

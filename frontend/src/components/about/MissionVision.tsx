@@ -6,6 +6,7 @@ import {
   Eye,
   HeartHandshake,
 } from "lucide-react";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const items = [
   {
@@ -29,6 +30,25 @@ const items = [
 ];
 
 export default function MissionVision() {
+  const { t } = useLanguage();
+
+  const items = [
+    {
+      icon: Target,
+      title: t.about.mission.cards.mission.title,
+      description: t.about.mission.cards.mission.desc,
+    },
+    {
+      icon: Eye,
+      title: t.about.mission.cards.vision.title,
+      description: t.about.mission.cards.vision.desc,
+    },
+    {
+      icon: HeartHandshake,
+      title: t.about.mission.cards.values.title,
+      description: t.about.mission.cards.values.desc,
+    },
+  ];
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -36,16 +56,15 @@ export default function MissionVision() {
         {/* Header */}
         <div className="text-center mb-14">
           <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700 font-semibold">
-            🌱 OUR PURPOSE
+            🌱 {t.about.mission.badge}
           </span>
 
           <h2 className="mt-4 text-4xl md:text-5xl font-extrabold text-gray-900">
-            Mission • Vision • Values
+            {t.about.mission.title}
           </h2>
 
           <p className="mt-4 text-gray-600 max-w-3xl mx-auto">
-            Our commitment to farmers is built on strong values,
-            innovation and dedication towards sustainable agriculture.
+            {t.about.mission.description}
           </p>
         </div>
 

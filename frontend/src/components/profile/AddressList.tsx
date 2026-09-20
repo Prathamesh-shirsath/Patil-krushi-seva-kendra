@@ -15,8 +15,10 @@ import {
     useDeleteAddress,
     useDefaultAddress,
 } from "@/hooks/use-addresses";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function AddressList() {
+    const { t } = useLanguage();
     const { data: addresses = [], isLoading } = useAddresses();
 
     const deleteMutation = useDeleteAddress();
@@ -37,7 +39,7 @@ export default function AddressList() {
 
     const handleDelete = (id: string) => {
         const ok = window.confirm(
-            "Are you sure you want to delete this address?"
+            t.profile.addresses.confirmDelete
         );
 
         if (!ok) return;
@@ -52,7 +54,7 @@ export default function AddressList() {
     if (isLoading) {
         return (
             <div className="py-12 text-center text-muted-foreground">
-                Loading addresses...
+                {t.profile.addresses.loading}
             </div>
         );
     }
@@ -62,35 +64,35 @@ export default function AddressList() {
             <div className="mb-6 flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-bold">
-                        My Addresses
+                        {t.profile.addresses.title}
                     </h2>
 
                     <p className="text-muted-foreground">
-                        Manage your saved delivery addresses.
+                        {t.profile.addresses.description}
                     </p>
                 </div>
 
                 <Button onClick={handleAdd}>
                     <Plus className="mr-2 h-4 w-4" />
-                    Add Address
+                    {t.profile.addresses.addAddress}
                 </Button>
             </div>
 
             {addresses.length === 0 ? (
                 <div className="rounded-xl border border-dashed p-12 text-center">
                     <h3 className="text-lg font-semibold">
-                        No addresses found
+                        {t.profile.addresses.emptyTitle}
                     </h3>
 
                     <p className="mt-2 text-muted-foreground">
-                        Add your first delivery address.
+                        {t.profile.addresses.emptyDesc}
                     </p>
 
                     <Button
                         className="mt-6"
                         onClick={handleAdd}
                     >
-                        Add Address
+                        {t.profile.addresses.addAddress}
                     </Button>
                 </div>
             ) : (

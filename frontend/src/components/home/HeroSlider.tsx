@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import {
   ArrowRight,
   CheckCircle2,
@@ -16,6 +16,8 @@ import {
   getImageSrc,
 } from "@/lib/image-fallbacks";
 import type { Banner } from "@/services/banner.service";
+import { useLanguage } from "@/i18n/useLanguage";
+import type { Locale, TranslationDictionary } from "@/i18n/types";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
@@ -24,13 +26,12 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-const defaultBanners: Banner[] = [
-  {
+function buildDefaultBanner(t: TranslationDictionary): Banner {
+  return {
     id: "default-banner",
-    label: "Trusted by 10,000+ Farmers",
-    title: "All Your Farming\nNeeds In One Place",
-    subtitle:
-      "Premium quality seeds, fertilizers, pesticides and expert agricultural solutions for modern farmers.",
+    label: t.home.hero.fallbackLabel,
+    title: t.home.hero.fallbackTitle,
+    subtitle: t.home.hero.fallbackSubtitle,
     image: DEFAULT_BANNER_IMAGE,
     mobileImage: null,
     buttonText: null,
@@ -43,8 +44,8 @@ const defaultBanners: Banner[] = [
     textTheme: "LIGHT",
     status: true,
     displayOrder: 0,
-  },
-];
+  };
+}
 
 function getBannerHref(banner: Banner) {
   if (banner.targetType === "PRODUCT" && banner.targetSlug) {
@@ -76,7 +77,13 @@ function HeroSkeleton() {
   );
 }
 
-function renderTitle(title: string) {
+function renderTitle(title: string, locale: Locale) {
+  if (locale === "mr") {
+    return (
+      <span className="whitespace-pre-line text-white">{title}</span>
+    );
+  }
+
   const words = title.replace(/\s+/g, " ").trim().split(" ");
 
   const highlightWords = [
@@ -155,7 +162,15 @@ function TrustBadge({
   );
 }
 
-function HeroSlide({ banner }: { banner: Banner }) {
+function HeroSlide({
+  banner,
+  t,
+  locale,
+}: {
+  banner: Banner;
+  t: TranslationDictionary;
+  locale: Locale;
+}) {
   const href = getBannerHref(banner);
 
   const image = getImageSrc(
@@ -288,7 +303,7 @@ function HeroSlide({ banner }: { banner: Banner }) {
                 lg:text-7xl
               "
             >
-              {renderTitle(banner.title)}
+              {renderTitle(banner.title, locale)}
             </h1>
 
             {/* Subtitle */}
@@ -372,7 +387,7 @@ function HeroSlide({ banner }: { banner: Banner }) {
                     sm:w-auto
                   "
                 >
-                  Explore Categories
+                  {t.home.hero.exploreCategories}
                 </Button>
               </Link>
             </div>
@@ -394,21 +409,21 @@ function HeroSlide({ banner }: { banner: Banner }) {
                 icon={
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                 }
-                label="Genuine Products"
+                label={t.home.hero.genuineProducts}
               />
 
               <TrustBadge
                 icon={
                   <Truck className="h-4 w-4 text-emerald-400" />
                 }
-                label="Fast Delivery"
+                label={t.home.hero.fastDelivery}
               />
 
               <TrustBadge
                 icon={
                   <Leaf className="h-4 w-4 text-emerald-400" />
                 }
-                label="Trusted Brands"
+                label={t.home.hero.trustedBrands}
               />
             </div>
 
@@ -420,7 +435,7 @@ function HeroSlide({ banner }: { banner: Banner }) {
       {href && (
         <Link
           href={href}
-          aria-label={`Open ${banner.title}`}
+          aria-label={`${t.home.hero.openBanner}: ${banner.title}`}
           className="absolute inset-0 z-10"
         />
       )}
@@ -432,11 +447,35 @@ function HeroSlide({ banner }: { banner: Banner }) {
 }
 
 export default function HeroSlider() {
+  const { t, locale } = useLanguage();
+
   const {
     data: banners = [],
     isLoading,
     isError,
   } = useBanners();
+
+  const defaultBanner = useMemo(
+    () => buildDefaultBanner(t),
+    [t]
+  );
+
+  useEffect(() => {
+    const prevButton = document.querySelector(
+      ".premium-hero-swiper .swiper-button-prev"
+    );
+    const nextButton = document.querySelector(
+      ".premium-hero-swiper .swiper-button-next"
+    );
+
+    if (prevButton instanceof HTMLElement) {
+      prevButton.setAttribute("aria-label", t.home.hero.previousBanner);
+    }
+
+    if (nextButton instanceof HTMLElement) {
+      nextButton.setAttribute("aria-label", t.home.hero.nextBanner);
+    }
+  }, [t, isLoading, banners.length, isError]);
 
   if (isLoading) {
     return <HeroSkeleton />;
@@ -444,7 +483,7 @@ export default function HeroSlider() {
 
   const slides =
     isError || banners.length === 0
-      ? defaultBanners
+      ? [defaultBanner]
       : banners;
 
   return (
@@ -532,7 +571,7 @@ export default function HeroSlider() {
       >
         {slides.map((banner) => (
           <SwiperSlide key={banner.id}>
-            <HeroSlide banner={banner} />
+            <HeroSlide banner={banner} t={t} locale={locale} />
           </SwiperSlide>
         ))}
       </Swiper>

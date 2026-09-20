@@ -1,4 +1,8 @@
+"use client";
+
 import ProductCard from "@/components/common/ProductCard";
+import { useLanguage } from "@/i18n/useLanguage";
+import type { StockStatus } from "@/lib/shop-filters";
 
 export type ShopProduct = {
   id: string;
@@ -13,9 +17,7 @@ export type ShopProduct = {
 
   category: string;
 
-  availability:
-  | "In Stock"
-  | "Out of Stock";
+  availability: StockStatus;
 
   rating: number;
 
@@ -37,15 +39,17 @@ interface ProductGridProps {
 export default function ProductGrid({
   products,
 }: ProductGridProps) {
+  const { t } = useLanguage();
+
   if (products.length === 0) {
     return (
       <div className="w-full rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center sm:p-12">
         <h2 className="text-lg font-semibold text-gray-900">
-          No products found
+          {t.shop.emptyTitle}
         </h2>
 
         <p className="mt-2 text-sm text-gray-500">
-          Try changing your filters.
+          {t.shop.emptyHint}
         </p>
       </div>
     );

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useLanguage } from "@/i18n/useLanguage";
 
 type Review = {
   id: string;
@@ -26,6 +27,7 @@ const API_URL =
 export default function ProductReviews({
   productId,
 }: ProductReviewsProps) {
+  const { t } = useLanguage();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -50,7 +52,7 @@ export default function ProductReviews({
 
       if (!response.ok) {
         throw new Error(
-          result?.message || "Failed to fetch reviews"
+          result?.message || t.reviews.errorFetch
         );
       }
 
@@ -59,7 +61,7 @@ export default function ProductReviews({
       setError(
         error instanceof Error
           ? error.message
-          : "Failed to fetch reviews"
+          : t.reviews.errorFetch
       );
     } finally {
       setLoading(false);
@@ -99,12 +101,12 @@ export default function ProductReviews({
     setError("");
 
     if (rating < 1 || rating > 5) {
-      setError("Please select a rating.");
+      setError(t.reviews.errorSelectRating);
       return;
     }
 
     if (!comment.trim()) {
-      setError("Please write your review.");
+      setError(t.reviews.errorWriteReview);
       return;
     }
 
@@ -131,11 +133,11 @@ export default function ProductReviews({
 
       if (!response.ok) {
         throw new Error(
-          result?.message || "Failed to submit review"
+          result?.message || t.reviews.errorSubmit
         );
       }
 
-      setMessage("Review submitted successfully!");
+      setMessage(t.reviews.successMessage);
       setRating(0);
       setComment("");
 
@@ -144,7 +146,7 @@ export default function ProductReviews({
       setError(
         error instanceof Error
           ? error.message
-          : "Failed to submit review"
+          : t.reviews.errorSubmit
       );
     } finally {
       setSubmitting(false);
@@ -165,21 +167,20 @@ export default function ProductReviews({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <span className="inline-flex rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-            CUSTOMER FEEDBACK
+            {t.reviews.customerFeedback}
           </span>
 
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-            Customer Reviews
+            {t.reviews.title}
           </h2>
 
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-            See what our customers think about this product and
-            share your own experience.
+            {t.reviews.subtitle}
           </p>
         </div>
 
         <span className="text-sm text-slate-500">
-          {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
+          {reviews.length} {reviews.length === 1 ? t.reviews.reviewSingle : t.reviews.reviewPlural}
         </span>
       </div>
 
@@ -188,7 +189,7 @@ export default function ProductReviews({
         {/* OVERALL RATING */}
         <div className="min-w-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <h3 className="text-lg font-bold text-slate-950">
-            Overall Rating
+            {t.reviews.overallRating}
           </h3>
 
           <div className="mt-5 flex items-center gap-4">
@@ -198,7 +199,7 @@ export default function ProductReviews({
               </div>
 
               <div className="mt-1 text-sm text-slate-500">
-                out of 5
+                {t.reviews.outOf5}
               </div>
             </div>
 
@@ -212,7 +213,7 @@ export default function ProductReviews({
               </div>
 
               <p className="mt-1 text-xs text-slate-500">
-                {reviews.length} ratings
+                {reviews.length} {t.reviews.ratings}
               </p>
             </div>
           </div>
@@ -260,11 +261,11 @@ export default function ProductReviews({
 
             <div>
               <p className="text-sm font-semibold text-green-800">
-                Customer Reviews
+                {t.reviews.verifiedReviewsTitle}
               </p>
 
               <p className="text-xs text-green-700">
-                Real reviews stored in our database
+                {t.reviews.verifiedReviewsDesc}
               </p>
             </div>
           </div>
@@ -274,11 +275,11 @@ export default function ProductReviews({
         <div className="min-w-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:col-span-2">
           <div>
             <h3 className="text-lg font-bold text-slate-950 sm:text-xl">
-              Write a Review
+              {t.reviews.writeReview}
             </h3>
 
             <p className="mt-1 text-sm text-slate-500">
-              Share your experience with this product.
+              {t.reviews.writeReviewDesc}
             </p>
           </div>
 
@@ -289,7 +290,7 @@ export default function ProductReviews({
             {/* RATING */}
             <div>
               <label className="text-sm font-semibold text-slate-700">
-                Your Rating
+                {t.reviews.yourRating}
               </label>
 
               <div className="mt-2 flex gap-1 text-3xl sm:text-4xl">
@@ -320,7 +321,7 @@ export default function ProductReviews({
             {/* COMMENT */}
             <div className="mt-6">
               <label className="text-sm font-semibold text-slate-700">
-                Your Review
+                {t.reviews.yourReview}
               </label>
 
               <textarea
@@ -329,7 +330,7 @@ export default function ProductReviews({
                   setComment(event.target.value)
                 }
                 maxLength={1000}
-                placeholder="Tell us about your experience with this product..."
+                placeholder={t.reviews.reviewPlaceholder}
                 className="
                   mt-2
                   min-h-[130px]
@@ -374,7 +375,7 @@ export default function ProductReviews({
             {/* SUBMIT */}
             <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs leading-5 text-slate-500">
-                Please share an honest and helpful review.
+                {t.reviews.submitHint}
               </p>
 
               <button
@@ -396,8 +397,8 @@ export default function ProductReviews({
                 "
               >
                 {submitting
-                  ? "Submitting..."
-                  : "Submit Review"}
+                  ? t.reviews.submittingButton
+                  : t.reviews.submitButton}
               </button>
             </div>
           </form>
@@ -408,29 +409,29 @@ export default function ProductReviews({
       <div className="mt-12">
         <div className="border-b border-slate-200 pb-5">
           <h3 className="text-xl font-bold text-slate-950">
-            Customer Reviews
+            {t.reviews.title}
             <span className="ml-2 text-sm font-normal text-slate-500">
               ({reviews.length})
             </span>
           </h3>
 
           <p className="mt-1 text-sm text-slate-500">
-            Latest feedback from our customers
+            {t.reviews.latestFeedback}
           </p>
         </div>
 
         {loading ? (
           <div className="mt-6 rounded-2xl border border-slate-200 p-6 text-center text-sm text-slate-500">
-            Loading reviews...
+            {t.reviews.loading}
           </div>
         ) : reviews.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-dashed border-slate-300 p-8 text-center">
             <p className="font-semibold text-slate-700">
-              No reviews yet
+              {t.reviews.emptyTitle}
             </p>
 
             <p className="mt-1 text-sm text-slate-500">
-              Be the first customer to review this product.
+              {t.reviews.emptyMessage}
             </p>
           </div>
         ) : (
@@ -438,7 +439,7 @@ export default function ProductReviews({
             {reviews.map((review) => {
               const name =
                 review.user?.name?.trim() ||
-                "Customer";
+                t.reviews.defaultCustomerName;
 
               const initials = name
                 .split(" ")

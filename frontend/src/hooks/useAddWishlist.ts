@@ -2,8 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { addToWishlist } from "@/services/wishlist.service";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export const useAddWishlist = () => {
+    const { t } = useLanguage();
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -14,17 +16,13 @@ export const useAddWishlist = () => {
                 queryKey: ["wishlist"],
             });
 
-            window.dispatchEvent(
-                new Event("wishlist-updated")
-            );
-
-            toast.success("Added to wishlist");
+            toast.success(t.wishlist.toast.added);
         },
 
         onError: (error: any) => {
             toast.error(
                 error?.response?.data?.message ??
-                "Failed to add to wishlist"
+                t.wishlist.toast.addFailed
             );
         },
     });

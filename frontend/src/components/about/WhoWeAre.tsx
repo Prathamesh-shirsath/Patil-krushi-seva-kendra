@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { ShieldCheck, UserCheck, Truck, IndianRupee } from "lucide-react";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const features = [
   {
@@ -21,6 +24,26 @@ const features = [
 ];
 
 export default function WhoWeAre() {
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      icon: ShieldCheck,
+      title: t.about.whoWeAre.features.genuine,
+    },
+    {
+      icon: UserCheck,
+      title: t.about.whoWeAre.features.expert,
+    },
+    {
+      icon: Truck,
+      title: t.about.whoWeAre.features.fast,
+    },
+    {
+      icon: IndianRupee,
+      title: t.about.whoWeAre.features.affordable,
+    },
+  ];
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
@@ -30,7 +53,7 @@ export default function WhoWeAre() {
           <div className="relative">
             <Image
               src="/about/shop.jpg"
-              alt="Who We Are"
+              alt={t.about.accessibility.whoWeAreAlt}
               width={700}
               height={500}
               className="rounded-3xl shadow-xl object-cover"
@@ -40,22 +63,18 @@ export default function WhoWeAre() {
           {/* Content */}
           <div>
             <span className="text-green-600 font-semibold uppercase tracking-wide">
-              🌱 Who We Are
+              🌱 {t.about.whoWeAre.badge}
             </span>
 
             <h2 className="mt-3 text-4xl font-extrabold text-gray-900 leading-tight">
-              More Than a Store,
+              {t.about.whoWeAre.title1}
               <span className="block text-green-600">
-                We Are Your Farming Partner
+                {t.about.whoWeAre.title2}
               </span>
             </h2>
 
             <p className="mt-6 text-gray-600 leading-8">
-              Patil Krushi Seva Kendra is dedicated to providing farmers
-              with premium agricultural products, genuine solutions and
-              expert guidance. We believe in building long-term
-              relationships and supporting farmers at every step of
-              their journey.
+              {t.about.whoWeAre.description}
             </p>
 
             <div className="grid grid-cols-2 gap-6 mt-8">

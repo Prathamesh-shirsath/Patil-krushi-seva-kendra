@@ -9,6 +9,7 @@ import QuantitySelector from "./QuantitySelector";
 import { CartItem as CartItemType } from "@/types/cart";
 import { useUpdateCart } from "@/hooks/cart/useUpdateCart";
 import { useRemoveCart } from "@/hooks/cart/useRemoveCart";
+import { useLanguage } from "@/i18n/useLanguage";
 
 interface Props {
     item: CartItemType;
@@ -17,6 +18,7 @@ interface Props {
 export default function CartItem({ item }: Props) {
     const updateCart = useUpdateCart();
     const removeCart = useRemoveCart();
+    const { t } = useLanguage();
 
     const increase = () => {
         if (item.quantity >= item.product.stock) return;
@@ -60,7 +62,7 @@ export default function CartItem({ item }: Props) {
                     </p>
 
                     <p className="mt-1 text-sm text-gray-500">
-                        Pack Size: {item.product.packSize}
+                        {t.cart.item.packSize} {item.product.packSize}
                     </p>
 
                     <p className="mt-2 text-lg font-bold text-green-700">
@@ -68,7 +70,7 @@ export default function CartItem({ item }: Props) {
                     </p>
 
                     <p className="text-xs text-gray-500">
-                        Stock: {item.product.stock}
+                        {t.cart.item.stock} {item.product.stock}
                     </p>
                 </div>
 
@@ -87,7 +89,7 @@ export default function CartItem({ item }: Props) {
                         onClick={() => removeCart.mutate(item.id)}
                     >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Remove
+                        {t.cart.item.remove}
                     </Button>
                 </div>
             </div>

@@ -44,9 +44,22 @@ import {
   getImageSrc,
 } from "@/lib/image-fallbacks";
 
+import { useLanguage } from "@/i18n/useLanguage";
+
+import {
+  FILTER_ALL,
+  FILTER_CURRENT_CATEGORY,
+  matchesAvailabilityFilter,
+  STOCK_IN,
+  STOCK_OUT,
+  type AvailabilityFilter,
+} from "@/lib/shop-filters";
+
 const PAGE_SIZE = 12;
 
 export default function CategoriesPage() {
+  const { t } = useLanguage();
+
   const searchParams = useSearchParams();
 
   const selectedSlug =
@@ -67,21 +80,17 @@ export default function CategoriesPage() {
   const [
     selectedBrand,
     setSelectedBrand,
-  ] = useState("All Brands");
+  ] = useState(FILTER_ALL);
 
   const [
     selectedProductType,
     setSelectedProductType,
-  ] = useState(
-    "All Product Types"
-  );
+  ] = useState(FILTER_ALL);
 
   const [
     selectedAvailability,
     setSelectedAvailability,
-  ] = useState(
-    "All Availability"
-  );
+  ] = useState<AvailabilityFilter>(FILTER_ALL);
 
   const [minPrice, setMinPrice] =
     useState(0);
@@ -218,12 +227,14 @@ export default function CategoriesPage() {
     useMemo(
       () => [
         {
-          label: "All Brands",
+          value: FILTER_ALL,
+          label: t.shop.filterAll.brands,
           count: products.length,
         },
 
         ...brandValues.map(
           (brand) => ({
+            value: brand,
             label: brand,
             count: products.filter(
               (product) =>
@@ -236,6 +247,7 @@ export default function CategoriesPage() {
       [
         products,
         brandValues,
+        t,
       ]
     );
 
@@ -247,12 +259,16 @@ export default function CategoriesPage() {
   ----------------------------- */
 
   const productTypes: FilterOption[] =
-    [
-      {
-        label: "All Product Types",
-        count: products.length,
-      },
-    ];
+    useMemo(
+      () => [
+        {
+          value: FILTER_ALL,
+          label: t.shop.filterAll.productTypes,
+          count: products.length,
+        },
+      ],
+      [products.length, t]
+    );
 
   /* -----------------------------
      Availability
@@ -262,29 +278,30 @@ export default function CategoriesPage() {
     FilterOption[] = useMemo(
       () => [
         {
-          label: "All Availability",
+          value: FILTER_ALL,
+          label: t.shop.filterAll.availability,
           count: products.length,
         },
 
         {
-          label: "In Stock",
+          value: STOCK_IN,
+          label: t.shop.stock.inStock,
           count: products.filter(
             (product) =>
-              product.availability ===
-              "In Stock"
+              product.availability === STOCK_IN
           ).length,
         },
 
         {
-          label: "Out of Stock",
+          value: STOCK_OUT,
+          label: t.shop.stock.outOfStock,
           count: products.filter(
             (product) =>
-              product.availability ===
-              "Out of Stock"
+              product.availability === STOCK_OUT
           ).length,
         },
       ],
-      [products]
+      [products, t]
     );
 
   /* -----------------------------
@@ -296,20 +313,18 @@ export default function CategoriesPage() {
       return products.filter(
         (product) => {
           const brandMatch =
-            selectedBrand ===
-            "All Brands" ||
+            selectedBrand === FILTER_ALL ||
             product.brand ===
             selectedBrand;
 
           const availabilityMatch =
-            selectedAvailability ===
-            "All Availability" ||
-            product.availability ===
-            selectedAvailability;
+            matchesAvailabilityFilter(
+              product.availability,
+              selectedAvailability
+            );
 
           const productTypeMatch =
-            selectedProductType ===
-            "All Product Types";
+            selectedProductType === FILTER_ALL;
 
           const productPrice =
             Number(product.price) ||
@@ -379,17 +394,11 @@ export default function CategoriesPage() {
   };
 
   const clearFilters = () => {
-    setSelectedBrand(
-      "All Brands"
-    );
+    setSelectedBrand(FILTER_ALL);
 
-    setSelectedProductType(
-      "All Product Types"
-    );
+    setSelectedProductType(FILTER_ALL);
 
-    setSelectedAvailability(
-      "All Availability"
-    );
+    setSelectedAvailability(FILTER_ALL);
 
     setMinPrice(0);
     setMaxPriceValue(0);
@@ -404,9 +413,10 @@ export default function CategoriesPage() {
   const filterProps = {
     categories: [
       {
+        value: FILTER_CURRENT_CATEGORY,
         label:
           selectedCategory?.name ??
-          "Current Category",
+          t.shop.categoriesPage.currentCategory,
         count: products.length,
       },
     ],
@@ -417,9 +427,7 @@ export default function CategoriesPage() {
 
     availabilityOptions,
 
-    selectedCategory:
-      selectedCategory?.name ??
-      "Current Category",
+    selectedCategory: FILTER_CURRENT_CATEGORY,
 
     selectedBrand,
 
@@ -518,26 +526,22 @@ export default function CategoriesPage() {
                   href="/"
                   className="hover:text-green-700"
                 >
-                  Home
+                  {t.navigation.home}
                 </Link>
 
                 <ChevronRight className="h-3 w-3 shrink-0" />
 
                 <span className="text-gray-900">
-                  Categories
+                  {t.navigation.categories}
                 </span>
               </div>
 
               <h1 className="text-2xl font-bold text-gray-950 sm:text-3xl">
-                Shop by Category
+                {t.shop.categoriesPage.title}
               </h1>
 
               <p className="mt-2 max-w-2xl text-sm text-gray-600">
-                Explore agricultural
-                products by category
-                and find the right
-                products for your
-                crops.
+                {t.shop.categoriesPage.subtitle}
               </p>
             </div>
 
@@ -563,7 +567,8 @@ export default function CategoriesPage() {
                     event.target.value
                   )
                 }
-                placeholder="Search categories..."
+                placeholder={t.shop.categoriesPage.searchPlaceholder}
+                aria-label={t.common.search}
                 className="h-10 pl-9"
               />
             </div>
@@ -583,7 +588,7 @@ export default function CategoriesPage() {
             <div className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-green-700 border-t-transparent" />
 
             <p className="mt-3 text-sm text-gray-500">
-              Loading categories...
+              {t.shop.categoriesPage.loading}
             </p>
           </div>
         )}
@@ -593,11 +598,11 @@ export default function CategoriesPage() {
         {categoriesError && (
           <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
             <h2 className="font-semibold text-red-700">
-              Unable to load categories
+              {t.shop.categoriesPage.errorTitle}
             </h2>
 
             <p className="mt-1 text-sm text-red-600">
-              Please try again later.
+              {t.shop.categoriesPage.errorMessage}
             </p>
           </div>
         )}
@@ -679,7 +684,7 @@ export default function CategoriesPage() {
                                 ?.products ??
                               0
                             }{" "}
-                            products
+                            {t.shop.categoriesPage.categoryProducts}
                           </p>
                         </div>
                       </Link>
@@ -694,8 +699,7 @@ export default function CategoriesPage() {
                 0 && (
                   <div className="py-16 text-center">
                     <p className="text-sm text-gray-500">
-                      No categories
-                      found.
+                      {t.shop.categoriesPage.noCategories}
                     </p>
                   </div>
                 )}
@@ -711,7 +715,7 @@ export default function CategoriesPage() {
                   <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
                       <p className="text-xs font-semibold uppercase tracking-wider text-green-700">
-                        Category
+                        {t.shop.categoriesPage.categoryLabel}
                       </p>
 
                       <h2 className="mt-1 truncate text-xl font-bold text-gray-950 sm:text-2xl">
@@ -724,8 +728,7 @@ export default function CategoriesPage() {
                         {
                           filteredProducts.length
                         }{" "}
-                        products
-                        available
+                        {t.shop.categoriesPage.productsAvailable}
                       </p>
                     </div>
 
@@ -754,7 +757,7 @@ export default function CategoriesPage() {
                           >
                             <SlidersHorizontal className="mr-2 h-4 w-4" />
 
-                            Filters
+                            {t.shop.filters}
                           </Button>
                         </SheetTrigger>
 
@@ -797,7 +800,7 @@ export default function CategoriesPage() {
                             ? "h-9 w-9 rounded-lg bg-green-700 hover:bg-green-800"
                             : "h-9 w-9 rounded-lg"
                         }
-                        aria-label="Grid view"
+                        aria-label={t.shop.viewGrid}
                       >
                         <Grid2X2 className="h-4 w-4" />
                       </Button>
@@ -822,7 +825,7 @@ export default function CategoriesPage() {
                             ? "h-9 w-9 rounded-lg bg-green-700 hover:bg-green-800"
                             : "h-9 w-9 rounded-lg"
                         }
-                        aria-label="List view"
+                        aria-label={t.shop.viewList}
                       >
                         <List className="h-4 w-4" />
                       </Button>
@@ -850,8 +853,7 @@ export default function CategoriesPage() {
                           <div className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-green-700 border-t-transparent" />
 
                           <p className="mt-3 text-sm text-gray-500">
-                            Loading
-                            products...
+                            {t.shop.categoriesPage.loadingProducts}
                           </p>
                         </div>
                       ) : (
@@ -860,18 +862,19 @@ export default function CategoriesPage() {
 
                           <div className="mb-4 flex items-center justify-between">
                             <p className="text-xs text-gray-500">
-                              Showing{" "}
+                              {t.shop.showing}{" "}
                               <span className="font-semibold text-gray-900">
                                 {
                                   visibleProducts.length
                                 }
                               </span>{" "}
-                              of{" "}
+                              {t.shop.of}{" "}
                               <span className="font-semibold text-gray-900">
                                 {
                                   filteredProducts.length
                                 }
-                              </span>
+                              </span>{" "}
+                              {t.shop.products}
                             </p>
                           </div>
 
@@ -951,14 +954,11 @@ export default function CategoriesPage() {
               {!selectedCategory && (
                 <div className="mt-10 rounded-2xl border border-dashed border-green-200 bg-green-50/50 p-8 text-center sm:p-10">
                   <h2 className="text-lg font-bold text-gray-900">
-                    Select a category
+                    {t.shop.categoriesPage.selectCategoryTitle}
                   </h2>
 
                   <p className="mt-2 text-sm text-gray-600">
-                    Select a category
-                    above to view
-                    its available
-                    products.
+                    {t.shop.categoriesPage.selectCategoryMessage}
                   </p>
                 </div>
               )}
