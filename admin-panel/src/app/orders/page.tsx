@@ -15,9 +15,11 @@ export default function OrdersPage() {
   const {
     orders,
     loading,
-    error,
-    refreshOrders,
   } = useOrders();
+
+  const refreshOrders = async (): Promise<void> => {
+    window.location.reload();
+  };
 
   const [search, setSearch] =
     useState("");
@@ -140,14 +142,6 @@ export default function OrdersPage() {
           onRefresh={refreshOrders}
           loading={loading}
         />
-
-        {/* Error */}
-
-        {error && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            {error}
-          </div>
-        )}
 
         {/* Overview */}
 

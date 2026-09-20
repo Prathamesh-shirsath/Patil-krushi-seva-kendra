@@ -347,7 +347,7 @@ export default function OrdersTable({
 
                       ₹
                       {formatAmount(
-                        order.grandTotal
+                        order.grandTotal as unknown as number
                       )}
 
                     </TableCell>

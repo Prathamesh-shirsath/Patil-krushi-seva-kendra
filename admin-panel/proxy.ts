@@ -33,15 +33,15 @@ export const config = {
     "/categories/:path*",
     "/orders/:path*",
     "/customers/:path*",
-    "/users/:path*",
+    
     "/brands/:path*",
     "/banners/:path*",
     "/coupons/:path*",
     "/reviews/:path*",
-    "/reports/:path*",
+    
     "/newsletter/:path*",
     "/bulk-sms/:path*",
     "/pages/:path*",
-    "/settings/:path*",
+    
   ],
 };

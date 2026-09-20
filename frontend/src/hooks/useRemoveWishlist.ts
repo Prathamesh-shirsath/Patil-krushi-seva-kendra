@@ -14,6 +14,10 @@ export const useRemoveWishlist = () => {
                 queryKey: ["wishlist"],
             });
 
+            window.dispatchEvent(
+                new Event("wishlist-updated")
+            );
+
             toast.success("Removed from wishlist");
         },
 

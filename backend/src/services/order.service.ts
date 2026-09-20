@@ -147,7 +147,10 @@ export const createOrder = async (data: CreateOrderInput) => {
       discount,
       grandTotal,
       totalAmount: grandTotal,
-      status: OrderStatus.PENDING,
+     status:
+      paymentMethod === PaymentMethod.COD
+    ? OrderStatus.CONFIRMED
+    : OrderStatus.PENDING,
       paymentStatus: PaymentStatus.PENDING,
       paymentMethod,
       items: {
