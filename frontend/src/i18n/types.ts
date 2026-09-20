@@ -234,4 +234,65 @@ export type TranslationDictionary = {
       next: string;
     };
   };
+  product: {
+    notFound: {
+      title: string;
+      message: string;
+      backToShop: string;
+    };
+    details: {
+      quantity: string;
+      addWishlist: string;
+      removeWishlist: string;
+      pleaseWait: string;
+      whyShopWithUs: string;
+      tabs: {
+        description: string;
+        specifications: string;
+        usageGuide: string;
+      };
+      emptyFeatures: string;
+      emptyCropRecommendations: string;
+      emptyUsageGuide: string;
+      recommendedFor: string;
+      youMayAlsoLike: string;
+    };
+    aria: {
+      previousImage: string;
+      nextImage: string;
+      viewImage: string;
+      decreaseQuantity: string;
+      increaseQuantity: string;
+    };
+  };
+  reviews: {
+    customerFeedback: string;
+    title: string;
+    subtitle: string;
+    reviewSingle: string;
+    reviewPlural: string;
+    overallRating: string;
+    outOf5: string;
+    ratings: string;
+    verifiedReviewsTitle: string;
+    verifiedReviewsDesc: string;
+    writeReview: string;
+    writeReviewDesc: string;
+    yourRating: string;
+    yourReview: string;
+    reviewPlaceholder: string;
+    submitHint: string;
+    submitButton: string;
+    submittingButton: string;
+    latestFeedback: string;
+    loading: string;
+    emptyTitle: string;
+    emptyMessage: string;
+    errorSelectRating: string;
+    errorWriteReview: string;
+    successMessage: string;
+    errorFetch: string;
+    errorSubmit: string;
+    defaultCustomerName: string;
+  };
 };
