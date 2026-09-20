@@ -360,7 +360,7 @@ export const getUserOrders = async (userId: string) => {
 | ADMIN - GET ALL PAID ORDERS
 |--------------------------------------------------------------------------
 */
-/*
+
 export const getAllOrders = async () => {
   return prisma.order.findMany({
     where: {
@@ -371,10 +371,10 @@ export const getAllOrders = async () => {
       createdAt: "desc",
     },
   });
-}; */
+}; 
 
 
-
+/*
 export const getAllOrders = async () => {
   return prisma.order.findMany({
     include: orderInclude,
@@ -382,7 +382,7 @@ export const getAllOrders = async () => {
       createdAt: "desc",
     },
   });
-};
+};*/
 
 /*
 |--------------------------------------------------------------------------
