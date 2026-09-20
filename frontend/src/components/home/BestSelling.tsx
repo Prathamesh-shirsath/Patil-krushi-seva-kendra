@@ -3,8 +3,11 @@
 import HomeProductSection from "./HomeProductSection";
 import { useProducts } from "@/hooks/use-products";
 import { mapProductsToProductCards } from "@/lib/product-mappers";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function BestSelling() {
+  const { t } = useLanguage();
+
   const {
     data = [],
     isLoading,
@@ -18,12 +21,13 @@ export default function BestSelling() {
 
   return (
     <HomeProductSection
-      eyebrow="🔥 Best Sellers"
-      title="Best Selling Products"
-      description="Popular choices trusted by farmers across India."
+      sectionId="best-selling-products"
+      eyebrow={t.home.bestSelling.eyebrow}
+      title={t.home.bestSelling.title}
+      description={t.home.bestSelling.description}
       products={bestSellingProducts}
       isLoading={isLoading}
-      emptyMessage="No best selling products available right now."
+      emptyMessage={t.home.bestSelling.empty}
     />
   );
 }

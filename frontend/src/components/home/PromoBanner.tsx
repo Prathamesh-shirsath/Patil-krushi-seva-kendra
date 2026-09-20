@@ -16,6 +16,7 @@ import {
   DEFAULT_BANNER_IMAGE,
   getImageSrc,
 } from "@/lib/image-fallbacks";
+import { useLanguage } from "@/i18n/useLanguage";
 
 function PromoBannerSkeleton() {
   return (
@@ -42,6 +43,8 @@ function PromoBannerSkeleton() {
 }
 
 export default function PromoBanner() {
+  const { t } = useLanguage();
+
   const {
     data: banners = [],
     isLoading,
@@ -225,15 +228,15 @@ export default function PromoBanner() {
                 <div className="mt-7 flex flex-wrap gap-2">
 
                   <span className="rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-white backdrop-blur-md ring-1 ring-white/10">
-                    ✓ Genuine Products
+                    ✓ {t.home.hero.genuineProducts}
                   </span>
 
                   <span className="rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-white backdrop-blur-md ring-1 ring-white/10">
-                    🚚 Fast Delivery
+                    🚚 {t.home.hero.fastDelivery}
                   </span>
 
                   <span className="rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-white backdrop-blur-md ring-1 ring-white/10">
-                    🌱 Trusted Brands
+                    🌱 {t.home.hero.trustedBrands}
                   </span>
 
                 </div>
@@ -246,7 +249,7 @@ export default function PromoBanner() {
               <button
                 type="button"
                 onClick={goToPrevious}
-                aria-label="Previous banner"
+                aria-label={t.home.hero.previousBanner}
                 className="
                   absolute
                   left-4
@@ -282,7 +285,7 @@ export default function PromoBanner() {
               <button
                 type="button"
                 onClick={goToNext}
-                aria-label="Next banner"
+                aria-label={t.home.hero.nextBanner}
                 className="
                   absolute
                   right-4
@@ -321,7 +324,7 @@ export default function PromoBanner() {
                   <button
                     key={index}
                     type="button"
-                    aria-label={`Go to banner ${index + 1}`}
+                    aria-label={`${t.home.hero.goToBanner} ${index + 1}`}
                     onClick={() => setCurrentIndex(index)}
                     className={`
                       h-2 rounded-full transition-all duration-300

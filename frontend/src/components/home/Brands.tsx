@@ -7,6 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Keyboard } from "swiper/modules";
 import { useBrands } from "@/hooks/use-brands";
 import { getImageSrc } from "@/lib/image-fallbacks";
+import { useLanguage } from "@/i18n/useLanguage";
 
 import {
   Card,
@@ -26,6 +27,7 @@ type Brand = {
 import "swiper/css";
 
 export default function Brands() {
+  const { t } = useLanguage();
 
   const {
     data: brands = [],
@@ -41,11 +43,11 @@ export default function Brands() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <span className="text-green-600 font-semibold">
-              🌱 Trusted Partners
+              {t.home.brands.trustedPartners}
             </span>
 
             <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mt-2">
-              Top Agricultural Brands
+              {t.home.brands.title}
             </h2>
           </div>
         </div>
@@ -128,7 +130,7 @@ export default function Brands() {
                 <SwiperSlide key={brand.id}>
                   <Link
                     href={`/brands/${brand.slug}`}
-                    aria-label={`View ${brand.name} brand details`}
+                    aria-label={`${t.home.brands.viewBrandDetails}: ${brand.name}`}
                     className="block"
                   >
                     <Card
@@ -186,7 +188,7 @@ export default function Brands() {
         ) : (
 
           <div className="py-10 text-center text-sm text-gray-500">
-            No brands available.
+            {t.home.brands.noBrands}
           </div>
 
         )}

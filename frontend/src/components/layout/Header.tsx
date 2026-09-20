@@ -240,16 +240,16 @@ export default function Header() {
       ===================================================== */}
 
       <div className="bg-green-700 text-white text-[11px] sm:text-sm">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-3">
-          <span>
-            🚚 Free Delivery Above ₹499
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+          <span className="min-w-0 flex-1 basis-full sm:basis-auto sm:flex-none">
+            🚚 {t.header.freeDelivery}
           </span>
 
-          <span className="hidden md:block">
-            🌱 Quality Agricultural Products
+          <span className="hidden min-w-0 md:block md:flex-1 md:text-center">
+            🌱 {t.header.qualityProducts}
           </span>
 
-          <span>
+          <span className="shrink-0">
             📞 +91 9209061629
           </span>
         </div>
@@ -274,7 +274,7 @@ export default function Header() {
             >
               <Image
                 src={DEFAULT_BRAND_IMAGE}
-                alt="Patil Krushi Seva Kendra"
+                alt={t.header.logoAlt}
                 width={72}
                 height={72}
                 priority
@@ -283,11 +283,11 @@ export default function Header() {
 
               <div className="min-w-0">
                 <h1 className="text-xs min-[380px]:text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight text-green-700 tracking-tight">
-                  Patil Krushi Seva Kendra
+                  {t.header.brandName}
                 </h1>
 
                 <p className="hidden md:block text-xs text-gray-500 font-medium">
-                  Agricultural Products & Solutions
+                  {t.header.tagline}
                 </p>
               </div>
             </Link>
@@ -296,12 +296,12 @@ export default function Header() {
                 DESKTOP NAVIGATION
             ================================================= */}
 
-            <nav className="hidden lg:flex items-center gap-5">
+            <nav className="hidden lg:flex items-center gap-4 xl:gap-5">
               {navLinks.map((item) => (
                 <Link
                   key={item.key}
                   href={item.href}
-                  className={`text-sm font-medium transition-colors hover:text-green-600 ${
+                  className={`text-sm font-medium transition-colors hover:text-green-600 whitespace-normal text-center leading-snug ${
                     pathname === item.href
                       ? "text-green-600 border-b-2 border-green-600 pb-0.5"
                       : "text-gray-700"
@@ -321,7 +321,8 @@ export default function Header() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
 
                 <Input
-                  placeholder="Search seeds, fertilizers, pesticides..."
+                  placeholder={t.header.searchPlaceholder}
+                  aria-label={t.header.searchLabel}
                   className="
                     h-11
                     pl-10
@@ -472,7 +473,7 @@ export default function Header() {
                       {user.role === "ADMIN" && (
                         <DropdownMenuItem asChild>
                           <Link href="/admin">
-                            Admin Dashboard
+                            {t.account.adminDashboard}
                           </Link>
                         </DropdownMenuItem>
                       )}
@@ -704,7 +705,7 @@ export default function Header() {
                               variant="outline"
                               className="w-full"
                             >
-                              Admin Dashboard
+                              {t.account.adminDashboard}
                             </Button>
                           </Link>
                         )}
@@ -750,7 +751,8 @@ export default function Header() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
 
               <Input
-                placeholder="Search seeds, fertilizers, pesticides..."
+                placeholder={t.header.searchPlaceholder}
+                aria-label={t.header.searchLabel}
                 className="
                   h-9
                   pl-9

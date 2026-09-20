@@ -17,6 +17,7 @@ import {
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAddWishlist } from "@/hooks/useAddWishlist";
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
+import { useLanguage } from "@/i18n/useLanguage";
 
 type Props = {
   id: string;
@@ -49,6 +50,8 @@ export default function ProductCard({
   unit,
   slug,
 }: Props) {
+  const { t } = useLanguage();
+
   const isAvailable = availability === "In Stock";
 
   const productHref = slug
@@ -189,7 +192,7 @@ export default function ProductCard({
       <CardContent className="flex flex-1 flex-col px-3 pb-3 pt-0">
 
         <p className="truncate text-[10px] font-bold uppercase tracking-wide text-green-700">
-          {category ?? "Product"}
+          {category ?? t.common.productFallback}
         </p>
 
         {productHref ? (
@@ -205,7 +208,7 @@ export default function ProductCard({
         )}
 
         <p className="mt-0.5 truncate text-[11px] text-gray-500">
-          Brand: {brand ?? "Generic"}
+          {t.common.brandLabel} {brand ?? t.common.genericBrand}
           {unit ? ` | ${unit}` : ""}
         </p>
 
@@ -260,8 +263,8 @@ export default function ProductCard({
             <ShoppingCart className="mr-1.5 h-3.5 w-3.5 shrink-0" />
 
             {cartLoading
-              ? "Adding..."
-              : "Add to Cart"}
+              ? t.common.addingToCart
+              : t.common.addToCart}
           </Button>
 
           {/* ================= WISHLIST ================= */}

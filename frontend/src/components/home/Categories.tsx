@@ -5,8 +5,11 @@ import { Sprout } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useCategories } from "@/hooks/use-categories";
 import { getImageSrc } from "@/lib/image-fallbacks";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function Categories() {
+  const { t } = useLanguage();
+
   const {
     data: categories = [],
     isLoading,
@@ -19,15 +22,15 @@ export default function Categories() {
         {/* ================= HEADER ================= */}
         <div className="mb-7 text-center sm:mb-8 md:mb-10 md:text-left">
           <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700 sm:px-4 sm:py-2 sm:text-sm">
-            Featured Categories
+            {t.home.categories.featured}
           </span>
 
           <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-gray-900 sm:mt-4 sm:text-3xl md:text-4xl lg:text-5xl">
-            Shop by Category
+            {t.home.categories.title}
           </h2>
 
           <p className="mx-auto mt-2 max-w-xl text-sm text-gray-600 sm:mt-3 sm:text-base md:mx-0">
-            Browse essential farming products by category.
+            {t.home.categories.description}
           </p>
         </div>
 
@@ -232,7 +235,7 @@ export default function Categories() {
             <Sprout className="mx-auto mb-3 h-8 w-8 text-green-500" />
 
             <p className="text-sm text-gray-500 sm:text-base">
-              No categories available.
+              {t.home.categories.noCategories}
             </p>
           </div>
         ) : null}

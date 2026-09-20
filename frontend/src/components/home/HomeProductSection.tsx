@@ -1,3 +1,5 @@
+"use client";
+
 import ProductCard from "../common/ProductCard";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -5,11 +7,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ProductCardProduct } from "@/lib/product-mappers";
+import { useLanguage } from "@/i18n/useLanguage";
 
 import "swiper/css";
 import "swiper/css/navigation";
 
 type HomeProductSectionProps = {
+  sectionId: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -43,6 +47,7 @@ function ProductCardSkeleton() {
 }
 
 export default function HomeProductSection({
+  sectionId,
   eyebrow,
   title,
   description,
@@ -50,17 +55,17 @@ export default function HomeProductSection({
   isLoading,
   emptyMessage,
 }: HomeProductSectionProps) {
-  const navigationClass = title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+  const { t } = useLanguage();
+
+  const prevSelector = `.home-products-prev-${sectionId}`;
+  const nextSelector = `.home-products-next-${sectionId}`;
 
   return (
     <section className="w-full bg-gradient-to-b from-white to-green-50 py-14 md:py-16">
       <div className="mx-auto w-full max-w-[1500px] px-4 md:px-8 lg:px-12">
 
         <div className="mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between">
-          <div>
+          <div className="min-w-0">
             <span className="inline-block rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
               {eyebrow}
             </span>
@@ -76,9 +81,9 @@ export default function HomeProductSection({
 
           <Link
             href="/shop"
-            className="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-green-700 transition-colors hover:text-green-800"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 text-sm font-bold text-green-700 transition-colors hover:text-green-800"
           >
-            View All
+            {t.common.viewAll}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -86,16 +91,16 @@ export default function HomeProductSection({
         <div className="relative">
           <button
             type="button"
-            aria-label={`Previous ${title}`}
-            className={`home-products-prev-${navigationClass} absolute left-0 top-1/2 z-10 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-green-800 shadow-lg transition-all hover:bg-green-700 hover:text-white lg:flex`}
+            aria-label={`${t.home.productSection.previous} ${title}`}
+            className={`home-products-prev-${sectionId} absolute left-0 top-1/2 z-10 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-green-800 shadow-lg transition-all hover:bg-green-700 hover:text-white lg:flex`}
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
 
           <button
             type="button"
-            aria-label={`Next ${title}`}
-            className={`home-products-next-${navigationClass} absolute right-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-white text-green-800 shadow-lg transition-all hover:bg-green-700 hover:text-white lg:flex`}
+            aria-label={`${t.home.productSection.next} ${title}`}
+            className={`home-products-next-${sectionId} absolute right-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-white text-green-800 shadow-lg transition-all hover:bg-green-700 hover:text-white lg:flex`}
           >
             <ArrowRight className="h-4 w-4" />
           </button>
@@ -103,8 +108,8 @@ export default function HomeProductSection({
           <Swiper
             modules={[Navigation]}
             navigation={{
-              prevEl: `.home-products-prev-${navigationClass}`,
-              nextEl: `.home-products-next-${navigationClass}`,
+              prevEl: prevSelector,
+              nextEl: nextSelector,
             }}
             spaceBetween={16}
             slidesPerView={1}
