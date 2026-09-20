@@ -6,15 +6,23 @@ import Footer from "@/components/layout/Footer";
 import SectionReveal from "@/components/animations/SectionReveal";
 
 import { Geist } from "next/font/google";
+import { Noto_Sans_Devanagari } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 
 import QueryProvider from "@/providers/query-provider";
 import { AuthProvider } from "@/providers/AuthProvider";
+import LanguageProvider from "@/i18n/LanguageProvider";
 
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const notoSansDevanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-marathi",
 });
 
 export default function RootLayout({
@@ -27,24 +35,29 @@ export default function RootLayout({
       lang="en"
       className={cn(
         "font-sans",
-        geist.variable
+        geist.variable,
+        notoSansDevanagari.variable
       )}
     >
       <body>
 
         <QueryProvider>
 
-          <AuthProvider>
+          <LanguageProvider>
 
-            <Header />
+            <AuthProvider>
 
-            {children}
+              <Header />
 
-            <SectionReveal threshold={0.2}>
-              <Footer />
-            </SectionReveal>
+              {children}
 
-          </AuthProvider>
+              <SectionReveal threshold={0.2}>
+                <Footer />
+              </SectionReveal>
+
+            </AuthProvider>
+
+          </LanguageProvider>
 
         </QueryProvider>
 

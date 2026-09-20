@@ -12,12 +12,14 @@ import {
   ShoppingCart,
   User,
   Heart,
+  Languages,
 } from "lucide-react";
 
 import { useAuth } from "@/providers/AuthProvider";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/i18n/useLanguage";
 
 import {
   Sheet,
@@ -33,19 +35,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "Shop", href: "/shop" },
-  { name: "Categories", href: "/categories" },
-  { name: "Brands", href: "/brands" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
-];
+  { key: "home", href: "/" },
+  { key: "shop", href: "/shop" },
+  { key: "categories", href: "/categories" },
+  { key: "brands", href: "/brands" },
+  { key: "about", href: "/about" },
+  { key: "contact", href: "/contact" },
+] as const;
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
   const { user, loading, logout } = useAuth();
+  const { locale, setLocale, t } = useLanguage();
 
   const [wishlistCount, setWishlistCount] = useState(0);
   const [wishlistLoading, setWishlistLoading] = useState(false);
@@ -296,7 +299,7 @@ export default function Header() {
             <nav className="hidden lg:flex items-center gap-5">
               {navLinks.map((item) => (
                 <Link
-                  key={item.name}
+                  key={item.key}
                   href={item.href}
                   className={`text-sm font-medium transition-colors hover:text-green-600 ${
                     pathname === item.href
@@ -304,7 +307,7 @@ export default function Header() {
                       : "text-gray-700"
                   }`}
                 >
-                  {item.name}
+                  {t.navigation[item.key]}
                 </Link>
               ))}
             </nav>
@@ -345,10 +348,41 @@ export default function Header() {
                 variant="ghost"
                 size="icon"
                 className="hidden h-11 w-11 sm:inline-flex md:hidden"
-                aria-label="Search"
+                aria-label={t.common.search}
               >
                 <Search className="h-5 w-5" />
               </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="hidden h-10 gap-1.5 rounded-full px-2.5 text-xs font-semibold lg:flex"
+                    aria-label={t.language.label}
+                  >
+                    <Languages className="h-4 w-4" />
+                    {locale === "en"
+                      ? t.language.english
+                      : t.language.marathi}
+                  </Button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onSelect={() => setLocale("en")}
+                    className={locale === "en" ? "bg-green-50 font-semibold text-green-700" : ""}
+                  >
+                    {t.language.english}
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onSelect={() => setLocale("mr")}
+                    className={locale === "mr" ? "bg-green-50 font-semibold text-green-700" : ""}
+                  >
+                    {t.language.marathi}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* =================================================
                   WISHLIST
@@ -368,7 +402,7 @@ export default function Header() {
                     hover:text-red-500
                     transition-all
                   "
-                  aria-label="Wishlist"
+                  aria-label={t.wishlist.label}
                 >
                   <Heart
                     className={`h-5 w-5 ${
@@ -425,13 +459,13 @@ export default function Header() {
 
                       <DropdownMenuItem asChild>
                         <Link href="/profile">
-                          My Profile
+                          {t.account.profile}
                         </Link>
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild>
                         <Link href="/orders">
-                          My Orders
+                          {t.orders.label}
                         </Link>
                       </DropdownMenuItem>
 
@@ -447,7 +481,7 @@ export default function Header() {
                         className="text-red-600 cursor-pointer"
                         onClick={handleLogout}
                       >
-                        Logout
+                        {t.account.logout}
                       </DropdownMenuItem>
 
                     </DropdownMenuContent>
@@ -472,7 +506,7 @@ export default function Header() {
                       "
                     >
                       <User className="h-4 w-4" />
-                      Login
+                      {t.account.login}
                     </Button>
                   </Link>
                 ))}
@@ -493,7 +527,7 @@ export default function Header() {
                     hover:text-green-600
                     transition-all
                   "
-                  aria-label="View Cart"
+                  aria-label={t.cart.label}
                 >
                   <ShoppingCart className="h-5 w-5" />
 
@@ -545,13 +579,47 @@ export default function Header() {
 
                     {navLinks.map((item) => (
                       <Link
-                        key={item.name}
+                        key={item.key}
                         href={item.href}
                         className="text-lg font-medium hover:text-green-600"
                       >
-                        {item.name}
+                        {t.navigation[item.key]}
                       </Link>
                     ))}
+
+                    <div className="border-t pt-4">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        {t.language.label}
+                      </p>
+
+                      <div className="mt-2 grid grid-cols-2 gap-2" role="group" aria-label={t.language.label}>
+                        <button
+                          type="button"
+                          onClick={() => setLocale("en")}
+                          aria-pressed={locale === "en"}
+                          className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition-colors ${
+                            locale === "en"
+                              ? "border-green-700 bg-green-50 text-green-700"
+                              : "border-gray-200 text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {t.language.english}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setLocale("mr")}
+                          aria-pressed={locale === "mr"}
+                          className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition-colors ${
+                            locale === "mr"
+                              ? "border-green-700 bg-green-50 text-green-700"
+                              : "border-gray-200 text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          {t.language.marathi}
+                        </button>
+                      </div>
+                    </div>
 
                     {/* Mobile Wishlist */}
 
@@ -568,7 +636,7 @@ export default function Header() {
                           }`}
                         />
 
-                        Wishlist
+                        {t.wishlist.label}
                       </span>
 
                       <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
@@ -587,7 +655,7 @@ export default function Header() {
                       <span className="flex items-center gap-2">
                         <ShoppingCart className="h-5 w-5" />
 
-                        Cart
+                        {t.cart.label}
                       </span>
 
                       <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-green-600 px-1.5 text-xs font-bold text-white">
@@ -611,7 +679,7 @@ export default function Header() {
                             variant="outline"
                             className="w-full"
                           >
-                            My Profile
+                            {t.account.profile}
                           </Button>
                         </Link>
 
@@ -623,7 +691,7 @@ export default function Header() {
                             variant="outline"
                             className="w-full"
                           >
-                            My Orders
+                            {t.orders.label}
                           </Button>
                         </Link>
 
@@ -646,7 +714,7 @@ export default function Header() {
                           className="w-full"
                           onClick={handleLogout}
                         >
-                          Logout
+                          {t.account.logout}
                         </Button>
                       </>
                     ) : (
@@ -663,7 +731,7 @@ export default function Header() {
                           "
                         >
                           <User className="mr-2 h-4 w-4" />
-                          Login
+                          {t.account.login}
                         </Button>
                       </Link>
                     )}
