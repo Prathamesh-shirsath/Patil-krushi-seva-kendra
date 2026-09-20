@@ -778,4 +778,130 @@ export type TranslationDictionary = {
       logoAlt: string;
     };
   };
+  about: {
+    hero: {
+      badge: string;
+      title1: string;
+      title2: string;
+      subtitle: string;
+      description: string;
+      tags: {
+        genuine: string;
+        fast: string;
+        expert: string;
+      };
+      buttons: {
+        explore: string;
+        contact: string;
+      };
+    };
+    whoWeAre: {
+      badge: string;
+      title1: string;
+      title2: string;
+      description: string;
+      features: {
+        genuine: string;
+        expert: string;
+        fast: string;
+        affordable: string;
+      };
+    };
+    journey: {
+      badge: string;
+      title: string;
+      description: string;
+      milestones: {
+        year2018: string;
+        year2020: string;
+        year2022: string;
+        year2024: string;
+        year2025: string;
+      };
+    };
+    mission: {
+      badge: string;
+      title: string;
+      description: string;
+      cards: {
+        mission: {
+          title: string;
+          desc: string;
+        };
+        vision: {
+          title: string;
+          desc: string;
+        };
+        values: {
+          title: string;
+          desc: string;
+        };
+      };
+    };
+    certifications: {
+      badge: string;
+      title: string;
+      description: string;
+      items: {
+        iso: { title: string; desc: string };
+        govt: { title: string; desc: string };
+        genuine: { title: string; desc: string };
+        fast: { title: string; desc: string };
+      };
+      trustBanner: {
+        quality: { title: string; desc: string };
+        support: { title: string; desc: string };
+        price: { title: string; desc: string };
+        products: { title: string; desc: string };
+        available: { title: string; desc: string };
+      };
+    };
+    stats: {
+      badge: string;
+      title: string;
+      description: string;
+      labels: {
+        farmers: string;
+        products: string;
+        brands: string;
+        genuine: string;
+      };
+    };
+    founder: {
+      badge: string;
+      title: string;
+      name: string;
+      role: string;
+      quote: string;
+      description: string;
+      stats: {
+        farmers: string;
+        products: string;
+      };
+    };
+    team: {
+      badge: string;
+      title: string;
+      description: string;
+      members: {
+        expert: { name: string; role: string };
+        support: { name: string; role: string };
+        logistics: { name: string; role: string };
+      };
+    };
+    cta: {
+      badge: string;
+      title: string;
+      description: string;
+      buttons: {
+        shop: string;
+        contact: string;
+      };
+    };
+    accessibility: {
+      heroAlt: string;
+      whoWeAreAlt: string;
+      founderAlt: string;
+    };
+  };
 };

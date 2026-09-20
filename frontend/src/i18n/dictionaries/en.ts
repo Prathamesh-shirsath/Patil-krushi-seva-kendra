@@ -780,6 +780,132 @@ const en = {
     accessibility: {
       logoAlt: "logo"
     }
+  },
+  about: {
+    hero: {
+      badge: "ABOUT US",
+      title1: "Quality Seeds, Fertilizers &",
+      title2: "Pesticides Under One Roof",
+      subtitle: "Patil Krushi Seva Kendra",
+      description: "Empowering farmers with quality agricultural products, modern farming solutions and expert guidance to achieve better yields and sustainable growth.",
+      tags: {
+        genuine: "100% Genuine Products",
+        fast: "Fast Delivery",
+        expert: "Expert Guidance"
+      },
+      buttons: {
+        explore: "Explore Products",
+        contact: "Contact Us"
+      }
+    },
+    whoWeAre: {
+      badge: "Who We Are",
+      title1: "More Than a Store,",
+      title2: "We Are Your Farming Partner",
+      description: "Patil Krushi Seva Kendra is dedicated to providing farmers with premium agricultural products, genuine solutions and expert guidance. We believe in building long-term relationships and supporting farmers at every step of their journey.",
+      features: {
+        genuine: "100% Genuine Products",
+        expert: "Expert Guidance",
+        fast: "Fast & Safe Delivery",
+        affordable: "Affordable Prices"
+      }
+    },
+    journey: {
+      badge: "OUR JOURNEY",
+      title: "Growing Together With Farmers",
+      description: "Our journey reflects our commitment to helping farmers achieve better productivity through trusted agricultural solutions.",
+      milestones: {
+        year2018: "Started as a Local Agriculture Store",
+        year2020: "Served 2000+ Happy Farmers",
+        year2022: "Expanded Our Product Range",
+        year2024: "Digital Transformation & Online Store",
+        year2025: "10,000+ Farmers & Growing"
+      }
+    },
+    mission: {
+      badge: "OUR PURPOSE",
+      title: "Mission • Vision • Values",
+      description: "Our commitment to farmers is built on strong values, innovation and dedication towards sustainable agriculture.",
+      cards: {
+        mission: {
+          title: "Our Mission",
+          desc: "To provide farmers with premium quality agricultural products, expert guidance and modern solutions that improve productivity and profitability."
+        },
+        vision: {
+          title: "Our Vision",
+          desc: "To become the most trusted agricultural partner by promoting innovation, sustainability and growth in farming communities."
+        },
+        values: {
+          title: "Our Values",
+          desc: "Trust, Quality, Service and Farmer Success drive everything we do and help us build long-term relationships."
+        }
+      }
+    },
+    certifications: {
+      badge: "CERTIFICATIONS",
+      title: "Certified Quality & Trusted Service",
+      description: "We maintain the highest standards of quality, transparency and customer satisfaction in every product we offer.",
+      items: {
+        iso: { title: "ISO 9001:2015", desc: "Certified quality management standards." },
+        govt: { title: "Government Registered", desc: "Registered and compliant business entity." },
+        genuine: { title: "100% Genuine Products", desc: "Products sourced from trusted manufacturers." },
+        fast: { title: "Fast Delivery", desc: "Reliable delivery across Maharashtra." }
+      },
+      trustBanner: {
+        quality: { title: "Best Quality", desc: "Premium Products" },
+        support: { title: "Expert Support", desc: "Farmer Guidance" },
+        price: { title: "Best Prices", desc: "Affordable Rates" },
+        products: { title: "500+ Products", desc: "Wide Range" },
+        available: { title: "24/7 Support", desc: "Always Available" }
+      }
+    },
+    stats: {
+      badge: "OUR IMPACT",
+      title: "Numbers That Reflect Our Success",
+      description: "Our commitment to quality and service has helped us build trust among thousands of farmers.",
+      labels: {
+        farmers: "Happy Farmers",
+        products: "Agricultural Products",
+        brands: "Trusted Brands",
+        genuine: "Genuine Products"
+      }
+    },
+    founder: {
+      badge: "FOUNDER MESSAGE",
+      title: "Meet Our Founder",
+      name: "Pradyumna Ramesh Rokade",
+      role: "Founder, Patil Krushi Seva Kendra",
+      quote: "Our mission is simple — empower farmers with genuine products, modern agricultural solutions and expert guidance that helps them achieve better harvests and sustainable growth.",
+      description: "We believe agriculture is the backbone of our nation. Through innovation, trust and quality service, we are committed to helping every farmer succeed.",
+      stats: {
+        farmers: "Farmers Served",
+        products: "Products Available"
+      }
+    },
+    team: {
+      badge: "OUR TEAM",
+      title: "Meet The Team Behind Our Success",
+      description: "Our dedicated team works tirelessly to provide quality agricultural products and exceptional service to farmers across the region.",
+      members: {
+        expert: { name: "Agriculture Expert", role: "Crop & Farming Consultant" },
+        support: { name: "Customer Support", role: "Farmer Assistance Team" },
+        logistics: { name: "Logistics Team", role: "Delivery & Operations" }
+      }
+    },
+    cta: {
+      badge: "READY TO GROW?",
+      title: "Ready To Grow Better Crops?",
+      description: "Explore our premium agricultural products and expert farming solutions designed to help farmers achieve higher productivity and better harvests.",
+      buttons: {
+        shop: "Shop Products",
+        contact: "Contact Us"
+      }
+    },
+    accessibility: {
+      heroAlt: "Patil Krushi Seva Kendra",
+      whoWeAreAlt: "Who We Are",
+      founderAlt: "Founder"
+    }
   }
 } satisfies TranslationDictionary;
 
