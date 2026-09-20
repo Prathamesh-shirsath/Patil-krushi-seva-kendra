@@ -11,6 +11,8 @@ import {
 } from "./razorpay.service";
 import { clearCart } from "./cart.service";
 
+import { isDeliveryAvailable } from "./delivery-pincode.service";
+
 const orderInclude = {
   user: {
     select: {
@@ -113,6 +115,24 @@ export const createOrder = async (data: CreateOrderInput) => {
   if (!shippingAddress) {
     throw new Error("Delivery address is required to place an order.");
   }
+
+
+  // 3. Validate Delivery Pincode
+  const deliveryAvailable =
+    await isDeliveryAvailable(
+      shippingAddress.pincode
+    );
+
+  if (!deliveryAvailable) {
+    throw new Error(
+      `Sorry, we currently don't deliver to pincode ${shippingAddress.pincode}.`
+    );
+  }
+
+
+
+
+
 
   // 3. Compute Totals
   let subTotal = 0;

@@ -308,6 +308,19 @@ model AppSettings {
   updatedAt          DateTime
 }
 
+
+model DeliveryPincode {
+  id        String   @id @default(cuid())
+  pincode   String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pincode])
+  @@index([isActive])
+}
+
+
 model OrderAddress {
   id          String  @id
   orderId     String  @unique

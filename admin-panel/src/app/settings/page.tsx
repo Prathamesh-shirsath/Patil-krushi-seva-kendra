@@ -1,5 +1,11 @@
 import Link from "next/link";
 import DashboardLayout from "@/components/layout/dashboard-layout";
+import {
+  MapPin,
+  ArrowRight,
+} from "lucide-react";
+
+
 
 export default function SettingsPage() {
   return (
@@ -106,6 +112,41 @@ export default function SettingsPage() {
               Manage administrators →
             </div>
           </Link>
+
+          
+
+          <Link
+            href="/settings/delivery-pincodes"
+            className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                <MapPin className="h-6 w-6" />
+              </div>
+
+              <ArrowRight className="h-5 w-5 text-slate-300 transition-all group-hover:translate-x-1 group-hover:text-emerald-600" />
+            </div>
+
+            <div className="mt-5">
+              <h2 className="text-base font-semibold text-slate-800">
+                Delivery Pincodes
+              </h2>
+
+              <p className="mt-1 text-sm leading-6 text-slate-500">
+                Add and manage the pincodes where your store
+                provides delivery.
+              </p>
+            </div>
+
+            <div className="mt-5 text-sm font-semibold text-emerald-600">
+              Manage delivery areas →
+            </div>
+          </Link>
+
+
+
+
+
 
           {/* ===================================================
               STORE SETTINGS
