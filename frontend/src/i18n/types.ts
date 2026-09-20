@@ -676,4 +676,79 @@ export type TranslationDictionary = {
     errorSubmit: string;
     defaultCustomerName: string;
   };
+  contact: {
+    hero: {
+      title: string;
+      subtitle: string;
+      description: string;
+      expertSupport: string;
+      assistance: string;
+      farmerFirst: string;
+      successPriority: string;
+    };
+    cards: {
+      callUs: string;
+      callHours: string;
+      whatsappUs: string;
+      whatsappDescription: string;
+      whatsappCta: string;
+      emailUs: string;
+      emailDescription: string;
+      visitStore: string;
+    };
+    form: {
+      title: string;
+      description: string;
+      success: string;
+      labels: {
+        name: string;
+        email: string;
+        phone: string;
+        subject: string;
+        message: string;
+      };
+      placeholders: {
+        name: string;
+        email: string;
+        phone: string;
+        message: string;
+      };
+      subjects: {
+        select: string;
+        productInquiry: string;
+        orderSupport: string;
+        farmingAdvice: string;
+        returnRefund: string;
+        other: string;
+      };
+      submit: string;
+    };
+    location: {
+      title: string;
+      mapsCta: string;
+      storeHours: string;
+      mondaySaturday: string;
+      mondaySaturdayHours: string;
+      sunday: string;
+      sundayHours: string;
+      online247: string;
+      onlineDescription: string;
+    };
+    trust: {
+      originalProducts: string;
+      originalProductsDescription: string;
+      fastDelivery: string;
+      fastDeliveryDescription: string;
+      expertSupport: string;
+      expertSupportDescription: string;
+      easyReturns: string;
+      easyReturnsDescription: string;
+      securePayments: string;
+      securePaymentsDescription: string;
+    };
+    accessibility: {
+      farmSupport: string;
+      storeLocation: string;
+    };
+  };
 };

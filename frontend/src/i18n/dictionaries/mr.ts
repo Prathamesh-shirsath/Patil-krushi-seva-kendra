@@ -680,6 +680,81 @@ const mr = {
     errorSubmit: "पुनरावलोकन सबमिट करण्यात अयशस्वी",
     defaultCustomerName: "ग्राहक",
   },
+  contact: {
+    hero: {
+      title: "आम्ही तुमच्या मदतीसाठी येथे आहोत",
+      subtitle: "प्रश्न आहेत किंवा मदतीची आवश्यकता आहे?",
+      description: "आमची टीम तुम्हाला सर्वोत्तम उत्पादने आणि तुमच्या शेतीच्या गरजांसाठी तज्ञ मार्गदर्शनासह मदत करण्यासाठी नेहमी तयार आहे.",
+      expertSupport: "तज्ञ समर्थन",
+      assistance: "२४/७ मदत",
+      farmerFirst: "शेतकरी प्रथम",
+      successPriority: "तुमचे यश आमचे प्राधान्य आहे"
+    },
+    cards: {
+      callUs: "आम्हाला कॉल करा",
+      callHours: "सोम-शनि: सकाळी ९:०० - संध्याकाळी ७:००\nरविवार: सकाळी १०:०० - संध्याकाळी ४:००",
+      whatsappUs: "आम्हाला व्हॉट्सॲप करा",
+      whatsappDescription: "व्हॉट्सॲपवर त्वरित मदत",
+      whatsappCta: "व्हॉट्सॲपवर चॅट करा →",
+      emailUs: "आम्हाला ईमेल करा",
+      emailDescription: "आम्ही २४ तासांच्या आत उत्तर देतो",
+      visitStore: "आमच्या दुकानाला भेट द्या"
+    },
+    form: {
+      title: "आम्हाला संदेश पाठवा",
+      description: "फॉर्म भरा आणि आमची टीम तुमच्याशी संपर्क साधेल.",
+      success: "✓ संदेश यशस्वीरित्या पाठवला! आम्ही लवकरच तुमच्याशी संपर्क साधू.",
+      labels: {
+        name: "तुमचे नाव",
+        email: "ईमेल पत्ता",
+        phone: "फोन नंबर",
+        subject: "विषय",
+        message: "संदेश"
+      },
+      placeholders: {
+        name: "तुमचे नाव प्रविष्ट करा",
+        email: "तुमचा ईमेल प्रविष्ट करा",
+        phone: "तुमचा फोन नंबर प्रविष्ट करा",
+        message: "तुमचा संदेश येथे टाइप करा..."
+      },
+      subjects: {
+        select: "विषय निवडा",
+        productInquiry: "उत्पादन चौकशी",
+        orderSupport: "ऑर्डर समर्थन",
+        farmingAdvice: "तज्ञ शेती सल्ला",
+        returnRefund: "परतावा आणि रिफंड",
+        other: "इतर"
+      },
+      submit: "संदेश पाठवा"
+    },
+    location: {
+      title: "आमचे ठिकाण",
+      mapsCta: "गुगल मॅप्समध्ये उघडा →",
+      storeHours: "दुकानाची वेळ",
+      mondaySaturday: "सोम - शनि",
+      mondaySaturdayHours: "सकाळी ९:०० - संध्याकाळी ७:००",
+      sunday: "रविवार",
+      sundayHours: "सकाळी १०:०० - संध्याकाळी ४:००",
+      online247: "२४/७ ऑनलाइन खरेदी करा",
+      onlineDescription: "आमच्या वेबसाइटवर कधीही तुमची ऑर्डर द्या."
+    },
+    trust: {
+      originalProducts: "१००% मूळ उत्पादने",
+      originalProductsDescription: "सर्वोत्तम गुणवत्तेची हमी",
+      fastDelivery: "जलद आणि सुरक्षित वितरण",
+      fastDeliveryDescription: "तुमच्या दारावर त्वरित वितरण",
+      expertSupport: "तज्ञ शेतकरी समर्थन",
+      expertSupportDescription: "२४/७ तज्ञ मार्गदर्शन",
+      easyReturns: "सोपे परतावे",
+      easyReturnsDescription: "त्रासमुक्त परतावे",
+      securePayments: "सुरक्षित पेमेंट",
+      securePaymentsDescription: "१००% सुरक्षित पेमेंट"
+    },
+    accessibility: {
+      farmSupport: "शेती समर्थन",
+      storeLocation: "दुकानाचे ठिकाण"
+    }
+  }
 } satisfies TranslationDictionary;
 
 export default mr;

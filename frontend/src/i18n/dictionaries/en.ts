@@ -678,6 +678,81 @@ const en = {
     errorSubmit: "Failed to submit review",
     defaultCustomerName: "Customer",
   },
+  contact: {
+    hero: {
+      title: "We’re Here to Help You",
+      subtitle: "Have questions or need assistance?",
+      description: "Our team is always ready to support you with the best products and expert guidance for your farming needs.",
+      expertSupport: "Expert Support",
+      assistance: "24/7 Assistance",
+      farmerFirst: "Farmer First",
+      successPriority: "Your success is our priority"
+    },
+    cards: {
+      callUs: "Call Us",
+      callHours: "Mon–Sat: 9:00 AM – 7:00 PM\nSunday: 10:00 AM – 4:00 PM",
+      whatsappUs: "WhatsApp Us",
+      whatsappDescription: "Quick support on WhatsApp",
+      whatsappCta: "Chat on WhatsApp →",
+      emailUs: "Email Us",
+      emailDescription: "We reply within 24 hours",
+      visitStore: "Visit Our Store"
+    },
+    form: {
+      title: "Send Us a Message",
+      description: "Fill out the form and our team will get back to you.",
+      success: "✓ Message sent successfully! We'll get back to you soon.",
+      labels: {
+        name: "Your Name",
+        email: "Email Address",
+        phone: "Phone Number",
+        subject: "Subject",
+        message: "Message"
+      },
+      placeholders: {
+        name: "Enter your name",
+        email: "Enter your email",
+        phone: "Enter your phone number",
+        message: "Type your message here..."
+      },
+      subjects: {
+        select: "Select a subject",
+        productInquiry: "Product Inquiry",
+        orderSupport: "Order Support",
+        farmingAdvice: "Expert Farming Advice",
+        returnRefund: "Return & Refund",
+        other: "Other"
+      },
+      submit: "Send Message"
+    },
+    location: {
+      title: "Our Location",
+      mapsCta: "Open in Google Maps →",
+      storeHours: "Store Hours",
+      mondaySaturday: "Mon – Sat",
+      mondaySaturdayHours: "9:00 AM – 7:00 PM",
+      sunday: "Sunday",
+      sundayHours: "10:00 AM – 4:00 PM",
+      online247: "Shop Online 24/7",
+      onlineDescription: "Place your order anytime on our website."
+    },
+    trust: {
+      originalProducts: "100% Original Products",
+      originalProductsDescription: "Best quality guaranteed",
+      fastDelivery: "Fast & Safe Delivery",
+      fastDeliveryDescription: "Quick delivery at your door",
+      expertSupport: "Expert Farmer Support",
+      expertSupportDescription: "24/7 expert guidance",
+      easyReturns: "Easy Returns",
+      easyReturnsDescription: "Hassle free returns",
+      securePayments: "Secure Payments",
+      securePaymentsDescription: "100% secure payments"
+    },
+    accessibility: {
+      farmSupport: "Farm Support",
+      storeLocation: "Store Location"
+    }
+  }
 } satisfies TranslationDictionary;
 
 export default en;
