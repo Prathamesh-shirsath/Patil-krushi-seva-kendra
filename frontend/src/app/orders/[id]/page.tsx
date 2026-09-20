@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getOrderById } from "@/services/order.service";
 import type { Order, OrderStatus, PaymentMethod, PaymentStatus } from "@/types/order";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const statusConfig: Record<
   OrderStatus,
@@ -61,6 +62,7 @@ const statusConfig: Record<
 };
 
 export default function OrderDetailsPage() {
+  const { t } = useLanguage();
   const params = useParams();
 
   const rawId = Array.isArray(params.id)
@@ -86,7 +88,7 @@ export default function OrderDetailsPage() {
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
             <p className="text-sm font-medium text-slate-600">
-              Loading order details...
+              {t.orders.details.loading}
             </p>
           </div>
         </div>
@@ -108,18 +110,17 @@ export default function OrderDetailsPage() {
             </div>
 
             <h1 className="mt-5 text-2xl font-black text-slate-900">
-              Order Not Found
+              {t.orders.details.notFoundTitle}
             </h1>
 
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-              This order was not found or you don't have access to it.
-              Please return to your orders and select an available order.
+              {t.orders.details.notFoundDesc}
             </p>
 
             <Link href="/orders" className="mt-6 inline-block">
               <Button className="h-11 rounded-xl bg-emerald-700 px-6 font-bold text-white hover:bg-emerald-800">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to My Orders
+                {t.orders.details.backToOrders}
               </Button>
             </Link>
 
@@ -132,6 +133,7 @@ export default function OrderDetailsPage() {
 
   const status = statusConfig[order.status];
   const StatusIcon = status.icon;
+  const statusLabel = t.orders.status[order.status.toLowerCase() as keyof typeof t.orders.status] || status.label;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
@@ -145,7 +147,7 @@ export default function OrderDetailsPage() {
           className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition-colors hover:text-emerald-700"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to My Orders
+          {t.orders.details.backToOrders}
         </Link>
 
         {/* ================= PREMIUM HEADER ================= */}
@@ -158,15 +160,15 @@ export default function OrderDetailsPage() {
 
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-emerald-50 backdrop-blur-xl">
                 <Package className="h-4 w-4" />
-                Order Details
+                {t.orders.details.orderDetails}
               </div>
 
               <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
-                Order #{order.id}
+                {t.orders.list.orderNum}{order.id}
               </h1>
 
               <p className="mt-2 text-sm text-emerald-50/70">
-                Placed on {formatDateTime(order.createdAt)}
+                {t.orders.details.placedOn} {formatDateTime(order.createdAt)}
               </p>
 
             </div>
@@ -177,17 +179,17 @@ export default function OrderDetailsPage() {
                 className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold ${status.className}`}
               >
                 <StatusIcon className="h-4 w-4" />
-                {status.label}
+                {statusLabel}
               </span>
 
               <Button
                 variant="outline"
                 disabled
-                title="Invoice is not available for this order."
+                title={t.orders.details.invoiceUnavailable}
                 className="rounded-xl border-white/20 bg-white/10 text-white backdrop-blur hover:bg-white/20 hover:text-white"
               >
                 <Download className="mr-2 h-4 w-4" />
-                Invoice
+                {t.orders.details.invoice}
               </Button>
 
             </div>
@@ -219,17 +221,17 @@ export default function OrderDetailsPage() {
                 <div>
 
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-                    Purchased Items
+                    {t.orders.details.purchasedItems}
                   </p>
 
                   <h2 className="mt-1 text-2xl font-black text-slate-950">
-                    Order Items ({order.items.length})
+                    {t.orders.details.orderItems} ({order.items.length})
                   </h2>
 
                 </div>
 
                 <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
-                  {order.items.length} Items
+                  {order.items.length} {order.items.length === 1 ? t.orders.details.items.replace(/s$/i, "") : t.orders.details.items}
                 </span>
 
               </div>
@@ -267,7 +269,7 @@ export default function OrderDetailsPage() {
                       </h3>
 
                       <p className="mt-1 text-sm text-slate-500">
-                        Quantity: {item.quantity}
+                        {t.orders.list.quantity}: {item.quantity}
                       </p>
 
                     </div>
@@ -297,11 +299,11 @@ export default function OrderDetailsPage() {
                 <div>
 
                   <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-                    Shipping
+                    {t.orders.details.shipping}
                   </p>
 
                   <h2 className="text-xl font-black text-slate-950">
-                    Delivery Address
+                    {t.orders.details.deliveryAddress}
                   </h2>
 
                 </div>
@@ -313,11 +315,11 @@ export default function OrderDetailsPage() {
                 <p className="font-bold text-slate-800">
                   {order.OrderAddress?.fullName ??
                     order.user.name ??
-                    "Customer information unavailable"}
+                    t.orders.details.customerInfoUnavailable}
                 </p>
 
                 <p className="mt-1 text-sm leading-6 text-slate-500">
-                  {formatOrderAddress(order)}
+                  {formatOrderAddress(order, t)}
                 </p>
 
                 {(order.user.phone || order.user.email) && (
@@ -337,26 +339,26 @@ export default function OrderDetailsPage() {
             <Card className="rounded-[30px] border-slate-200/80 bg-white p-6 shadow-[0_10px_40px_-18px_rgba(15,23,42,0.2)] sm:p-8">
 
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-                Order Progress
+                {t.orders.details.orderProgress}
               </p>
 
               <h2 className="mt-1 text-2xl font-black text-slate-950">
-                Order Timeline
+                {t.orders.details.orderTimeline}
               </h2>
 
               <div className="mt-7 space-y-0">
 
                 <TimelineItem
-                  title="Order Placed"
-                  description="Your order was successfully placed."
+                  title={t.orders.details.orderPlaced}
+                  description={t.orders.details.orderPlacedDesc}
                   date={formatDateTime(order.createdAt)}
                   completed
                 />
 
                 <TimelineItem
-                  title={`Current Status: ${status.label}`}
-                  description="This is the latest status available for your order."
-                  date={`Last updated ${formatDateTime(order.updatedAt)}`}
+                  title={`${t.orders.details.currentStatus}: ${statusLabel}`}
+                  description={t.orders.details.currentStatusDesc}
+                  date={t.orders.track.currentStatus + " " + formatDateTime(order.updatedAt)}
                   completed
                   last
                 />
@@ -376,27 +378,27 @@ export default function OrderDetailsPage() {
             <Card className="rounded-[30px] border-slate-200/80 bg-white p-6 shadow-[0_10px_40px_-18px_rgba(15,23,42,0.2)]">
 
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-                Payment
+                {t.orders.details.payment}
               </p>
 
               <h2 className="mt-1 text-xl font-black text-slate-950">
-                Order Summary
+                {t.orders.details.orderSummary}
               </h2>
 
               <div className="mt-5 space-y-4">
 
                 <SummaryRow
-                  label="Subtotal"
+                  label={t.orders.details.subtotal}
                   value={formatCurrency(order.subTotal)}
                 />
 
                 <SummaryRow
-                  label="Shipping Charge"
+                  label={t.orders.details.shippingCharge}
                   value={formatCurrency(order.deliveryCharge)}
                 />
 
                 <SummaryRow
-                  label="Discount"
+                  label={t.orders.details.discount}
                   value={`- ${formatCurrency(order.discount)}`}
                   green={Number(order.discount) > 0}
                 />
@@ -406,7 +408,7 @@ export default function OrderDetailsPage() {
                   <div className="flex items-center justify-between">
 
                     <span className="font-bold text-slate-800">
-                      Total Amount
+                      {t.orders.details.totalAmount}
                     </span>
 
                     <span className="text-2xl font-black text-emerald-700">
@@ -434,11 +436,11 @@ export default function OrderDetailsPage() {
                 <div>
 
                   <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-                    Payment
+                    {t.orders.details.payment}
                   </p>
 
                   <h2 className="text-xl font-black text-slate-950">
-                    Payment Information
+                    {t.orders.details.paymentInfo}
                   </h2>
 
                 </div>
@@ -448,19 +450,19 @@ export default function OrderDetailsPage() {
               <div className="mt-6 space-y-4">
 
                 <SummaryRow
-                  label="Method"
-                  value={getPaymentMethodLabel(order.paymentMethod)}
+                  label={t.orders.details.method}
+                  value={getPaymentMethodLabel(order.paymentMethod, t)}
                 />
 
                 <SummaryRow
-                  label="Payment Status"
-                  value={formatPaymentStatus(order.paymentStatus)}
+                  label={t.orders.details.paymentStatus}
+                  value={formatPaymentStatus(order.paymentStatus, t)}
                   green={order.paymentStatus === "SUCCESS"}
                 />
 
                 {getTransactionId(order) && (
                   <SummaryRow
-                    label="Transaction ID"
+                    label={t.orders.details.transactionId}
                     value={getTransactionId(order)!}
                   />
                 )}
@@ -478,7 +480,7 @@ export default function OrderDetailsPage() {
               >
                 <Button className="h-12 w-full rounded-xl bg-emerald-700 font-bold text-white shadow-lg shadow-emerald-700/20 transition-all hover:-translate-y-0.5 hover:bg-emerald-800">
                   <Truck className="mr-2 h-5 w-5" />
-                  Track This Order
+                  {t.orders.details.trackThisOrder}
                 </Button>
               </Link>
             )}
@@ -489,14 +491,13 @@ export default function OrderDetailsPage() {
                 className="mt-3 h-12 w-full rounded-xl border-slate-200 font-bold text-slate-700 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Orders
+                {t.orders.details.backToOrders}
               </Button>
             </Link>
 
           </div>
 
         </div>
-
       </div>
 
     </main>
@@ -517,11 +518,11 @@ function formatCurrency(amount: string) {
   return `₹${Number(amount).toLocaleString("en-IN")}`;
 }
 
-function formatOrderAddress(order: Order) {
+function formatOrderAddress(order: Order, t: any) {
   const address = order.OrderAddress;
 
   if (!address) {
-    return "Delivery address unavailable.";
+    return t.orders.list.addressUnavailable || "Delivery address unavailable.";
   }
 
   return [
@@ -537,11 +538,14 @@ function formatOrderAddress(order: Order) {
     .join(", ");
 }
 
-function getPaymentMethodLabel(paymentMethod: PaymentMethod) {
-  return paymentMethod === "COD" ? "Cash on Delivery" : "Razorpay";
+function getPaymentMethodLabel(paymentMethod: PaymentMethod, t: any) {
+  return paymentMethod === "COD" ? t.orders.payment.methodCod : t.orders.payment.methodRazorpay;
 }
 
-function formatPaymentStatus(paymentStatus: PaymentStatus) {
+function formatPaymentStatus(paymentStatus: PaymentStatus, t: any) {
+  if (paymentStatus === "SUCCESS") return "Success";
+  if (paymentStatus === "FAILED") return "Failed";
+  if (paymentStatus === "REFUNDED") return "Refunded";
   return paymentStatus.charAt(0) + paymentStatus.slice(1).toLowerCase();
 }
 
