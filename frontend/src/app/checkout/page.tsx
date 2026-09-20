@@ -30,9 +30,10 @@ import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/cart/useCart";
 import { useAddresses } from "@/hooks/use-addresses";
 import { useAuth } from "@/providers/AuthProvider";
-import AddressDialog from "@/components/profile/AddressDialog";
+import { AddressDialog } from "@/components/profile/AddressDialog";
 import { Address } from "@/types/address";
 import { createOrder, verifyPayment } from "@/services/order.service";
+import { useLanguage } from "@/i18n/useLanguage";
 
 declare global {
   interface Window {
@@ -41,6 +42,7 @@ declare global {
 }
 
 export default function CheckoutPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -123,19 +125,19 @@ export default function CheckoutPage() {
 
   const handleRazorpayPayment = async () => {
     if (!user) {
-      toast.error("Please sign in to complete your checkout.");
+      toast.error(t.checkout.toast.signInRequiredCheckout);
       router.push("/login?redirect=/checkout");
       return;
     }
 
     if (!activeAddress) {
-      toast.error("Please add and select a delivery address.");
+      toast.error(t.checkout.toast.addressRequired);
       setAddressDialogOpen(true);
       return;
     }
 
     if (!items.length) {
-      toast.error("Your cart is empty.");
+      toast.error(t.checkout.toast.cartEmpty);
       router.push("/cart");
       return;
     }
@@ -204,7 +206,7 @@ export default function CheckoutPage() {
           razorpay_signature: string;
         }) {
           try {
-            toast.loading("Verifying payment...", {
+            toast.loading(t.checkout.toast.verifyingPayment, {
               id: "payment-verify",
             });
 
@@ -223,7 +225,7 @@ export default function CheckoutPage() {
               window.dispatchEvent(new Event("cart-updated"));
 
               toast.success(
-                "Payment successful! Your order has been placed.",
+                t.checkout.toast.paymentSuccess,
                 {
                   id: "payment-verify",
                 }
@@ -232,7 +234,7 @@ export default function CheckoutPage() {
               router.push(`/orders/${order.id}`);
             } else {
               toast.error(
-                "Payment verification failed. Please contact support.",
+                t.checkout.toast.verifyFailed,
                 {
                   id: "payment-verify",
                 }
@@ -243,7 +245,7 @@ export default function CheckoutPage() {
 
             toast.error(
               verifyError?.response?.data?.message ||
-                "Failed to verify payment. Please contact support.",
+                t.checkout.toast.verifyFailedGeneric,
               {
                 id: "payment-verify",
               }
@@ -258,7 +260,7 @@ export default function CheckoutPage() {
             setIsProcessing(false);
 
             toast.info(
-              "Payment was not completed. You can try again whenever ready."
+              t.checkout.toast.paymentCancelled
             );
           },
         },
@@ -277,7 +279,7 @@ export default function CheckoutPage() {
 
         toast.error(
           resp.error?.description ||
-            "Payment failed. Please try another method."
+            t.checkout.toast.paymentFailed
         );
 
         setIsProcessing(false);
@@ -290,7 +292,7 @@ export default function CheckoutPage() {
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          "Unable to initialize payment. Please try again."
+          t.checkout.toast.paymentInitFailed
       );
 
       setIsProcessing(false);
@@ -303,19 +305,19 @@ export default function CheckoutPage() {
 
   const handleCodPayment = async () => {
     if (!user) {
-      toast.error("Please sign in to place an order.");
+      toast.error(t.checkout.toast.signInRequiredOrder);
       router.push("/login?redirect=/checkout");
       return;
     }
 
     if (!activeAddress) {
-      toast.error("Please add and select a delivery address.");
+      toast.error(t.checkout.toast.addressRequired);
       setAddressDialogOpen(true);
       return;
     }
 
     if (!items.length) {
-      toast.error("Your cart is empty.");
+      toast.error(t.checkout.toast.cartEmpty);
       router.push("/cart");
       return;
     }
@@ -344,12 +346,12 @@ export default function CheckoutPage() {
         window.dispatchEvent(new Event("cart-updated"));
 
         toast.success(
-          "Order placed successfully with Cash on Delivery!"
+          t.checkout.toast.codSuccess
         );
 
         router.push(`/orders/${res.data.order.id}`);
       } else {
-        throw new Error("Failed to place Cash on Delivery order.");
+        throw new Error(t.checkout.toast.codFailed);
       }
     } catch (error: any) {
       console.error("COD Order Error:", error);
@@ -357,7 +359,7 @@ export default function CheckoutPage() {
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          "Failed to place order. Please try again."
+          t.checkout.toast.orderFailedGeneric
       );
     } finally {
       setIsProcessing(false);
@@ -389,7 +391,7 @@ export default function CheckoutPage() {
               <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
 
               <p className="text-sm font-medium text-slate-600">
-                Loading checkout details...
+                {t.checkout.actions.loadingDetails}
               </p>
             </div>
           </div>
@@ -411,17 +413,17 @@ export default function CheckoutPage() {
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900">
-            Your Cart is Empty
+            {t.checkout.toast.cartEmpty}
           </h1>
 
           <p className="mt-2 text-sm text-slate-600">
-            You don't have any items in your cart to checkout.
+            {t.checkout.toast.cartEmpty}
           </p>
 
           <div className="mt-6">
             <Link href="/shop">
               <Button className="rounded-xl bg-emerald-700 px-6 font-semibold hover:bg-emerald-800">
-                Explore Products
+                {t.common?.continueShopping || "Explore Products"}
               </Button>
             </Link>
           </div>
@@ -451,12 +453,12 @@ export default function CheckoutPage() {
               className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition-colors hover:text-emerald-700"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Cart
+              {t.common?.backToCart || "Back to Cart"}
             </Link>
 
             <div className="hidden items-center gap-2 text-xs font-semibold sm:flex">
               <span className="text-slate-400">
-                1. Cart
+                {t.checkout.header.breadcrumbs.cart}
               </span>
 
               <span className="text-slate-300">
@@ -464,7 +466,7 @@ export default function CheckoutPage() {
               </span>
 
               <span className="text-emerald-700">
-                2. Delivery & Payment
+                {t.checkout.header.breadcrumbs.deliveryPayment}
               </span>
 
               <span className="text-slate-300">
@@ -472,7 +474,7 @@ export default function CheckoutPage() {
               </span>
 
               <span className="text-slate-400">
-                3. Confirmation
+                {t.checkout.header.breadcrumbs.confirmation}
               </span>
             </div>
           </div>
@@ -481,15 +483,15 @@ export default function CheckoutPage() {
           <div className="mb-8">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1 text-xs font-bold text-emerald-800">
               <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-              Secure Checkout
+              {t.checkout.header.secureCheckout}
             </div>
 
             <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
-              Delivery & Payment
+              {t.checkout.header.title}
             </h1>
 
             <p className="mt-1 text-sm text-slate-600">
-              Review your items, choose shipping address and complete payment securely.
+              {t.checkout.header.subtitle}
             </p>
           </div>
 
@@ -501,11 +503,11 @@ export default function CheckoutPage() {
 
                 <div>
                   <p className="text-sm font-bold text-amber-900">
-                    Sign in to complete order
+                    {t.checkout.auth.warningTitle}
                   </p>
 
                   <p className="text-xs text-amber-700">
-                    Please log in with your phone number to link your order history and addresses.
+                    {t.checkout.auth.warningDesc}
                   </p>
                 </div>
               </div>
@@ -515,7 +517,7 @@ export default function CheckoutPage() {
                 className="shrink-0 rounded-xl bg-amber-700 px-5 text-xs font-bold text-white hover:bg-amber-800"
               >
                 <Link href="/login?redirect=/checkout">
-                  Sign In with OTP
+                  {t.checkout.auth.signIn}
                 </Link>
               </Button>
             </div>
@@ -539,11 +541,11 @@ export default function CheckoutPage() {
 
                     <div>
                       <h2 className="text-base font-bold text-slate-900 sm:text-lg">
-                        1. Delivery Address
+                        {t.checkout.address.title}
                       </h2>
 
                       <p className="text-xs text-slate-500">
-                        Where should we deliver your order?
+                        {t.checkout.address.subtitle}
                       </p>
                     </div>
                   </div>
@@ -556,7 +558,7 @@ export default function CheckoutPage() {
                     className="gap-1.5 rounded-xl border-emerald-600 text-xs font-bold text-emerald-700 hover:bg-emerald-50"
                   >
                     <Plus className="h-3.5 w-3.5" />
-                    Add Address
+                    {t.checkout.address.addBtn}
                   </Button>
                 </div>
 
@@ -572,11 +574,11 @@ export default function CheckoutPage() {
                       <MapPin className="mx-auto mb-2 h-7 w-7 text-slate-400" />
 
                       <p className="text-sm font-semibold text-slate-800">
-                        No delivery address saved yet
+                        {t.checkout.address.emptyTitle}
                       </p>
 
                       <p className="mt-1 text-xs text-slate-500">
-                        Please add your farm or doorstep address to proceed.
+                        {t.checkout.address.emptyDesc}
                       </p>
 
                       <Button
@@ -585,7 +587,7 @@ export default function CheckoutPage() {
                         className="mt-4 rounded-xl bg-emerald-700 px-4 text-xs font-bold text-white hover:bg-emerald-800"
                       >
                         <Plus className="mr-1.5 h-3.5 w-3.5" />
-                        Add New Address
+                        {t.checkout.address.addNewBtn}
                       </Button>
 
                     </div>
@@ -620,11 +622,11 @@ export default function CheckoutPage() {
                                     {address.fullName}
                                   </p>
 
-                                  {address.isDefault && (
-                                    <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800">
-                                      Default
-                                    </span>
-                                  )}
+                                    {address.isDefault && (
+                                      <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                                        {t.checkout.address.defaultBadge}
+                                      </span>
+                                    )}
 
                                 </div>
 
@@ -699,11 +701,11 @@ export default function CheckoutPage() {
                     <div>
 
                       <h2 className="text-base font-bold text-slate-900 sm:text-lg">
-                        2. Payment Method
+                        {t.checkout.payment.title}
                       </h2>
 
                       <p className="text-xs text-slate-500">
-                        Choose your preferred mode of payment
+                        {t.checkout.payment.subtitle}
                       </p>
 
                     </div>
@@ -711,7 +713,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <Badge className="border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-800">
-                    256-Bit SSL Encrypted
+                    {t.checkout.payment.sslBadge}
                   </Badge>
 
                 </div>
@@ -743,31 +745,31 @@ export default function CheckoutPage() {
                           <div className="flex items-center gap-2">
 
                             <h3 className="font-bold text-slate-900">
-                              Online Payment via Razorpay
+                              {t.checkout.payment.razorpayTitle}
                             </h3>
 
-                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-                              Instant &amp; Recommended
+                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 break-keep">
+                              {t.checkout.payment.instantBadge}
                             </span>
 
                           </div>
 
                           <p className="mt-1 text-xs text-slate-600">
-                            Pay via UPI (GPay, PhonePe, Paytm), Debit/Credit Cards, NetBanking, and Wallets.
+                            {t.checkout.payment.razorpayDesc}
                           </p>
 
                           <div className="mt-3 flex flex-wrap items-center gap-2">
 
                             <span className="rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-2xs">
-                              ⚡ UPI (GPay / PhonePe)
+                              {t.checkout.payment.upiBadge}
                             </span>
 
                             <span className="rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-2xs">
-                              💳 Cards (Visa, RuPay, MC)
+                              {t.checkout.payment.cardsBadge}
                             </span>
 
                             <span className="rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-2xs">
-                              🏦 Net Banking (All Banks)
+                              {t.checkout.payment.netBankingBadge}
                             </span>
 
                           </div>
@@ -812,11 +814,11 @@ export default function CheckoutPage() {
                         <div>
 
                           <h3 className="font-bold text-slate-900">
-                            Cash on Delivery (COD)
+                            {t.checkout.payment.codTitle}
                           </h3>
 
                           <p className="mt-1 text-xs text-slate-600">
-                            Pay in cash to the courier representative when the package arrives at your doorstep.
+                            {t.checkout.payment.codDesc}
                           </p>
 
                         </div>
@@ -849,11 +851,11 @@ export default function CheckoutPage() {
 
                   <div>
                     <p className="text-xs font-bold text-slate-900">
-                      100% Genuine
+                      {t.checkout.trust.genuineTitle}
                     </p>
 
                     <p className="text-[10px] text-slate-500">
-                      Certified Agro Products
+                      {t.checkout.trust.genuineDesc}
                     </p>
                   </div>
                 </div>
@@ -863,11 +865,11 @@ export default function CheckoutPage() {
 
                   <div>
                     <p className="text-xs font-bold text-slate-900">
-                      Secure Payments
+                      {t.checkout.trust.secureTitle}
                     </p>
 
                     <p className="text-[10px] text-slate-500">
-                      Razorpay Protected
+                      {t.checkout.trust.secureDesc}
                     </p>
                   </div>
                 </div>
@@ -877,11 +879,11 @@ export default function CheckoutPage() {
 
                   <div>
                     <p className="text-xs font-bold text-slate-900">
-                      Fast Delivery
+                      {t.checkout.trust.deliveryTitle}
                     </p>
 
                     <p className="text-[10px] text-slate-500">
-                      To Your Village/Farm
+                      {t.checkout.trust.deliveryDesc}
                     </p>
                   </div>
                 </div>
@@ -899,14 +901,14 @@ export default function CheckoutPage() {
                   <div className="flex items-center justify-between border-b border-slate-100 pb-4">
 
                     <h2 className="text-lg font-bold text-slate-900">
-                      Order Summary
+                      {t.checkout.summary.title}
                     </h2>
 
                     <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-800">
                       {summary.totalItems}{" "}
                       {summary.totalItems === 1
-                        ? "Item"
-                        : "Items"}
+                        ? t.checkout.summary.item
+                        : t.checkout.summary.items}
                     </span>
 
                   </div>
@@ -945,7 +947,7 @@ export default function CheckoutPage() {
                           </h4>
 
                           <p className="text-[11px] text-slate-500">
-                            Qty: {item.quantity} × ₹
+                            {t.checkout.summary.qty}: {item.quantity} × ₹
                             {Number(
                               item.product.price
                             ).toLocaleString("en-IN")}
@@ -972,7 +974,7 @@ export default function CheckoutPage() {
                   <div className="space-y-3 py-4 text-xs sm:text-sm">
 
                     <div className="flex justify-between text-slate-600">
-                      <span>Subtotal</span>
+                      <span>{t.cart.summary?.subtotal || "Subtotal"}</span>
 
                       <span className="font-bold text-slate-900">
                         ₹
@@ -984,11 +986,11 @@ export default function CheckoutPage() {
 
                     <div className="flex justify-between text-slate-600">
 
-                      <span>Delivery Fee</span>
+                      <span>{t.cart.summary?.deliveryCharge || "Delivery Fee"}</span>
 
                       {summary.deliveryCharge === 0 ? (
                         <span className="font-bold text-emerald-700">
-                          FREE
+                          {t.cart.summary?.free || "FREE"}
                         </span>
                       ) : (
                         <span className="font-bold text-slate-900">
@@ -1004,7 +1006,7 @@ export default function CheckoutPage() {
                     {summary.discount > 0 && (
                       <div className="flex justify-between text-slate-600">
 
-                        <span>Discount</span>
+                        <span>{t.cart.summary?.discount || "Discount"}</span>
 
                         <span className="font-bold text-emerald-700">
                           - ₹
@@ -1021,7 +1023,7 @@ export default function CheckoutPage() {
                       <div className="flex items-baseline justify-between">
 
                         <span className="text-sm font-bold text-slate-900 sm:text-base">
-                          Grand Total
+                          {t.cart.summary?.grandTotal || "Grand Total"}
                         </span>
 
                         <span className="text-2xl font-black text-emerald-700">
@@ -1034,7 +1036,7 @@ export default function CheckoutPage() {
                       </div>
 
                       <p className="mt-0.5 text-[11px] text-slate-400">
-                        (Inclusive of all taxes &amp; charges)
+                        {t.checkout.summary.taxesDesc}
                       </p>
 
                     </div>
@@ -1045,7 +1047,7 @@ export default function CheckoutPage() {
                     <div className="mb-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-3 text-xs text-slate-600">
 
                       <p className="font-bold text-slate-800">
-                        Delivering to:{" "}
+                        {t.checkout.address.deliveringTo}{" "}
                         {activeAddress.fullName}
                       </p>
 
@@ -1068,21 +1070,17 @@ export default function CheckoutPage() {
                     {isProcessing ? (
                       <span className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Processing Order...
+                        {t.checkout.actions.processing}
                       </span>
                     ) : paymentMethod === "RAZORPAY" ? (
                       <span className="flex items-center gap-2">
                         <Lock className="h-4 w-4" />
-                        Pay ₹
-                        {summary.grandTotal.toLocaleString(
-                          "en-IN"
-                        )}{" "}
-                        with Razorpay
+                        {t.checkout.actions.payRazorpay(summary.grandTotal.toLocaleString("en-IN"))}
                       </span>
                     ) : (
                       <span className="flex items-center gap-2">
                         <Banknote className="h-4 w-4" />
-                        Confirm Cash on Delivery Order
+                        {t.checkout.actions.confirmCod}
                       </span>
                     )}
 

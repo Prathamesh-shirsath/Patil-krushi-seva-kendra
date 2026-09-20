@@ -165,10 +165,10 @@ export type TranslationDictionary = {
   wishlist: {
     label: string;
     hero: {
+      premiumBadge: string;
       title1: string;
       title2: string;
       description: string;
-      premiumBadge: string;
       share: string;
     };
     stats: {
@@ -203,8 +203,10 @@ export type TranslationDictionary = {
       items: string;
     };
     card: {
+      packSize: string;
       addCart: string;
       view: string;
+      remove: string;
       removing: string;
     };
     summary: {
@@ -242,9 +244,143 @@ export type TranslationDictionary = {
       removeFailed: string;
       empty: string;
       addAllSuccess: (count: number) => string;
-      addAllPartial: (successCount: number, failedCount: number) => string;
+      addAllPartial: (success: number, failed: number) => string;
       addAllError: string;
       genericError: string;
+    };
+  };
+  checkout: {
+    header: {
+      breadcrumbs: {
+        cart: string;
+        deliveryPayment: string;
+        confirmation: string;
+      };
+      secureCheckout: string;
+      title: string;
+      subtitle: string;
+    };
+    auth: {
+      warningTitle: string;
+      warningDesc: string;
+      signIn: string;
+    };
+    address: {
+      title: string;
+      subtitle: string;
+      addBtn: string;
+      emptyTitle: string;
+      emptyDesc: string;
+      addNewBtn: string;
+      defaultBadge: string;
+      deliveringTo: string;
+    };
+    payment: {
+      title: string;
+      subtitle: string;
+      sslBadge: string;
+      razorpayTitle: string;
+      instantBadge: string;
+      razorpayDesc: string;
+      upiBadge: string;
+      cardsBadge: string;
+      netBankingBadge: string;
+      codTitle: string;
+      codDesc: string;
+    };
+    trust: {
+      genuineTitle: string;
+      genuineDesc: string;
+      secureTitle: string;
+      secureDesc: string;
+      deliveryTitle: string;
+      deliveryDesc: string;
+    };
+    summary: {
+      title: string;
+      item: string;
+      items: string;
+      qty: string;
+      taxesDesc: string;
+    };
+    actions: {
+      processing: string;
+      payRazorpay: (amount: string) => string;
+      confirmCod: string;
+      loadingDetails: string;
+    };
+    toast: {
+      signInRequiredCheckout: string;
+      addressRequired: string;
+      cartEmpty: string;
+      verifyingPayment: string;
+      paymentSuccess: string;
+      verifyFailed: string;
+      verifyFailedGeneric: string;
+      paymentCancelled: string;
+      paymentFailed: string;
+      paymentInitFailed: string;
+      signInRequiredOrder: string;
+      codSuccess: string;
+      codFailed: string;
+      orderFailedGeneric: string;
+    };
+  };
+  profile: {
+    addressDialog: {
+      addTitle: string;
+      editTitle: string;
+      labels: {
+        fullName: string;
+        phone: string;
+        state: string;
+        district: string;
+        taluka: string;
+        village: string;
+        city: string;
+        pincode: string;
+        address: string;
+        landmark: string;
+      };
+      placeholders: {
+        fullName: string;
+        phone: string;
+        state: string;
+        district: string;
+        taluka: string;
+        village: string;
+        city: string;
+        pincode: string;
+        address: string;
+        landmark: string;
+      };
+      validation: {
+        nameRequired: string;
+        nameMin: string;
+        phoneRequired: string;
+        phonePattern: string;
+        stateRequired: string;
+        stateMin: string;
+        districtRequired: string;
+        districtMin: string;
+        villageRequired: string;
+        villageMin: string;
+        pincodeRequired: string;
+        pincodePattern: string;
+        addressRequired: string;
+        addressMin: string;
+      };
+      buttons: {
+        cancel: string;
+        update: string;
+        add: string;
+        saving: string;
+      };
+      toast: {
+        updateSuccess: string;
+        addSuccess: string;
+        error: string;
+      };
     };
   };
   orders: {
