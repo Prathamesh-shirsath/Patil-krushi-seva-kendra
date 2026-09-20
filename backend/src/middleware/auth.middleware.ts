@@ -11,23 +11,61 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   try {
-    // 1. Check custom JWT cookie
+    // =====================================================
+    // 1. CUSTOMER / GENERAL JWT COOKIE
+    //
+    // IMPORTANT:
+    // Admin authentication uses "admin_token"
+    // and is handled by adminMiddleware.
+    // =====================================================
+
     const cookieToken = req.cookies?.token;
 
     if (cookieToken) {
       try {
         const decoded = verifyToken(cookieToken);
 
-        res.locals.user = decoded;
+        const user = await prisma.user.findUnique({
+          where: {
+            id: decoded.userId,
+          },
+          select: {
+            id: true,
+            firebaseUid: true,
+            role: true,
+            phone: true,
+            email: true,
+            name: true,
+          },
+        });
+
+        if (!user) {
+          return res.status(401).json({
+            success: false,
+            message: "User not found.",
+          });
+        }
+
+        res.locals.user = {
+          userId: user.id,
+          firebaseUid: user.firebaseUid ?? decoded.firebaseUid,
+          role: user.role,
+          phone: user.phone,
+          email: user.email,
+          name: user.name,
+        };
 
         return next();
       } catch {
-        // Cookie JWT invalid/expired.
-        // Try Firebase token below.
+        // Invalid/expired JWT.
+        // Continue with Firebase authentication.
       }
     }
 
-    // 2. Check Firebase Bearer token
+    // =====================================================
+    // 2. FIREBASE BEARER TOKEN
+    // =====================================================
+
     const authorization = req.headers.authorization;
 
     if (!authorization?.startsWith("Bearer ")) {
@@ -39,15 +77,29 @@ export const authenticate = async (
 
     const firebaseToken = authorization.substring(7);
 
-    // 3. Verify Firebase token
+    // =====================================================
+    // 3. VERIFY FIREBASE TOKEN
+    // =====================================================
+
     const decodedFirebase = await getAuth().verifyIdToken(
       firebaseToken
     );
 
-    // 4. Find our database user
+    // =====================================================
+    // 4. FIND DATABASE USER
+    // =====================================================
+
     const user = await prisma.user.findUnique({
       where: {
         firebaseUid: decodedFirebase.uid,
+      },
+      select: {
+        id: true,
+        firebaseUid: true,
+        role: true,
+        phone: true,
+        email: true,
+        name: true,
       },
     });
 
@@ -58,11 +110,17 @@ export const authenticate = async (
       });
     }
 
-    // 5. Set authenticated user
+    // =====================================================
+    // 5. SET AUTHENTICATED USER
+    // =====================================================
+
     res.locals.user = {
       userId: user.id,
       firebaseUid: user.firebaseUid ?? decodedFirebase.uid,
       role: user.role,
+      phone: user.phone,
+      email: user.email,
+      name: user.name,
     };
 
     return next();

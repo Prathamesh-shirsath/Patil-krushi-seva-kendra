@@ -19,32 +19,16 @@ export default function OrdersPage() {
     refreshOrders,
   } = useOrders();
 
-  const [search, setSearch] =
-    useState("");
-
-  const [status, setStatus] =
-    useState("ALL");
-
-  const [payment, setPayment] =
-    useState("ALL");
-
-  /*
-  |--------------------------------------------------------------------------
-  | FILTER ORDERS
-  |--------------------------------------------------------------------------
-  */
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("ALL");
+  const [payment, setPayment] = useState("ALL");
 
   const filteredOrders = useMemo(() => {
-    const searchValue =
-      search.trim().toLowerCase();
+    const searchValue = search
+      .trim()
+      .toLowerCase();
 
     return orders.filter((order) => {
-      /*
-      |--------------------------------------------------------------------------
-      | Search
-      |--------------------------------------------------------------------------
-      */
-
       const orderId =
         order.id.toLowerCase();
 
@@ -53,57 +37,32 @@ export default function OrdersPage() {
           .slice(-8)
           .toLowerCase();
 
-      const customerName =
-        (
-          order.user?.name ||
-          order.OrderAddress
-            ?.fullName ||
-          ""
-        ).toLowerCase();
+      const customerName = (
+        order.user?.name ||
+        order.OrderAddress?.fullName ||
+        ""
+      ).toLowerCase();
 
-      const phone =
-        (
-          order.user?.phone ||
-          order.OrderAddress
-            ?.phone ||
-          ""
-        ).toLowerCase();
+      const phone = (
+        order.user?.phone ||
+        order.OrderAddress?.phone ||
+        ""
+      ).toLowerCase();
 
       const matchesSearch =
         searchValue === "" ||
-        orderId.includes(
-          searchValue
-        ) ||
-        shortOrderId.includes(
-          searchValue
-        ) ||
-        customerName.includes(
-          searchValue
-        ) ||
-        phone.includes(
-          searchValue
-        );
-
-      /*
-      |--------------------------------------------------------------------------
-      | Status
-      |--------------------------------------------------------------------------
-      */
+        orderId.includes(searchValue) ||
+        shortOrderId.includes(searchValue) ||
+        customerName.includes(searchValue) ||
+        phone.includes(searchValue);
 
       const matchesStatus =
         status === "ALL" ||
         order.status === status;
 
-      /*
-      |--------------------------------------------------------------------------
-      | Payment
-      |--------------------------------------------------------------------------
-      */
-
       const matchesPayment =
         payment === "ALL" ||
-        order.paymentStatus ===
-        payment;
+        order.paymentStatus === payment;
 
       return (
         matchesSearch &&
@@ -118,12 +77,6 @@ export default function OrdersPage() {
     payment,
   ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Clear Filters
-  |--------------------------------------------------------------------------
-  */
-
   const clearFilters = () => {
     setSearch("");
     setStatus("ALL");
@@ -133,29 +86,14 @@ export default function OrdersPage() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-
-        {/* Header */}
-
         <OrdersHeader
           onRefresh={refreshOrders}
           loading={loading}
         />
 
-        {/* Error */}
-
-        {error && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        {/* Overview */}
-
         <OrdersOverview
           orders={orders}
         />
-
-        {/* Filters */}
 
         <OrdersFilters
           search={search}
@@ -167,11 +105,14 @@ export default function OrdersPage() {
           onClear={clearFilters}
         />
 
-        {/* Result Count */}
+        {error && (
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
         {!loading && (
           <div className="flex items-center justify-between">
-
             <p className="text-sm text-slate-500">
               Showing{" "}
               <span className="font-semibold text-slate-900">
@@ -183,18 +124,14 @@ export default function OrdersPage() {
               </span>{" "}
               orders
             </p>
-
           </div>
         )}
-
-        {/* Table */}
 
         <OrdersTable
           orders={filteredOrders}
           loading={loading}
           onOrdersUpdated={refreshOrders}
         />
-
       </div>
     </DashboardLayout>
   );

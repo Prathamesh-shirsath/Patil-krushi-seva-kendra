@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -13,6 +13,20 @@ import {
   AlertCircle,
 } from "lucide-react";
 
+import {
+  browserLocalPersistence,
+  browserSessionPersistence,
+  setPersistence,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+
+import { auth } from "@/lib/firebase";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:5000/api";
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -23,17 +37,90 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const [error, setError] = useState("");
+
+  // =====================================================
+  // CHECK EXISTING ADMIN SESSION
+  // =====================================================
+
+  useEffect(() => {
+    const checkAdminSession = async () => {
+      try {
+        const response = await fetch(`${API_URL}/admin-auth/me`, {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          router.replace("/dashboard");
+          return;
+        }
+      } catch (error) {
+        console.error("Admin session check error:", error);
+      } finally {
+        setCheckingSession(false);
+      }
+    };
+
+    checkAdminSession();
+  }, [router]);
+
+  // =====================================================
+  // LOGIN
+  // =====================================================
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setError("");
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // =================================================
+      // 1. SET FIREBASE PERSISTENCE
+      // =================================================
+
+      await setPersistence(
+        auth,
+        rememberMe
+          ? browserLocalPersistence
+          : browserSessionPersistence
+      );
+
+      // =================================================
+      // 2. FIREBASE EMAIL/PASSWORD LOGIN
+      // =================================================
+
+      const credential = await signInWithEmailAndPassword(
+        auth,
+        normalizedEmail,
+        password
+      );
+
+      // =================================================
+      // 3. GET FIREBASE ID TOKEN
+      // =================================================
+
+      const firebaseIdToken = await credential.user.getIdToken(
+        true
+      );
+
+      // =================================================
+      // 4. SEND FIREBASE TOKEN TO OUR BACKEND
+      // =================================================
+
       const response = await fetch(
-        "http://localhost:5000/api/admin-auth/login",
+        `${API_URL}/admin-auth/login`,
         {
           method: "POST",
           headers: {
@@ -41,50 +128,119 @@ export default function LoginPage() {
           },
           credentials: "include",
           body: JSON.stringify({
-            email: email.trim(),
-            password,
+            idToken: firebaseIdToken,
           }),
         }
       );
 
       const data = await response.json();
 
+      // =================================================
+      // 5. BACKEND ADMIN AUTHORIZATION FAILED
+      // =================================================
+
       if (!response.ok) {
+        // Firebase login succeeded but this Firebase
+        // account is not an authorized admin in our DB.
+        await signOut(auth);
+
         throw new Error(
-          data?.message || "Invalid email or password."
+          data?.message ||
+          "You are not authorized to access the admin panel."
         );
       }
 
-      console.log("Admin login successful:", data);
+      // =================================================
+      // 6. SUCCESS
+      // =================================================
 
-      // Optional: remember admin email
+      console.log("Firebase admin login successful:", data);
+
       if (rememberMe) {
-        localStorage.setItem("adminEmail", email.trim());
+        localStorage.setItem(
+          "adminEmail",
+          normalizedEmail
+        );
       } else {
         localStorage.removeItem("adminEmail");
       }
 
-      // Login successful → Dashboard
-      router.push("/dashboard");
+      router.replace("/dashboard");
       router.refresh();
-    } catch (err) {
-      console.error("Login error:", err);
+    } catch (err: any) {
+      console.error("Admin login error:", err);
 
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again."
-      );
+      let message =
+        "Something went wrong. Please try again.";
+
+      // Firebase errors
+      switch (err?.code) {
+        case "auth/invalid-credential":
+        case "auth/wrong-password":
+        case "auth/user-not-found":
+          message = "Invalid email or password.";
+          break;
+
+        case "auth/invalid-email":
+          message = "Please enter a valid email address.";
+          break;
+
+        case "auth/user-disabled":
+          message =
+            "This admin account has been disabled.";
+          break;
+
+        case "auth/too-many-requests":
+          message =
+            "Too many login attempts. Please try again later.";
+          break;
+
+        case "auth/network-request-failed":
+          message =
+            "Network error. Please check your internet connection.";
+          break;
+
+        default:
+          message =
+            err instanceof Error
+              ? err.message
+              : message;
+      }
+
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
+
+  // =====================================================
+  // CHECKING EXISTING SESSION UI
+  // =====================================================
+
+  if (checkingSession) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100">
+            <Sprout className="h-8 w-8 text-green-700" />
+          </div>
+
+          <Loader2 className="h-5 w-5 animate-spin text-green-700" />
+
+          <p className="text-sm text-gray-500">
+            Checking admin session...
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen w-full overflow-hidden bg-slate-50">
       <div className="flex min-h-screen w-full flex-col lg:flex-row">
 
         {/* ================= LEFT BRANDING ================= */}
+
         <section
           className="
             relative hidden min-h-screen w-full overflow-hidden
@@ -93,14 +249,12 @@ export default function LoginPage() {
             xl:w-[55%]
           "
         >
-          {/* Decorative circles */}
           <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-green-600/40" />
 
           <div className="absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-green-800/40" />
 
           <div className="relative z-10 flex w-full flex-col justify-center px-10 xl:px-16 2xl:px-24">
 
-            {/* Logo */}
             <div className="mb-8 flex items-center gap-3">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-lg">
                 <Sprout className="h-8 w-8 text-green-700" />
@@ -117,7 +271,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Heading */}
             <div className="max-w-xl">
               <span className="inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-green-100 ring-1 ring-white/20">
                 Admin Panel
@@ -137,7 +290,6 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Features */}
             <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">
               <div className="rounded-xl bg-white/10 p-4 backdrop-blur-sm ring-1 ring-white/10">
                 <p className="text-lg font-bold text-white">
@@ -173,6 +325,7 @@ export default function LoginPage() {
         </section>
 
         {/* ================= LOGIN SECTION ================= */}
+
         <section
           className="
             flex min-h-screen w-full items-center justify-center
@@ -187,6 +340,7 @@ export default function LoginPage() {
           <div className="w-full max-w-md">
 
             {/* Mobile Logo */}
+
             <div className="mb-8 flex flex-col items-center text-center lg:hidden">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100">
                 <Sprout className="h-8 w-8 text-green-700" />
@@ -202,6 +356,7 @@ export default function LoginPage() {
             </div>
 
             {/* Header */}
+
             <div className="mb-7 text-center lg:text-left">
               <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
                 Welcome back 👋
@@ -213,6 +368,7 @@ export default function LoginPage() {
             </div>
 
             {/* Login Card */}
+
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:rounded-3xl sm:p-7 md:p-8">
 
               <form
@@ -221,6 +377,7 @@ export default function LoginPage() {
               >
 
                 {/* Error */}
+
                 {error && (
                   <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                     <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
@@ -230,6 +387,7 @@ export default function LoginPage() {
                 )}
 
                 {/* Email */}
+
                 <div>
                   <label
                     htmlFor="email"
@@ -250,7 +408,9 @@ export default function LoginPage() {
                       id="email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) =>
+                        setEmail(e.target.value)
+                      }
                       placeholder="admin@example.com"
                       autoComplete="email"
                       required
@@ -269,6 +429,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Password */}
+
                 <div>
                   <label
                     htmlFor="password"
@@ -287,9 +448,15 @@ export default function LoginPage() {
 
                     <input
                       id="password"
-                      type={showPassword ? "text" : "password"}
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) =>
+                        setPassword(e.target.value)
+                      }
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       required
@@ -334,6 +501,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Remember + Forgot */}
+
                 <div className="flex items-center justify-between gap-3">
                   <label className="flex cursor-pointer items-center gap-2">
                     <input
@@ -363,6 +531,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Login Button */}
+
                 <button
                   type="submit"
                   disabled={loading}
@@ -391,14 +560,16 @@ export default function LoginPage() {
               </form>
 
               {/* Security */}
+
               <div className="mt-6 border-t border-slate-100 pt-5 text-center">
                 <p className="text-xs text-gray-400">
-                  🔒 Secure admin access
+                  🔒 Secure Firebase admin access
                 </p>
               </div>
             </div>
 
             {/* Footer */}
+
             <p className="mt-6 text-center text-xs text-gray-400">
               © {new Date().getFullYear()} Patil Krushi Seva Kendra
             </p>

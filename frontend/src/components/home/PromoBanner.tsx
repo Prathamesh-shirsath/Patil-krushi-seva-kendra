@@ -276,7 +276,7 @@ export default function PromoBanner() {
                   max-md:opacity-100
                 "
               >
-                <ChevronLeft className="h-5 w-5" />
+              {/*  <ChevronLeft className="h-5 w-5" />*/}
               </button>
             )}
 
@@ -312,7 +312,7 @@ export default function PromoBanner() {
                   max-md:opacity-100
                 "
               >
-                <ChevronRight className="h-5 w-5" />
+                {/*<ChevronRight className="h-5 w-5" />*/}
               </button>
             )}
 
