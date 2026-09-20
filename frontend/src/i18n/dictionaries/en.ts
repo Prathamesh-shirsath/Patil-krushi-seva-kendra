@@ -752,6 +752,34 @@ const en = {
       farmSupport: "Farm Support",
       storeLocation: "Store Location"
     }
+  },
+  brands: {
+    title: "Top Agricultural Brands",
+    subtitle: "We partner with trusted agricultural manufacturers to provide original seeds, fertilizers, pesticides and crop solutions.",
+    authorizedPartners: "Authorized Partners",
+    breadcrumb: "Brands",
+    loading: "Loading brands...",
+    error: {
+      title: "Unable to load brands",
+      message: "Please try again later."
+    },
+    empty: {
+      title: "No brands found",
+      message: "There are currently no agricultural brands available."
+    },
+    card: {
+      trustedBrand: "Trusted Agricultural Brand",
+      fallbackDescription: "Premium agricultural products and farming solutions.",
+      productsLabel: "Products",
+      statusLabel: "Status",
+      active: "Active",
+      inactive: "Inactive",
+      exploreProducts: "Explore Products",
+      unavailable: "Currently Unavailable"
+    },
+    accessibility: {
+      logoAlt: "logo"
+    }
   }
 } satisfies TranslationDictionary;
 

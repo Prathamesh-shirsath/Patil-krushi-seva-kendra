@@ -23,6 +23,7 @@ import {
 } from "@/lib/image-fallbacks";
 
 import { useBrands } from "@/hooks/use-brands";
+import { useLanguage } from "@/i18n/useLanguage";
 
 interface Brand {
   id: string;
@@ -41,6 +42,7 @@ export default function BrandsOverviewPage() {
     isLoading,
     isError,
   } = useBrands();
+  const { t } = useLanguage();
 
   if (isLoading) {
     return (
@@ -49,7 +51,7 @@ export default function BrandsOverviewPage() {
           <div className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-green-700 border-t-transparent" />
 
           <p className="mt-3 text-sm text-slate-500">
-            Loading brands...
+            {t.brands.loading}
           </p>
         </div>
       </main>
@@ -61,11 +63,11 @@ export default function BrandsOverviewPage() {
       <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
         <div className="w-full max-w-md rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
           <h2 className="font-semibold text-red-700">
-            Unable to load brands
+            {t.brands.error.title}
           </h2>
 
           <p className="mt-2 text-sm text-red-600">
-            Please try again later.
+            {t.brands.error.message}
           </p>
         </div>
       </main>
@@ -82,13 +84,13 @@ export default function BrandsOverviewPage() {
             href="/"
             className="transition hover:text-green-700"
           >
-            Home
+            {t.navigation.home}
           </Link>
 
           <ChevronRight className="h-3.5 w-3.5 text-slate-300" />
 
           <span className="font-semibold text-slate-900">
-            Brands
+            {t.brands.breadcrumb}
           </span>
         </div>
       </div>
@@ -98,17 +100,15 @@ export default function BrandsOverviewPage() {
       <section className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
           <span className="inline-flex rounded-full bg-green-100/60 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-700">
-            Authorized Partners
+            {t.brands.authorizedPartners}
           </span>
 
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            Top Agricultural Brands
+            {t.brands.title}
           </h1>
 
           <p className="mt-3 text-sm leading-relaxed text-slate-500">
-            We partner with trusted agricultural
-            manufacturers to provide original seeds,
-            fertilizers, pesticides and crop solutions.
+            {t.brands.subtitle}
           </p>
         </div>
 
@@ -147,7 +147,7 @@ export default function BrandsOverviewPage() {
                             brand.logo,
                             DEFAULT_BRAND_IMAGE
                           )}
-                          alt={`${brand.name} logo`}
+                          alt={`${brand.name} ${t.brands.accessibility.logoAlt}`}
                           width={50}
                           height={50}
                           className="h-full w-full object-contain"
@@ -160,14 +160,14 @@ export default function BrandsOverviewPage() {
                         </h2>
 
                         <span className="text-xs font-semibold text-green-700">
-                          Trusted Agricultural Brand
+                          {t.brands.card.trustedBrand}
                         </span>
                       </div>
                     </div>
 
                     <p className="mt-5 line-clamp-4 min-h-[80px] text-sm leading-5 text-slate-500">
                       {brand.description ||
-                        "Premium agricultural products and farming solutions."}
+                        t.brands.card.fallbackDescription}
                     </p>
                   </div>
 
@@ -183,7 +183,7 @@ export default function BrandsOverviewPage() {
                         </p>
 
                         <p className="text-[10px] uppercase tracking-wide text-slate-400">
-                          Products
+                          {t.brands.card.productsLabel}
                         </p>
                       </div>
                     </div>
@@ -200,12 +200,12 @@ export default function BrandsOverviewPage() {
                           }
                         >
                           {isActive
-                            ? "Active"
-                            : "Inactive"}
+                            ? t.brands.card.active
+                            : t.brands.card.inactive}
                         </p>
 
                         <p className="text-[10px] uppercase tracking-wide text-slate-400">
-                          Status
+                          {t.brands.card.statusLabel}
                         </p>
                       </div>
                     </div>
@@ -222,7 +222,7 @@ export default function BrandsOverviewPage() {
                         type="button"
                         className="h-11 w-full rounded-xl bg-green-700 text-sm font-semibold text-white hover:bg-green-800"
                       >
-                        Explore Products
+                        {t.brands.card.exploreProducts}
 
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
@@ -233,7 +233,7 @@ export default function BrandsOverviewPage() {
                       disabled
                       className="h-11 w-full rounded-xl bg-slate-200 text-sm font-semibold text-slate-500"
                     >
-                      Currently Unavailable
+                      {t.brands.card.unavailable}
                     </Button>
                   )}
                 </CardContent>
@@ -249,12 +249,11 @@ export default function BrandsOverviewPage() {
             <Package className="mx-auto h-10 w-10 text-slate-300" />
 
             <h2 className="mt-4 text-lg font-bold text-slate-900">
-              No brands found
+              {t.brands.empty.title}
             </h2>
 
             <p className="mt-2 text-sm text-slate-500">
-              There are currently no agricultural
-              brands available.
+              {t.brands.empty.message}
             </p>
           </div>
         )}

@@ -750,5 +750,32 @@ export type TranslationDictionary = {
       farmSupport: string;
       storeLocation: string;
     };
+  brands: {
+    title: string;
+    subtitle: string;
+    authorizedPartners: string;
+    breadcrumb: string;
+    loading: string;
+    error: {
+      title: string;
+      message: string;
+    };
+    empty: {
+      title: string;
+      message: string;
+    };
+    card: {
+      trustedBrand: string;
+      fallbackDescription: string;
+      productsLabel: string;
+      statusLabel: string;
+      active: string;
+      inactive: string;
+      exploreProducts: string;
+      unavailable: string;
+    };
+    accessibility: {
+      logoAlt: string;
+    };
   };
 };

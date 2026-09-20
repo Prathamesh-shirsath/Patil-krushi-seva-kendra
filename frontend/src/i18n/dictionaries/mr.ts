@@ -754,6 +754,34 @@ const mr = {
       farmSupport: "शेती समर्थन",
       storeLocation: "दुकानाचे ठिकाण"
     }
+  },
+  brands: {
+    title: "अव्वल कृषी ब्रँड्स",
+    subtitle: "आम्ही मूळ बियाणे, खते, कीटकनाशके आणि पीक समाधाने प्रदान करण्यासाठी विश्वसनीय कृषी उत्पादकांशी भागीदारी करतो.",
+    authorizedPartners: "अधिकृत भागीदार",
+    breadcrumb: "ब्रँड्स",
+    loading: "ब्रँड्स लोड करत आहे...",
+    error: {
+      title: "ब्रँड्स लोड करण्यात अक्षम",
+      message: "कृपया नंतर पुन्हा प्रयत्न करा."
+    },
+    empty: {
+      title: "कोणतेही ब्रँड्स आढळले नाहीत",
+      message: "सध्या कोणतेही कृषी ब्रँड्स उपलब्ध नाहीत."
+    },
+    card: {
+      trustedBrand: "विश्वसनीय कृषी ब्रँड",
+      fallbackDescription: "प्रीमियम कृषी उत्पादने आणि शेती समाधाने.",
+      productsLabel: "उत्पादने",
+      statusLabel: "स्थिती",
+      active: "सक्रिय",
+      inactive: "निष्क्रिय",
+      exploreProducts: "उत्पादने एक्सप्लोर करा",
+      unavailable: "सध्या अनुपलब्ध"
+    },
+    accessibility: {
+      logoAlt: "लोगो"
+    }
   }
 } satisfies TranslationDictionary;
 
