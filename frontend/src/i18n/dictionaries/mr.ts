@@ -38,6 +38,7 @@ const mr = {
       addedToCart: "उत्पादन कार्टमध्ये जोडले.",
       addToCartFailed: "उत्पादन कार्टमध्ये जोडता आले नाही.",
     },
+    continueShopping: "खरेदी सुरू ठेवा",
   },
   shop: {
     title: "दुकान",
@@ -131,6 +132,39 @@ const mr = {
   },
   cart: {
     label: "कार्ट",
+    title: "शॉपिंग कार्ट",
+    summary: {
+      title: "ऑर्डर सारांश",
+      totalItems: "एकूण उत्पादने",
+      subtotal: "उप-एकूण",
+      deliveryCharge: "डिलिव्हरी शुल्क",
+      free: "मोफत",
+      discount: "सवलत",
+      grandTotal: "एकूण रक्कम",
+      checkout: "चेकआउट करा",
+      clear: "कार्ट रिकामे करा",
+    },
+    empty: {
+      title: "तुमची कार्ट रिकामी आहे",
+      message: "असे दिसते की तुम्ही अजून कोणतीही उत्पादने जोडलेली नाहीत.",
+    },
+    item: {
+      packSize: "पॅक आकार:",
+      stock: "स्टॉक:",
+      remove: "काढून टाका",
+    },
+    aria: {
+      decreaseQuantity: "प्रमाण कमी करा",
+      increaseQuantity: "प्रमाण वाढवा",
+    },
+    toast: {
+      cleared: "कार्ट रिकामे केले.",
+      clearFailed: "कार्ट रिकामे करण्यात अयशस्वी.",
+      removed: "उत्पादन काढून टाकले.",
+      removeFailed: "उत्पादन काढून टाकण्यात अयशस्वी.",
+      updated: "कार्ट अद्यतनित केले.",
+      updateFailed: "प्रमाण अद्यतनित करण्यात अयशस्वी.",
+    },
   },
   wishlist: {
     label: "इच्छा यादी",

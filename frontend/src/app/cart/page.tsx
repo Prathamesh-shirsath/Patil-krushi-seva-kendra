@@ -6,9 +6,11 @@ import CartSkeleton from "@/components/cart/CartSkeleton";
 import EmptyCart from "@/components/cart/EmptyCart";
 
 import { useCart } from "@/hooks/cart/useCart";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function CartPage() {
   const { data, isLoading } = useCart();
+  const { t } = useLanguage();
 
   if (isLoading) {
     return (
@@ -25,7 +27,7 @@ export default function CartPage() {
   return (
     <div className="container mx-auto py-10">
       <h1 className="mb-8 text-3xl font-bold">
-        Shopping Cart
+        {t.cart.title}
       </h1>
 
       <div className="grid gap-8 lg:grid-cols-3">

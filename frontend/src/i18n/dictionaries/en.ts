@@ -38,6 +38,7 @@ const en = {
       addedToCart: "Product added to cart.",
       addToCartFailed: "Unable to add product to cart.",
     },
+    continueShopping: "Continue Shopping",
   },
   shop: {
     title: "Shop",
@@ -131,6 +132,39 @@ const en = {
   },
   cart: {
     label: "Cart",
+    title: "Shopping Cart",
+    summary: {
+      title: "Order Summary",
+      totalItems: "Total Items",
+      subtotal: "Subtotal",
+      deliveryCharge: "Delivery Charge",
+      free: "FREE",
+      discount: "Discount",
+      grandTotal: "Grand Total",
+      checkout: "Proceed to Checkout",
+      clear: "Clear Cart",
+    },
+    empty: {
+      title: "Your cart is empty",
+      message: "Looks like you haven't added any products yet.",
+    },
+    item: {
+      packSize: "Pack Size:",
+      stock: "Stock:",
+      remove: "Remove",
+    },
+    aria: {
+      decreaseQuantity: "Decrease quantity",
+      increaseQuantity: "Increase quantity",
+    },
+    toast: {
+      cleared: "Cart cleared.",
+      clearFailed: "Failed to clear cart.",
+      removed: "Item removed.",
+      removeFailed: "Failed to remove item.",
+      updated: "Cart updated.",
+      updateFailed: "Failed to update quantity.",
+    },
   },
   wishlist: {
     label: "Wishlist",

@@ -38,6 +38,7 @@ export type TranslationDictionary = {
       addedToCart: string;
       addToCartFailed: string;
     };
+    continueShopping: string;
   };
   shop: {
     title: string;
@@ -127,6 +128,39 @@ export type TranslationDictionary = {
   };
   cart: {
     label: string;
+    title: string;
+    summary: {
+      title: string;
+      totalItems: string;
+      subtotal: string;
+      deliveryCharge: string;
+      free: string;
+      discount: string;
+      grandTotal: string;
+      checkout: string;
+      clear: string;
+    };
+    empty: {
+      title: string;
+      message: string;
+    };
+    item: {
+      packSize: string;
+      stock: string;
+      remove: string;
+    };
+    aria: {
+      decreaseQuantity: string;
+      increaseQuantity: string;
+    };
+    toast: {
+      cleared: string;
+      clearFailed: string;
+      removed: string;
+      removeFailed: string;
+      updated: string;
+      updateFailed: string;
+    };
   };
   wishlist: {
     label: string;
