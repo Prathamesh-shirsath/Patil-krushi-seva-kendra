@@ -14,6 +14,10 @@ export const useAddWishlist = () => {
                 queryKey: ["wishlist"],
             });
 
+            window.dispatchEvent(
+                new Event("wishlist-updated")
+            );
+
             toast.success("Added to wishlist");
         },
 

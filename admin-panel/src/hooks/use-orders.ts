@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
 
 export interface OrderAddress {
   id: string;
@@ -16,6 +18,7 @@ export interface OrderAddress {
 }
 
 export interface Order {
+  grandTotal(grandTotal: any): import("react").ReactNode;
   id: string;
   totalAmount: number;
   status: string;
@@ -37,29 +40,72 @@ export interface Order {
 export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadOrders = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch(
+        "http://localhost:5000/api/orders",
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+        }
+      );
+
+      const contentType = res.headers.get("content-type");
+
+      let json: any = {};
+
+      if (contentType?.includes("application/json")) {
+        json = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(
+          `Server returned an invalid response (${res.status}): ${text.slice(0, 100)}`
+        );
+      }
+
+      if (!res.ok) {
+        throw new Error(
+          json?.message ||
+            `Failed to fetch orders (${res.status})`
+        );
+      }
+
+      setOrders(
+        Array.isArray(json?.data)
+          ? json.data
+          : []
+      );
+    } catch (err: any) {
+      console.error("Load orders error:", err);
+
+      setError(
+        err?.message ||
+          "Failed to fetch orders. Please check backend server."
+      );
+
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(
-          "http://localhost:5000/api/orders"
-        );
-
-        const json = await res.json();
-
-        setOrders(json.data ?? []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-  }, []);
+    loadOrders();
+  }, [loadOrders]);
 
   return {
     orders,
     loading,
+    error,
+    refreshOrders: loadOrders,
   };
 }
