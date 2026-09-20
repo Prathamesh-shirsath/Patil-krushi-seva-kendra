@@ -29,7 +29,7 @@ export default function WishlistHero() {
     const fetchWishlist = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/wishlist",
+          "/api/wishlist",
           {
             method: "GET",
             credentials: "include",

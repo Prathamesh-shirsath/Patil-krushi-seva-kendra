@@ -329,6 +329,40 @@ const en = {
     },
   },
   profile: {
+    title: "My Profile",
+    premiumMember: "Premium Member",
+    description: "Manage your personal information, addresses, wishlist and orders in one place.",
+    sidebar: {
+      myProfile: "My Profile",
+      myAddresses: "My Addresses",
+      myOrders: "My Orders",
+      wishlist: "Wishlist",
+      logout: "Logout",
+      myAccount: "My Account"
+    },
+    form: {
+      loading: "Loading profile...",
+      nameLabel: "Name",
+      namePlaceholder: "Enter your name",
+      phoneLabel: "Mobile Number",
+      emailLabel: "Email",
+      emailPlaceholder: "Enter email",
+      saving: "Saving...",
+      saveChanges: "Save Changes"
+    },
+    addresses: {
+      title: "My Addresses",
+      description: "Manage your saved delivery addresses.",
+      addAddress: "Add Address",
+      loading: "Loading addresses...",
+      emptyTitle: "No addresses found",
+      emptyDesc: "Add your first delivery address.",
+      isDefault: "Default",
+      setDefault: "Set Default",
+      edit: "Edit",
+      delete: "Delete",
+      confirmDelete: "Are you sure you want to delete this address?"
+    },
     addressDialog: {
       addTitle: "Add Address",
       editTitle: "Edit Address",

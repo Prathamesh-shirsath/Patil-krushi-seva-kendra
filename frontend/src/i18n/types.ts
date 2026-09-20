@@ -327,6 +327,40 @@ export type TranslationDictionary = {
     };
   };
   profile: {
+    title: string;
+    premiumMember: string;
+    description: string;
+    sidebar: {
+      myProfile: string;
+      myAddresses: string;
+      myOrders: string;
+      wishlist: string;
+      logout: string;
+      myAccount: string;
+    };
+    form: {
+      loading: string;
+      nameLabel: string;
+      namePlaceholder: string;
+      phoneLabel: string;
+      emailLabel: string;
+      emailPlaceholder: string;
+      saving: string;
+      saveChanges: string;
+    };
+    addresses: {
+      title: string;
+      description: string;
+      addAddress: string;
+      loading: string;
+      emptyTitle: string;
+      emptyDesc: string;
+      isDefault: string;
+      setDefault: string;
+      edit: string;
+      delete: string;
+      confirmDelete: string;
+    };
     addressDialog: {
       addTitle: string;
       editTitle: string;

@@ -331,6 +331,40 @@ const mr = {
   },
 
   profile: {
+    title: "माझे प्रोफाईल",
+    premiumMember: "प्रीमियम सदस्य",
+    description: "तुमची वैयक्तिक माहिती, पत्ते, इच्छा यादी आणि ऑर्डर्स एकाच ठिकाणी व्यवस्थापित करा.",
+    sidebar: {
+      myProfile: "माझे प्रोफाईल",
+      myAddresses: "माझे पत्ते",
+      myOrders: "माझ्या ऑर्डर्स",
+      wishlist: "इच्छा यादी",
+      logout: "लॉग आउट",
+      myAccount: "माझे खाते"
+    },
+    form: {
+      loading: "प्रोफाईल लोड करत आहे...",
+      nameLabel: "नाव",
+      namePlaceholder: "तुमचे नाव प्रविष्ट करा",
+      phoneLabel: "मोबाईल नंबर",
+      emailLabel: "ईमेल",
+      emailPlaceholder: "ईमेल प्रविष्ट करा",
+      saving: "जतन करत आहे...",
+      saveChanges: "बदल जतन करा"
+    },
+    addresses: {
+      title: "माझे पत्ते",
+      description: "तुमचे जतन केलेले वितरण पत्ते व्यवस्थापित करा.",
+      addAddress: "पत्ता जोडा",
+      loading: "पत्ते लोड करत आहे...",
+      emptyTitle: "कोणतेही पत्ते आढळले नाहीत",
+      emptyDesc: "तुमचा पहिला वितरण पत्ता जोडा.",
+      isDefault: "डिफॉल्ट",
+      setDefault: "डिफॉल्ट सेट करा",
+      edit: "संपादित करा",
+      delete: "काढून टाका",
+      confirmDelete: "तुम्हाला खात्री आहे की तुम्ही हा पत्ता हटवू इच्छिता?"
+    },
     addressDialog: {
       addTitle: "पत्ता जोडा",
       editTitle: "पत्ता संपादित करा",
