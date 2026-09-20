@@ -164,6 +164,88 @@ export type TranslationDictionary = {
   };
   wishlist: {
     label: string;
+    hero: {
+      title1: string;
+      title2: string;
+      description: string;
+      premiumBadge: string;
+      share: string;
+    };
+    stats: {
+      savedProducts: string;
+      wishlistValue: string;
+      offers: string;
+      backInStock: string;
+    };
+    filters: {
+      search: string;
+      categories: {
+        all: string;
+        seeds: string;
+        fertilizers: string;
+        pesticides: string;
+        bioProducts: string;
+      };
+      sortOptions: {
+        newest: string;
+        priceLowHigh: string;
+        priceHighLow: string;
+        highestRated: string;
+      };
+      filter: string;
+      clear: string;
+      sort: string;
+      showing: string;
+      productsInWishlist: string;
+    };
+    grid: {
+      title: string;
+      items: string;
+    };
+    card: {
+      addCart: string;
+      view: string;
+      removing: string;
+    };
+    summary: {
+      title: string;
+      subtitle: string;
+      products: string;
+      savings: string;
+      estimatedSavings: string;
+      estimatedTotal: string;
+      addAll: string;
+      addingProducts: string;
+    };
+    benefits: {
+      title: string;
+      delivery: string;
+      deliverySubtitle: string;
+      genuine: string;
+      genuineSubtitle: string;
+      offers: string;
+      offersSubtitle: string;
+    };
+    cta: {
+      title: string;
+      description: string;
+      explore: string;
+    };
+    empty: {
+      title: string;
+      message: string;
+    };
+    toast: {
+      added: string;
+      addFailed: string;
+      removed: string;
+      removeFailed: string;
+      empty: string;
+      addAllSuccess: (count: number) => string;
+      addAllPartial: (successCount: number, failedCount: number) => string;
+      addAllError: string;
+      genericError: string;
+    };
   };
   orders: {
     label: string;

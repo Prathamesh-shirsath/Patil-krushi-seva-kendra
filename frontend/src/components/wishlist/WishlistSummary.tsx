@@ -14,6 +14,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n/useLanguage";
 
 type WishlistItem = {
   id: string;
@@ -27,6 +28,7 @@ type WishlistItem = {
 };
 
 export default function WishlistSummary() {
+  const { t } = useLanguage();
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -108,7 +110,7 @@ export default function WishlistSummary() {
   const handleAddAllToCart = async () => {
     if (wishlist.length === 0) {
       toast.error(
-        "Your wishlist is empty."
+        t.wishlist.toast.empty
       );
       return;
     }
@@ -172,26 +174,18 @@ export default function WishlistSummary() {
         failedCount === 0
       ) {
         toast.success(
-          `${successCount} product${
-            successCount > 1
-              ? "s"
-              : ""
-          } added to cart successfully.`
+          t.wishlist.toast.addAllSuccess(successCount)
         );
       } else if (
         successCount > 0 &&
         failedCount > 0
       ) {
         toast.warning(
-          `${successCount} product${
-            successCount > 1
-              ? "s"
-              : ""
-          } added. ${failedCount} failed.`
+          t.wishlist.toast.addAllPartial(successCount, failedCount)
         );
       } else {
         toast.error(
-          "Unable to add wishlist products to cart."
+          t.wishlist.toast.addAllError
         );
       }
     } catch (error) {
@@ -201,7 +195,7 @@ export default function WishlistSummary() {
       );
 
       toast.error(
-        "Something went wrong while adding products to cart."
+        t.wishlist.toast.genericError
       );
     } finally {
       setAddingAll(false);
@@ -246,11 +240,11 @@ export default function WishlistSummary() {
 
             <div>
               <h2 className="text-xl font-bold">
-                Wishlist Summary
+                {t.wishlist.summary.title}
               </h2>
 
               <p className="mt-1 text-sm text-green-100">
-                Your favourite farming essentials
+                {t.wishlist.summary.subtitle}
               </p>
             </div>
           </div>
@@ -266,7 +260,7 @@ export default function WishlistSummary() {
 
             <div className="rounded-2xl bg-green-50 p-4">
               <p className="text-sm text-gray-500">
-                Products
+                {t.wishlist.summary.products}
               </p>
 
               <h3 className="mt-2 text-3xl font-black text-green-700">
@@ -280,7 +274,7 @@ export default function WishlistSummary() {
 
             <div className="rounded-2xl bg-orange-50 p-4">
               <p className="text-sm text-gray-500">
-                Savings
+                {t.wishlist.summary.savings}
               </p>
 
               <h3 className="mt-2 text-3xl font-black text-orange-600">
@@ -299,7 +293,7 @@ export default function WishlistSummary() {
 
           <div className="space-y-4">
             <Row
-              label="Wishlist Value"
+              label={t.wishlist.stats.wishlistValue}
               value={
                 loading
                   ? "..."
@@ -308,7 +302,7 @@ export default function WishlistSummary() {
             />
 
             <Row
-              label="Estimated Savings"
+              label={t.wishlist.summary.estimatedSavings}
               value={
                 loading
                   ? "..."
@@ -318,8 +312,8 @@ export default function WishlistSummary() {
             />
 
             <Row
-              label="Delivery"
-              value="FREE"
+              label={t.cart.summary.deliveryCharge || "Delivery"}
+              value={t.cart.summary.free || "FREE"}
               green
             />
           </div>
@@ -330,7 +324,7 @@ export default function WishlistSummary() {
 
           <div className="flex items-center justify-between">
             <span className="text-lg font-semibold">
-              Estimated Total
+              {t.wishlist.summary.estimatedTotal}
             </span>
 
             <span className="text-3xl font-black text-green-700">
@@ -359,8 +353,8 @@ export default function WishlistSummary() {
             <ShoppingCart className="mr-2 h-5 w-5" />
 
             {addingAll
-              ? "Adding Products..."
-              : "Add All To Cart"}
+              ? t.wishlist.summary.addingProducts
+              : t.wishlist.summary.addAll}
           </Button>
 
           {/* Continue Shopping */}
@@ -373,7 +367,7 @@ export default function WishlistSummary() {
               variant="outline"
               className="h-14 w-full rounded-2xl border-green-300 text-base"
             >
-              Continue Shopping
+              {t.common.continueShopping}
 
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -389,7 +383,7 @@ export default function WishlistSummary() {
         <h3 className="mb-5 flex items-center gap-2 text-lg font-bold">
           <Sparkles className="h-5 w-5 text-yellow-500" />
 
-          Why Shop With Us?
+          {t.wishlist.benefits.title || t.product.details.whyShopWithUs}
         </h3>
 
         <div className="space-y-4">
@@ -397,24 +391,24 @@ export default function WishlistSummary() {
             icon={
               <Truck className="h-5 w-5" />
             }
-            title="Free Delivery"
-            subtitle="On eligible orders"
+            title={t.wishlist.benefits.delivery}
+            subtitle={t.wishlist.benefits.deliverySubtitle}
           />
 
           <Feature
             icon={
               <ShieldCheck className="h-5 w-5" />
             }
-            title="100% Genuine Products"
-            subtitle="Trusted agriculture brands"
+            title={t.wishlist.benefits.genuine}
+            subtitle={t.wishlist.benefits.genuineSubtitle}
           />
 
           <Feature
             icon={
               <BadgePercent className="h-5 w-5" />
             }
-            title="Exclusive Offers"
-            subtitle="Special discounts available"
+            title={t.wishlist.benefits.offers}
+            subtitle={t.wishlist.benefits.offersSubtitle}
           />
         </div>
       </div>
@@ -425,18 +419,16 @@ export default function WishlistSummary() {
 
       <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-green-700 to-lime-600 p-6 text-white shadow-xl">
         <h3 className="text-2xl font-bold">
-          Ready to Grow Better?
+          {t.wishlist.cta.title}
         </h3>
 
         <p className="mt-3 text-green-100">
-          Add your saved products to the
-          cart and complete your purchase
-          today.
+          {t.wishlist.cta.description}
         </p>
 
         <Link href="/shop">
           <Button className="mt-6 h-12 w-full rounded-xl bg-white font-semibold text-green-700 hover:bg-green-100">
-            Explore More Products
+            {t.wishlist.cta.explore}
           </Button>
         </Link>
       </div>

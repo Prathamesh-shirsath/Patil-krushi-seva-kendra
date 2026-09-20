@@ -2,8 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { removeFromWishlist } from "@/services/wishlist.service";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export const useRemoveWishlist = () => {
+    const { t } = useLanguage();
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -14,11 +16,11 @@ export const useRemoveWishlist = () => {
                 queryKey: ["wishlist"],
             });
 
-            toast.success("Removed from wishlist");
+            toast.success(t.wishlist.toast.removed);
         },
 
         onError: () => {
-            toast.error("Failed to remove from wishlist");
+            toast.error(t.wishlist.toast.removeFailed);
         },
     });
 };

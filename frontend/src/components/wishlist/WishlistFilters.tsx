@@ -12,8 +12,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function WishlistFilters() {
+  const { t } = useLanguage();
   const [gridView, setGridView] = useState(true);
 
   return (
@@ -28,7 +30,7 @@ export default function WishlistFilters() {
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
 
           <Input
-            placeholder="Search wishlist products..."
+            placeholder={t.wishlist.filters.search}
             className="h-12 rounded-xl border-green-200 pl-11 focus-visible:ring-green-600"
           />
 
@@ -42,11 +44,11 @@ export default function WishlistFilters() {
 
           <select className="h-12 rounded-xl border border-green-200 bg-white px-4 text-sm outline-none transition focus:border-green-600">
 
-            <option>All Categories</option>
-            <option>Seeds</option>
-            <option>Fertilizers</option>
-            <option>Pesticides</option>
-            <option>Bio Products</option>
+            <option>{t.wishlist.filters.categories.all}</option>
+            <option>{t.wishlist.filters.categories.seeds}</option>
+            <option>{t.wishlist.filters.categories.fertilizers}</option>
+            <option>{t.wishlist.filters.categories.pesticides}</option>
+            <option>{t.wishlist.filters.categories.bioProducts}</option>
 
           </select>
 
@@ -54,10 +56,10 @@ export default function WishlistFilters() {
 
           <select className="h-12 rounded-xl border border-green-200 bg-white px-4 text-sm outline-none transition focus:border-green-600">
 
-            <option>Newest</option>
-            <option>Price Low → High</option>
-            <option>Price High → Low</option>
-            <option>Highest Rated</option>
+            <option>{t.wishlist.filters.sortOptions.newest}</option>
+            <option>{t.wishlist.filters.sortOptions.priceLowHigh}</option>
+            <option>{t.wishlist.filters.sortOptions.priceHighLow}</option>
+            <option>{t.wishlist.filters.sortOptions.highestRated}</option>
 
           </select>
 
@@ -68,7 +70,7 @@ export default function WishlistFilters() {
             className="h-12 rounded-xl border-green-300"
           >
             <SlidersHorizontal className="mr-2 h-4 w-4" />
-            Filters
+            {t.wishlist.filters.filter}
           </Button>
 
           {/* Remove All */}
@@ -78,7 +80,7 @@ export default function WishlistFilters() {
             className="h-12 rounded-xl"
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            Clear
+            {t.wishlist.filters.clear}
           </Button>
 
         </div>
@@ -90,11 +92,11 @@ export default function WishlistFilters() {
       <div className="mt-6 flex flex-col gap-4 border-t pt-5 md:flex-row md:items-center md:justify-between">
 
         <div className="text-sm text-gray-500">
-          Showing
+          {t.wishlist.filters.showing}
           <span className="mx-2 font-semibold text-green-700">
             12
           </span>
-          products in your wishlist
+          {t.wishlist.filters.productsInWishlist}
         </div>
 
         <div className="flex items-center gap-3">
@@ -104,7 +106,7 @@ export default function WishlistFilters() {
             className="rounded-xl border-green-300"
           >
             <ArrowUpDown className="mr-2 h-4 w-4" />
-            Sort
+            {t.wishlist.filters.sort}
           </Button>
 
           <div className="flex overflow-hidden rounded-xl border">

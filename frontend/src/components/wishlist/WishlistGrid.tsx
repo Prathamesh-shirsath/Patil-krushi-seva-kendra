@@ -10,8 +10,10 @@ import WishlistSkeleton from "./WishlistSkeleton";
 import EmptyWishlist from "./EmptyWishlist";
 
 import { useWishlist } from "@/hooks/useWishlist";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function WishlistGrid() {
+  const { t } = useLanguage();
   const [gridView, setGridView] = useState(true);
 
   const {
@@ -32,11 +34,11 @@ export default function WishlistGrid() {
       <div className="flex flex-col gap-4 rounded-2xl border bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-xl font-bold">
-            Saved Products
+            {t.wishlist.grid.title}
           </h2>
 
           <p className="text-sm text-muted-foreground">
-            {wishlist.length} Items
+            {wishlist.length} {t.wishlist.grid.items}
           </p>
         </div>
 
