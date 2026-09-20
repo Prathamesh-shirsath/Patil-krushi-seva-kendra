@@ -235,6 +235,51 @@ export const getOrderByIdController = async (
   }
 };
 
+
+
+
+export const getAdminOrderByIdController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const orderId = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
+
+    if (!orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "Order ID is required.",
+      });
+    }
+
+    const order = await getOrderById(orderId);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: order,
+    });
+  } catch (error) {
+    console.error(
+      "Get admin order error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch order.",
+    });
+  }
+};
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN - UPDATE ORDER STATUS

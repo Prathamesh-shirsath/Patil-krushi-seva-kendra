@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { api } from "@/lib/axios";
 
 export interface OrderAddress {
   id: string;
@@ -9,32 +10,65 @@ export interface OrderAddress {
   phone: string;
   state: string;
   district: string;
-  taluka?: string;
+  taluka?: string | null;
   village: string;
-  city?: string;
+  city?: string | null;
   pincode: string;
   addressLine: string;
-  landmark?: string;
+  landmark?: string | null;
+}
+
+export interface OrderItem {
+  id: string;
+  quantity: number;
+  price: number | string;
+  productName?: string;
+  product?: {
+    id: string;
+    name: string;
+    image?: string | null;
+  } | null;
+}
+
+export interface OrderPayment {
+  id?: string;
+  amount?: number | string;
+  status?: string;
+  razorpayOrderId?: string | null;
+  razorpayPaymentId?: string | null;
+  transactionId?: string | null;
+  failureReason?: string | null;
 }
 
 export interface Order {
-  grandTotal(grandTotal: any): import("react").ReactNode;
   id: string;
-  totalAmount: number;
+
+  subTotal: number | string;
+  deliveryCharge: number | string;
+  discount: number | string;
+
+  grandTotal: number | string;
+  totalAmount: number | string;
+
   status: string;
   paymentStatus: string;
+  paymentMethod?: string;
+
   createdAt: string;
+  updatedAt?: string;
 
-  user: {
-    email: string;
-    name: string;
-    phone?: string;
-  };
+  user?: {
+    id?: string;
+    email?: string | null;
+    name?: string | null;
+    phone?: string | null;
+  } | null;
 
-  payment: any;
-  items: any[];
+  payment?: OrderPayment | null;
 
-  OrderAddress?: OrderAddress;
+  items: OrderItem[];
+
+  OrderAddress?: OrderAddress | null;
 }
 
 export function useOrders() {
@@ -47,49 +81,31 @@ export function useOrders() {
       setLoading(true);
       setError(null);
 
-      const res = await fetch(
-        "http://localhost:5000/api/orders",
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-        }
-      );
+      const response = await api.get("/orders", {
+        params: {
+          _t: Date.now(),
+        },
+      });
 
-      const contentType = res.headers.get("content-type");
-
-      let json: any = {};
-
-      if (contentType?.includes("application/json")) {
-        json = await res.json();
-      } else {
-        const text = await res.text();
+      if (!response.data?.success) {
         throw new Error(
-          `Server returned an invalid response (${res.status}): ${text.slice(0, 100)}`
-        );
-      }
-
-      if (!res.ok) {
-        throw new Error(
-          json?.message ||
-            `Failed to fetch orders (${res.status})`
+          response.data?.message ||
+          "Failed to fetch orders."
         );
       }
 
       setOrders(
-        Array.isArray(json?.data)
-          ? json.data
+        Array.isArray(response.data?.data)
+          ? response.data.data
           : []
       );
-    } catch (err: any) {
-      console.error("Load orders error:", err);
+    } catch (error: any) {
+      console.error("Load orders error:", error);
 
       setError(
-        err?.message ||
-          "Failed to fetch orders. Please check backend server."
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch orders."
       );
 
       setOrders([]);

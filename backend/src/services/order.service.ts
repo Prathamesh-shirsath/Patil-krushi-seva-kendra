@@ -335,6 +335,26 @@ export const getUserOrders = async (userId: string) => {
 |--------------------------------------------------------------------------
 */
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN - GET ALL PAID ORDERS
+|--------------------------------------------------------------------------
+*/
+/*
+export const getAllOrders = async () => {
+  return prisma.order.findMany({
+    where: {
+      paymentStatus: PaymentStatus.SUCCESS,
+    },
+    include: orderInclude,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}; */
+
+
+
 export const getAllOrders = async () => {
   return prisma.order.findMany({
     include: orderInclude,
@@ -350,12 +370,19 @@ export const getAllOrders = async () => {
 |--------------------------------------------------------------------------
 */
 
-export const getOrderById = async (id: string, userId: string) => {
+export const getOrderById = async (
+  id: string,
+  userId?: string
+) => {
   return prisma.order.findFirst({
-    where: {
-      id,
-      userId,
-    },
+    where: userId
+      ? {
+        id,
+        userId,
+      }
+      : {
+        id,
+      },
     include: orderInclude,
   });
 };
