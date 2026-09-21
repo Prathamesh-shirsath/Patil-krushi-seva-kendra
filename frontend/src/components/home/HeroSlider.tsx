@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import {
   ArrowRight,
   CheckCircle2,
@@ -20,32 +20,10 @@ import { useLanguage } from "@/i18n/useLanguage";
 import type { Locale, TranslationDictionary } from "@/i18n/types";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination} from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
-
-
-function buildDefaultBanner(t: TranslationDictionary): Banner {
-  return {
-    id: "default-banner",
-    label: t.home.hero.fallbackLabel,
-    title: t.home.hero.fallbackTitle,
-    subtitle: t.home.hero.fallbackSubtitle,
-    image: DEFAULT_BANNER_IMAGE,
-    mobileImage: null,
-    buttonText: null,
-    targetType: "NONE",
-    targetSlug: null,
-    targetUrl: null,
-    placement: "HOME_HERO",
-    scopeType: "GLOBAL",
-    scopeSlug: null,
-    textTheme: "LIGHT",
-    status: true,
-    displayOrder: 0,
-  };
-}
 
 function getBannerHref(banner: Banner) {
   if (banner.targetType === "PRODUCT" && banner.targetSlug) {
@@ -80,7 +58,9 @@ function HeroSkeleton() {
 function renderTitle(title: string, locale: Locale) {
   if (locale === "mr") {
     return (
-      <span className="whitespace-pre-line text-white">{title}</span>
+      <span className="whitespace-pre-line text-white">
+        {title}
+      </span>
     );
   }
 
@@ -452,24 +432,13 @@ export default function HeroSlider() {
   const {
     data: banners = [],
     isLoading,
-    isError,
   } = useBanners();
-
-  const defaultBanner = useMemo(
-    () => buildDefaultBanner(t),
-    [t]
-  );
-
-  
 
   if (isLoading) {
     return <HeroSkeleton />;
   }
 
-  const slides =
-    isError || banners.length === 0
-      ? [defaultBanner]
-      : banners;
+  const slides = banners;
 
   return (
     <section className="w-full px-4 py-5 md:px-8 md:py-7 lg:px-12">
@@ -500,10 +469,6 @@ export default function HeroSlider() {
 
           [&_.swiper-button-next]:!hidden
           [&_.swiper-button-prev]:!hidden
-
-
-          [&_.swiper-button-next]:hidden
-          [&_.swiper-button-prev]:hidden
 
           md:[&_.swiper-button-next]:flex
           md:[&_.swiper-button-prev]:flex
@@ -559,7 +524,11 @@ export default function HeroSlider() {
       >
         {slides.map((banner) => (
           <SwiperSlide key={banner.id}>
-            <HeroSlide banner={banner} t={t} locale={locale} />
+            <HeroSlide
+              banner={banner}
+              t={t}
+              locale={locale}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
