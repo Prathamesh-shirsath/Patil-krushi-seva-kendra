@@ -4,7 +4,7 @@ const API_URL =
 
 export async function getBrands() {
     const response = await fetch(
-        `${API_URL}/api/brands`,
+        `${API_URL}/brands`,
         {
             cache: "no-store",
         }

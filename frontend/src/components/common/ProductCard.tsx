@@ -24,6 +24,10 @@ import {
   type StockStatus,
 } from "@/lib/shop-filters";
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:5000/api";
+
 type Props = {
   id: string;
   name: string;
@@ -99,7 +103,7 @@ export default function ProductCard({
       setCartLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/cart",
+        `${API_URL}/cart`,
         {
           method: "POST",
           credentials: "include",
@@ -118,20 +122,21 @@ export default function ProductCard({
       if (!response.ok) {
         throw new Error(
           result?.message ||
-            "Unable to add product to cart."
+          "Unable to add product to cart."
         );
       }
 
       // =====================================================
-      // 🔥 CART HEADER BADGE INSTANT UPDATE
+      // CART HEADER BADGE INSTANT UPDATE
       // =====================================================
 
       window.dispatchEvent(
         new Event("cart-updated")
       );
 
-      toast.success(t.common.toast.addedToCart);
-
+      toast.success(
+        t.common.toast.addedToCart
+      );
     } catch (error: any) {
       console.error(
         "Add to cart error:",
@@ -140,7 +145,7 @@ export default function ProductCard({
 
       toast.error(
         error?.message ||
-          t.common.toast.addToCartFailed
+        t.common.toast.addToCartFailed
       );
     } finally {
       setCartLoading(false);
@@ -213,7 +218,8 @@ export default function ProductCard({
         )}
 
         <p className="mt-0.5 truncate text-[11px] text-gray-500">
-          {t.common.brandLabel} {brand ?? t.common.genericBrand}
+          {t.common.brandLabel}{" "}
+          {brand ?? t.common.genericBrand}
           {unit ? ` | ${unit}` : ""}
         </p>
 
@@ -253,7 +259,7 @@ export default function ProductCard({
             ACTION BUTTONS
         =================================================== */}
 
-        <div className="mt-auto flex items-center gap-2 pt-3">
+        <div className="mt-auto flex items-center gap-2">
 
           {/* ================= ADD TO CART ================= */}
 
@@ -263,7 +269,7 @@ export default function ProductCard({
               cartLoading
             }
             onClick={handleAddToCart}
-            className="flex-1 bg-green-700 text-xs font-bold hover:bg-green-800 px-2 sm:px-3 h-10"
+            className="flex-1 bg-green-700 px-2 text-xs font-bold hover:bg-green-800 sm:px-3 h-10"
           >
             <ShoppingCart className="mr-1.5 h-3.5 w-3.5 shrink-0" />
 

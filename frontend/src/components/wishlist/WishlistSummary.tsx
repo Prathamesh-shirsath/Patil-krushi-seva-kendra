@@ -16,6 +16,10 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/useLanguage";
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:5000/api";
+
 type WishlistItem = {
   id: string;
 
@@ -29,6 +33,7 @@ type WishlistItem = {
 
 export default function WishlistSummary() {
   const { t } = useLanguage();
+
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -45,7 +50,7 @@ export default function WishlistSummary() {
       setLoading(true);
 
       const response = await fetch(
-        "/api/wishlist",
+        `${API_URL}/wishlist`,
         {
           method: "GET",
           credentials: "include",
@@ -126,7 +131,7 @@ export default function WishlistSummary() {
       for (const item of wishlist) {
         try {
           const response = await fetch(
-            "http://localhost:5000/api/cart",
+            `${API_URL}/cart`,
             {
               method: "POST",
               credentials: "include",
@@ -145,10 +150,13 @@ export default function WishlistSummary() {
           const result =
             await response.json();
 
-          if (!response.ok || !result?.success) {
+          if (
+            !response.ok ||
+            !result?.success
+          ) {
             throw new Error(
               result?.message ||
-                "Failed to add product"
+              "Failed to add product"
             );
           }
 
@@ -174,14 +182,19 @@ export default function WishlistSummary() {
         failedCount === 0
       ) {
         toast.success(
-          t.wishlist.toast.addAllSuccess(successCount)
+          t.wishlist.toast.addAllSuccess(
+            successCount
+          )
         );
       } else if (
         successCount > 0 &&
         failedCount > 0
       ) {
         toast.warning(
-          t.wishlist.toast.addAllPartial(successCount, failedCount)
+          t.wishlist.toast.addAllPartial(
+            successCount,
+            failedCount
+          )
         );
       } else {
         toast.error(
@@ -293,7 +306,10 @@ export default function WishlistSummary() {
 
           <div className="space-y-4">
             <Row
-              label={t.wishlist.stats.wishlistValue}
+              label={
+                t.wishlist.stats
+                  .wishlistValue
+              }
               value={
                 loading
                   ? "..."
@@ -302,7 +318,10 @@ export default function WishlistSummary() {
             />
 
             <Row
-              label={t.wishlist.summary.estimatedSavings}
+              label={
+                t.wishlist.summary
+                  .estimatedSavings
+              }
               value={
                 loading
                   ? "..."
@@ -312,8 +331,15 @@ export default function WishlistSummary() {
             />
 
             <Row
-              label={t.cart.summary.deliveryCharge || "Delivery"}
-              value={t.cart.summary.free || "FREE"}
+              label={
+                t.cart.summary
+                  .deliveryCharge ||
+                "Delivery"
+              }
+              value={
+                t.cart.summary.free ||
+                "FREE"
+              }
               green
             />
           </div>
@@ -331,8 +357,8 @@ export default function WishlistSummary() {
               {loading
                 ? "..."
                 : `₹${estimatedTotal.toLocaleString(
-                    "en-IN"
-                  )}`}
+                  "en-IN"
+                )}`}
             </span>
           </div>
 
@@ -353,7 +379,8 @@ export default function WishlistSummary() {
             <ShoppingCart className="mr-2 h-5 w-5" />
 
             {addingAll
-              ? t.wishlist.summary.addingProducts
+              ? t.wishlist.summary
+                .addingProducts
               : t.wishlist.summary.addAll}
           </Button>
 
@@ -383,7 +410,9 @@ export default function WishlistSummary() {
         <h3 className="mb-5 flex items-center gap-2 text-lg font-bold">
           <Sparkles className="h-5 w-5 text-yellow-500" />
 
-          {t.wishlist.benefits.title || t.product.details.whyShopWithUs}
+          {t.wishlist.benefits.title ||
+            t.product.details
+              .whyShopWithUs}
         </h3>
 
         <div className="space-y-4">
@@ -391,24 +420,42 @@ export default function WishlistSummary() {
             icon={
               <Truck className="h-5 w-5" />
             }
-            title={t.wishlist.benefits.delivery}
-            subtitle={t.wishlist.benefits.deliverySubtitle}
+            title={
+              t.wishlist.benefits
+                .delivery
+            }
+            subtitle={
+              t.wishlist.benefits
+                .deliverySubtitle
+            }
           />
 
           <Feature
             icon={
               <ShieldCheck className="h-5 w-5" />
             }
-            title={t.wishlist.benefits.genuine}
-            subtitle={t.wishlist.benefits.genuineSubtitle}
+            title={
+              t.wishlist.benefits
+                .genuine
+            }
+            subtitle={
+              t.wishlist.benefits
+                .genuineSubtitle
+            }
           />
 
           <Feature
             icon={
               <BadgePercent className="h-5 w-5" />
             }
-            title={t.wishlist.benefits.offers}
-            subtitle={t.wishlist.benefits.offersSubtitle}
+            title={
+              t.wishlist.benefits
+                .offers
+            }
+            subtitle={
+              t.wishlist.benefits
+                .offersSubtitle
+            }
           />
         </div>
       </div>
@@ -458,11 +505,10 @@ function Row({
       </span>
 
       <span
-        className={`font-bold ${
-          green
+        className={`font-bold ${green
             ? "text-green-700"
             : "text-gray-900"
-        }`}
+          }`}
       >
         {value}
       </span>

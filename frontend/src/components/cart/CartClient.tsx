@@ -23,6 +23,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:5000/api";
+
 type CartItem = {
   id: string;
   name: string;
@@ -143,7 +147,7 @@ export default function CartClient() {
       setAddingProductId(productId);
 
       const response = await fetch(
-        "http://localhost:5000/api/cart",
+        `${API_URL}/cart`,
         {
           method: "POST",
           credentials: "include",
@@ -162,16 +166,16 @@ export default function CartClient() {
       if (!response.ok) {
         throw new Error(
           result?.message ||
-            "Unable to add product to cart."
+          "Unable to add product to cart."
         );
       }
 
-      // 🔥 Update Header cart badge instantly
+      // Update Header cart badge instantly
       window.dispatchEvent(
         new Event("cart-updated")
       );
 
-      // 🔥 Success notification
+      // Success notification
       toast.success("Product added to cart.");
     } catch (error: any) {
       console.error(
@@ -181,7 +185,7 @@ export default function CartClient() {
 
       toast.error(
         error?.message ||
-          "Unable to add product to cart."
+        "Unable to add product to cart."
       );
     } finally {
       setAddingProductId(null);
@@ -226,7 +230,6 @@ export default function CartClient() {
       )
     );
 
-    // 🔥 Header badge refresh
     window.dispatchEvent(
       new Event("cart-updated")
     );
@@ -241,7 +244,6 @@ export default function CartClient() {
   const clearCart = () => {
     setCartItems([]);
 
-    // 🔥 Header badge refresh
     window.dispatchEvent(
       new Event("cart-updated")
     );
@@ -265,14 +267,14 @@ export default function CartClient() {
       (acc, item) =>
         acc +
         item.price *
-          item.quantity,
+        item.quantity,
       0
     );
 
   const shippingCharges =
     subtotal >=
       FREE_SHIPPING_THRESHOLD ||
-    cartItems.length === 0
+      cartItems.length === 0
       ? 0
       : SHIPPING_FEE;
 
@@ -283,7 +285,7 @@ export default function CartClient() {
     Math.max(
       0,
       FREE_SHIPPING_THRESHOLD -
-        subtotal
+      subtotal
     );
 
   const freeShippingProgressPercent =
@@ -292,7 +294,7 @@ export default function CartClient() {
       Math.round(
         (subtotal /
           FREE_SHIPPING_THRESHOLD) *
-          100
+        100
       )
     );
 
@@ -313,7 +315,7 @@ export default function CartClient() {
     setRecommendationIndex(
       (prev) =>
         prev >=
-        RECOMMENDED_PRODUCTS.length -
+          RECOMMENDED_PRODUCTS.length -
           4
           ? prev
           : prev + 1
@@ -790,7 +792,7 @@ export default function CartClient() {
                 disabled={
                   recommendationIndex >=
                   RECOMMENDED_PRODUCTS.length -
-                    4
+                  4
                 }
                 className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-2xs hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:h-8 sm:w-8"
                 aria-label="Next recommendation"
@@ -829,7 +831,7 @@ export default function CartClient() {
                   </p>
                 </div>
 
-                {/* 🔥 UPDATED ADD TO CART BUTTON */}
+                {/* Add to Cart */}
                 <Button
                   variant="outline"
                   disabled={
@@ -843,7 +845,7 @@ export default function CartClient() {
                   className="mt-2.5 h-8 w-full rounded-lg border-emerald-600 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60 sm:mt-3 sm:h-9 sm:rounded-xl sm:text-xs"
                 >
                   {addingProductId ===
-                  prod.id
+                    prod.id
                     ? "Adding..."
                     : "Add to Cart"}
                 </Button>
