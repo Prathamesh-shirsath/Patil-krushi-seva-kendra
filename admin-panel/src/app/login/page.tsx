@@ -25,7 +25,7 @@ import { auth } from "@/lib/firebase";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:5000/api";
+  "https://api.patilkrushi.com/api";
 
 export default function LoginPage() {
   const router = useRouter();

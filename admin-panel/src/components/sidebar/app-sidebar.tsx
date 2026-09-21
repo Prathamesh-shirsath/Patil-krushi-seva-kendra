@@ -37,8 +37,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:5000/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://api.patilkrushi.com/api";
 
 const sections = [
   {
