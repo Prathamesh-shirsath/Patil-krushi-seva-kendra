@@ -8,14 +8,15 @@ import AddressList from "@/components/profile/AddressList";
 import OrdersList from "@/components/profile/OrdersList";
 
 import { Card } from "@/components/ui/card";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export type ProfileSection =
   | "profile"
   | "addresses"
-  | "wishlist"
   | "orders";
 
 export default function ProfilePage() {
+  const { t } = useLanguage();
   const [section, setSection] =
     useState<ProfileSection>("profile");
 
@@ -152,7 +153,7 @@ export default function ProfilePage() {
                     sm:text-xs
                   "
                 >
-                  Premium Member
+                  {t.profile.premiumMember}
                 </span>
 
                 {/* Heading */}
@@ -168,7 +169,7 @@ export default function ProfilePage() {
                     md:text-5xl
                   "
                 >
-                  My Profile
+                  {t.profile.title}
                 </h1>
 
                 {/* Description */}
@@ -185,8 +186,7 @@ export default function ProfilePage() {
                     md:text-lg
                   "
                 >
-                  Manage your personal information, addresses,
-                  wishlist and orders in one place.
+                  {t.profile.description}
                 </p>
               </div>
 
@@ -322,8 +322,8 @@ export default function ProfilePage() {
 
               {/* =================================================
                   WISHLIST
-              ================================================== */}
-              {section === "wishlist" && (
+              /*================================================== */}
+              {/* {section === "wishlist" && (
                 <div
                   className="
                     min-h-[300px]
@@ -341,7 +341,7 @@ export default function ProfilePage() {
                       sm:text-3xl
                     "
                   >
-                    Wishlist
+                    {t.profile.sidebar.wishlist}
                   </h2>
 
                   <p
@@ -353,10 +353,10 @@ export default function ProfilePage() {
                       sm:text-base
                     "
                   >
-                    Your favourite agricultural products.
+                    {t.profile.description}
                   </p>
                 </div>
-              )}
+              )}*/}
 
               {/* =================================================
                   ORDERS

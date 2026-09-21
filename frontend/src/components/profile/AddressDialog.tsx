@@ -21,6 +21,7 @@ import {
     useCreateAddress,
     useUpdateAddress,
 } from "@/hooks/use-addresses";
+import { useLanguage } from "@/i18n/useLanguage";
 
 interface AddressDialogProps {
     open: boolean;
@@ -46,6 +47,7 @@ export default function AddressDialog({
     onOpenChange,
     address,
 }: AddressDialogProps) {
+    const { t } = useLanguage();
     const createMutation = useCreateAddress();
     const updateMutation = useUpdateAddress();
 
@@ -123,11 +125,11 @@ export default function AddressDialog({
                     data: cleanedValues,
                 });
 
-                toast.success("Address updated successfully");
+                toast.success(t.profile.addressDialog.toast.updateSuccess);
             } else {
                 await createMutation.mutateAsync(cleanedValues);
 
-                toast.success("Address added successfully");
+                toast.success(t.profile.addressDialog.toast.addSuccess);
             }
 
             reset();
@@ -139,7 +141,7 @@ export default function AddressDialog({
                 error?.response?.data?.message ||
                 error?.response?.data?.error ||
                 error?.message ||
-                "Something went wrong."
+                t.profile.addressDialog.toast.error
             );
         }
     };
@@ -152,7 +154,7 @@ export default function AddressDialog({
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>
-                        {address ? "Edit Address" : "Add Address"}
+                        {address ? t.profile.addressDialog.editTitle : t.profile.addressDialog.addTitle}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -164,18 +166,18 @@ export default function AddressDialog({
 
                         {/* Full Name */}
                         <div>
-                            <Label>Full Name</Label>
+                            <Label>{t.profile.addressDialog.labels.fullName}</Label>
 
                             <Input
                                 {...register("fullName", {
-                                    required: "Full name is required",
+                                    required: t.profile.addressDialog.validation.nameRequired,
                                     minLength: {
                                         value: 2,
                                         message:
-                                            "Name must be at least 2 characters",
+                                            t.profile.addressDialog.validation.nameMin,
                                     },
                                 })}
-                                placeholder="Enter full name"
+                                placeholder={t.profile.addressDialog.placeholders.fullName}
                             />
 
                             {errors.fullName && (
@@ -187,18 +189,18 @@ export default function AddressDialog({
 
                         {/* Phone */}
                         <div>
-                            <Label>Phone</Label>
+                            <Label>{t.profile.addressDialog.labels.phone}</Label>
 
                             <Input
                                 {...register("phone", {
-                                    required: "Phone number is required",
+                                    required: t.profile.addressDialog.validation.phoneRequired,
                                     pattern: {
                                         value: /^[6-9]\d{9}$/,
                                         message:
-                                            "Enter a valid 10-digit mobile number",
+                                            t.profile.addressDialog.validation.phonePattern,
                                     },
                                 })}
-                                placeholder="9876543210"
+                                placeholder={t.profile.addressDialog.placeholders.phone}
                                 inputMode="numeric"
                                 maxLength={10}
                             />
@@ -212,18 +214,18 @@ export default function AddressDialog({
 
                         {/* State */}
                         <div>
-                            <Label>State</Label>
+                            <Label>{t.profile.addressDialog.labels.state}</Label>
 
                             <Input
                                 {...register("state", {
-                                    required: "State is required",
+                                    required: t.profile.addressDialog.validation.stateRequired,
                                     minLength: {
                                         value: 2,
                                         message:
-                                            "State must be at least 2 characters",
+                                            t.profile.addressDialog.validation.stateMin,
                                     },
                                 })}
-                                placeholder="Maharashtra"
+                                placeholder={t.profile.addressDialog.placeholders.state}
                             />
 
                             {errors.state && (
@@ -235,18 +237,18 @@ export default function AddressDialog({
 
                         {/* District */}
                         <div>
-                            <Label>District</Label>
+                            <Label>{t.profile.addressDialog.labels.district}</Label>
 
                             <Input
                                 {...register("district", {
-                                    required: "District is required",
+                                    required: t.profile.addressDialog.validation.districtRequired,
                                     minLength: {
                                         value: 2,
                                         message:
-                                            "District must be at least 2 characters",
+                                            t.profile.addressDialog.validation.districtMin,
                                     },
                                 })}
-                                placeholder="Chhatrapati Sambhajinagar"
+                                placeholder={t.profile.addressDialog.placeholders.district}
                             />
 
                             {errors.district && (
@@ -258,28 +260,28 @@ export default function AddressDialog({
 
                         {/* Taluka */}
                         <div>
-                            <Label>Taluka</Label>
+                            <Label>{t.profile.addressDialog.labels.taluka}</Label>
 
                             <Input
                                 {...register("taluka")}
-                                placeholder="Enter taluka"
+                                placeholder={t.profile.addressDialog.placeholders.taluka}
                             />
                         </div>
 
                         {/* Village */}
                         <div>
-                            <Label>Village</Label>
+                            <Label>{t.profile.addressDialog.labels.village}</Label>
 
                             <Input
                                 {...register("village", {
-                                    required: "Village is required",
+                                    required: t.profile.addressDialog.validation.villageRequired,
                                     minLength: {
                                         value: 2,
                                         message:
-                                            "Village must be at least 2 characters",
+                                            t.profile.addressDialog.validation.villageMin,
                                     },
                                 })}
-                                placeholder="Enter village"
+                                placeholder={t.profile.addressDialog.placeholders.village}
                             />
 
                             {errors.village && (
@@ -291,28 +293,28 @@ export default function AddressDialog({
 
                         {/* City */}
                         <div>
-                            <Label>City</Label>
+                            <Label>{t.profile.addressDialog.labels.city}</Label>
 
                             <Input
                                 {...register("city")}
-                                placeholder="Enter city"
+                                placeholder={t.profile.addressDialog.placeholders.city}
                             />
                         </div>
 
                         {/* Pincode */}
                         <div>
-                            <Label>Pincode</Label>
+                            <Label>{t.profile.addressDialog.labels.pincode}</Label>
 
                             <Input
                                 {...register("pincode", {
-                                    required: "Pincode is required",
+                                    required: t.profile.addressDialog.validation.pincodeRequired,
                                     pattern: {
                                         value: /^\d{6}$/,
                                         message:
-                                            "Pincode must be exactly 6 digits",
+                                            t.profile.addressDialog.validation.pincodePattern,
                                     },
                                 })}
-                                placeholder="431001"
+                                placeholder={t.profile.addressDialog.placeholders.pincode}
                                 inputMode="numeric"
                                 maxLength={6}
                             />
@@ -327,18 +329,18 @@ export default function AddressDialog({
 
                     {/* Address */}
                     <div>
-                        <Label>Address</Label>
+                        <Label>{t.profile.addressDialog.labels.address}</Label>
 
                         <Input
                             {...register("addressLine", {
-                                required: "Address is required",
+                                required: t.profile.addressDialog.validation.addressRequired,
                                 minLength: {
                                     value: 5,
                                     message:
-                                        "Address must be at least 5 characters",
+                                        t.profile.addressDialog.validation.addressMin,
                                 },
                             })}
-                            placeholder="Enter complete address"
+                            placeholder={t.profile.addressDialog.placeholders.address}
                         />
 
                         {errors.addressLine && (
@@ -350,11 +352,11 @@ export default function AddressDialog({
 
                     {/* Landmark */}
                     <div>
-                        <Label>Landmark</Label>
+                        <Label>{t.profile.addressDialog.labels.landmark}</Label>
 
                         <Input
                             {...register("landmark")}
-                            placeholder="Near temple, school, etc."
+                            placeholder={t.profile.addressDialog.placeholders.landmark}
                         />
                     </div>
 
@@ -366,7 +368,7 @@ export default function AddressDialog({
                             disabled={isSubmitting}
                             onClick={() => onOpenChange(false)}
                         >
-                            Cancel
+                            {t.profile.addressDialog.buttons.cancel}
                         </Button>
 
                         <Button
@@ -374,10 +376,10 @@ export default function AddressDialog({
                             disabled={isSubmitting}
                         >
                             {isSubmitting
-                                ? "Saving..."
+                                ? t.profile.addressDialog.buttons.saving
                                 : address
-                                    ? "Update Address"
-                                    : "Add Address"}
+                                    ? t.profile.addressDialog.buttons.update
+                                    : t.profile.addressDialog.buttons.add}
                         </Button>
                     </div>
                 </form>

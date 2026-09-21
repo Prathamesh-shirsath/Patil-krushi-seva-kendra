@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
+import { useLanguage } from "@/i18n/useLanguage";
 
 interface Props {
   wishlistId: string;
@@ -40,16 +41,17 @@ export default function WishlistCard({
   product,
   listView = false,
 }: Props) {
+  const { t } = useLanguage();
   const removeMutation = useRemoveWishlist();
 
   return (
     <div
-      className={`overflow-hidden rounded-3xl border bg-white shadow transition hover:shadow-xl ${listView ? "flex gap-6 p-5" : ""
+      className={`overflow-hidden rounded-3xl border bg-white shadow transition hover:shadow-xl ${listView ? "flex flex-col gap-5 p-5 sm:flex-row sm:gap-6" : ""
         }`}
     >
       <div
         className={`relative overflow-hidden ${listView
-            ? "h-44 w-44 rounded-2xl"
+            ? "h-56 w-full rounded-2xl sm:h-44 sm:w-44"
             : "h-64 w-full"
           }`}
       >
@@ -61,24 +63,24 @@ export default function WishlistCard({
         />
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-center justify-between">
-          <Badge variant="secondary">
+      <div className="flex min-w-0 flex-1 flex-col p-5">
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <Badge variant="secondary" className="max-w-[60%] truncate">
             {product.category?.name ?? "Category"}
           </Badge>
 
-          <span className="text-sm text-muted-foreground">
+          <span className="min-w-0 truncate text-right text-sm text-muted-foreground">
             {product.brand?.name ?? ""}
           </span>
         </div>
 
-        <h3 className="mt-4 text-xl font-bold">
+        <h3 className="mt-4 break-words text-xl font-bold">
           {product.name}
         </h3>
 
         {product.packSize && (
           <p className="mt-2 text-sm text-muted-foreground">
-            Pack Size : {product.packSize}
+            {t.wishlist.card.packSize || t.cart.item.packSize} {product.packSize}
           </p>
         )}
 
@@ -86,10 +88,10 @@ export default function WishlistCard({
           ₹{product.price}
         </div>
 
-        <div className="mt-auto grid grid-cols-2 gap-3 pt-6">
+        <div className={`mt-auto grid gap-3 pt-6 ${listView ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2"}`}>
           <Button>
             <ShoppingCart className="mr-2 h-4 w-4" />
-            Add Cart
+            {t.wishlist.card.addCart}
           </Button>
 
           <Link
@@ -101,7 +103,7 @@ export default function WishlistCard({
               className="w-full"
             >
               <Eye className="mr-2 h-4 w-4" />
-              View
+              {t.wishlist.card.view}
             </Button>
           </Link>
         </div>
@@ -117,8 +119,8 @@ export default function WishlistCard({
           <Heart className="mr-2 h-4 w-4 fill-current" />
 
           {removeMutation.isPending
-            ? "Removing..."
-            : "Remove"}
+            ? t.wishlist.card.removing
+            : t.wishlist.card.remove || t.cart.item.remove}
         </Button>
       </div>
     </div>

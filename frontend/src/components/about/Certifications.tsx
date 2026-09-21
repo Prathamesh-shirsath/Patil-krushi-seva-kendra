@@ -1,5 +1,6 @@
 
 "use client";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const certifications = [
   {
@@ -25,6 +26,30 @@ const certifications = [
 ];
 
 export default function Certifications() {
+  const { t } = useLanguage();
+
+  const certifications = [
+    {
+      icon: "🏅",
+      title: t.about.certifications.items.iso.title,
+      description: t.about.certifications.items.iso.desc,
+    },
+    {
+      icon: "🏛️",
+      title: t.about.certifications.items.govt.title,
+      description: t.about.certifications.items.govt.desc,
+    },
+    {
+      icon: "🛡️",
+      title: t.about.certifications.items.genuine.title,
+      description: t.about.certifications.items.genuine.desc,
+    },
+    {
+      icon: "🚚",
+      title: t.about.certifications.items.fast.title,
+      description: t.about.certifications.items.fast.desc,
+    },
+  ];
   return (
     <section className="py-20 bg-gradient-to-b from-green-50 to-white">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -32,16 +57,15 @@ export default function Certifications() {
         {/* Header */}
         <div className="text-center mb-14">
           <span className="inline-block px-4 py-2 rounded-full bg-green-100 text-green-700 font-semibold">
-            🏆 CERTIFICATIONS
+            🏆 {t.about.certifications.badge}
           </span>
 
           <h2 className="mt-4 text-4xl md:text-5xl font-extrabold text-gray-900">
-            Certified Quality & Trusted Service
+            {t.about.certifications.title}
           </h2>
 
           <p className="mt-4 text-gray-600 max-w-3xl mx-auto">
-            We maintain the highest standards of quality, transparency
-            and customer satisfaction in every product we offer.
+            {t.about.certifications.description}
           </p>
         </div>
 
@@ -82,37 +106,37 @@ export default function Certifications() {
           <div className="grid md:grid-cols-5 gap-6 text-center">
 
             <div>
-              <h3 className="font-bold text-lg">🌱 Best Quality</h3>
+              <h3 className="font-bold text-lg">🌱 {t.about.certifications.trustBanner.quality.title}</h3>
               <p className="text-white/80 text-sm">
-                Premium Products
+                {t.about.certifications.trustBanner.quality.desc}
               </p>
             </div>
 
             <div>
-              <h3 className="font-bold text-lg">👨‍🌾 Expert Support</h3>
+              <h3 className="font-bold text-lg">👨‍🌾 {t.about.certifications.trustBanner.support.title}</h3>
               <p className="text-white/80 text-sm">
-                Farmer Guidance
+                {t.about.certifications.trustBanner.support.desc}
               </p>
             </div>
 
             <div>
-              <h3 className="font-bold text-lg">💰 Best Prices</h3>
+              <h3 className="font-bold text-lg">💰 {t.about.certifications.trustBanner.price.title}</h3>
               <p className="text-white/80 text-sm">
-                Affordable Rates
+                {t.about.certifications.trustBanner.price.desc}
               </p>
             </div>
 
             <div>
-              <h3 className="font-bold text-lg">📦 500+ Products</h3>
+              <h3 className="font-bold text-lg">📦 {t.about.certifications.trustBanner.products.title}</h3>
               <p className="text-white/80 text-sm">
-                Wide Range
+                {t.about.certifications.trustBanner.products.desc}
               </p>
             </div>
 
             <div>
-              <h3 className="font-bold text-lg">☎️ 24/7 Support</h3>
+              <h3 className="font-bold text-lg">☎️ {t.about.certifications.trustBanner.available.title}</h3>
               <p className="text-white/80 text-sm">
-                Always Available
+                {t.about.certifications.trustBanner.available.desc}
               </p>
             </div>
 

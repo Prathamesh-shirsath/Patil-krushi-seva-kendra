@@ -11,6 +11,8 @@ import {
 } from "./razorpay.service";
 import { clearCart } from "./cart.service";
 
+import { isDeliveryAvailable } from "./delivery-pincode.service";
+
 const orderInclude = {
   user: {
     select: {
@@ -113,6 +115,24 @@ export const createOrder = async (data: CreateOrderInput) => {
   if (!shippingAddress) {
     throw new Error("Delivery address is required to place an order.");
   }
+
+
+  // 3. Validate Delivery Pincode
+  const deliveryAvailable =
+    await isDeliveryAvailable(
+      shippingAddress.pincode
+    );
+
+  if (!deliveryAvailable) {
+    throw new Error(
+      `Sorry, we currently don't deliver to pincode ${shippingAddress.pincode}.`
+    );
+  }
+
+
+
+
+
 
   // 3. Compute Totals
   let subTotal = 0;
@@ -335,6 +355,26 @@ export const getUserOrders = async (userId: string) => {
 |--------------------------------------------------------------------------
 */
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN - GET ALL PAID ORDERS
+|--------------------------------------------------------------------------
+*/
+
+export const getAllOrders = async () => {
+  return prisma.order.findMany({
+    where: {
+      paymentStatus: PaymentStatus.SUCCESS,
+    },
+    include: orderInclude,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}; 
+
+
+/*
 export const getAllOrders = async () => {
   return prisma.order.findMany({
     include: orderInclude,
@@ -342,7 +382,7 @@ export const getAllOrders = async () => {
       createdAt: "desc",
     },
   });
-};
+};*/
 
 /*
 |--------------------------------------------------------------------------
@@ -350,12 +390,19 @@ export const getAllOrders = async () => {
 |--------------------------------------------------------------------------
 */
 
-export const getOrderById = async (id: string, userId: string) => {
+export const getOrderById = async (
+  id: string,
+  userId?: string
+) => {
   return prisma.order.findFirst({
-    where: {
-      id,
-      userId,
-    },
+    where: userId
+      ? {
+        id,
+        userId,
+      }
+      : {
+        id,
+      },
     include: orderInclude,
   });
 };

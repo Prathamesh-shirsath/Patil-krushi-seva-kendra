@@ -2,6 +2,7 @@
 
 import { Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/i18n/useLanguage";
 
 interface QuantitySelectorProps {
     quantity: number;
@@ -16,6 +17,8 @@ export default function QuantitySelector({
     onIncrease,
     onDecrease,
 }: QuantitySelectorProps) {
+    const { t } = useLanguage();
+
     return (
         <div className="flex items-center rounded-lg border">
             <Button
@@ -24,6 +27,7 @@ export default function QuantitySelector({
                 size="icon"
                 disabled={loading || quantity <= 1}
                 onClick={onDecrease}
+                aria-label={t.cart.aria.decreaseQuantity}
             >
                 <Minus className="h-4 w-4" />
             </Button>
@@ -38,6 +42,7 @@ export default function QuantitySelector({
                 size="icon"
                 disabled={loading}
                 onClick={onIncrease}
+                aria-label={t.cart.aria.increaseQuantity}
             >
                 <Plus className="h-4 w-4" />
             </Button>

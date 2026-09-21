@@ -3,8 +3,11 @@
 import HomeProductSection from "./HomeProductSection";
 import { mapProductsToProductCards } from "@/lib/product-mappers";
 import { useProducts } from "@/hooks/use-products";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function FeaturedProducts() {
+  const { t } = useLanguage();
+
   const {
     data: products = [],
     isLoading,
@@ -18,12 +21,13 @@ export default function FeaturedProducts() {
 
   return (
     <HomeProductSection
-      eyebrow="🌱 Featured Collection"
-      title="Featured Products"
-      description="Best quality agricultural products trusted by farmers."
+      sectionId="featured-products"
+      eyebrow={t.home.featuredProducts.eyebrow}
+      title={t.home.featuredProducts.title}
+      description={t.home.featuredProducts.description}
       products={featuredProducts}
       isLoading={isLoading}
-      emptyMessage="No featured products available right now."
+      emptyMessage={t.home.featuredProducts.empty}
     />
   );
 }

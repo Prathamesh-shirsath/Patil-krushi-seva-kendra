@@ -4,8 +4,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Phone, Leaf } from "lucide-react";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function AboutHero() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-[#f8fcf5] via-white to-[#eef8e8]">
       
@@ -21,24 +24,22 @@ export default function AboutHero() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
               <Leaf className="h-4 w-4" />
-              ABOUT US
+              {t.about.hero.badge}
             </div>
 
             <h1 className="mt-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight text-gray-900">
-              Quality Seeds, Fertilizers &
+              {t.about.hero.title1}
               <span className="block text-green-700">
-                Pesticides Under One Roof
+                {t.about.hero.title2}
               </span>
             </h1>
 
             <h2 className="mt-5 text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
-              Patil Krushi Seva Kendra
+              {t.about.hero.subtitle}
             </h2>
 
             <p className="mt-5 max-w-2xl text-base md:text-lg leading-7 md:leading-8 text-gray-600">
-              Empowering farmers with quality agricultural products,
-              modern farming solutions and expert guidance to achieve
-              better yields and sustainable growth.
+              {t.about.hero.description}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -46,7 +47,7 @@ export default function AboutHero() {
                 href="/products"
                 className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 md:px-6 md:py-4 font-semibold text-white shadow-lg hover:bg-green-700 transition"
               >
-                Explore Products
+                {t.about.hero.buttons.explore}
                 <ArrowRight className="h-5 w-5" />
               </Link>
 
@@ -54,22 +55,22 @@ export default function AboutHero() {
                 href="/contact"
                 className="inline-flex items-center gap-2 rounded-xl border-2 border-green-600 px-5 py-3 md:px-6 md:py-4 font-semibold text-green-700 hover:bg-green-50 transition"
               >
-                Contact Us
+                {t.about.hero.buttons.contact}
                 <Phone className="h-5 w-5" />
               </Link>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <div className="rounded-full bg-white px-4 py-2 text-sm md:text-base shadow">
-                🌱 100% Genuine Products
+                🌱 {t.about.hero.tags.genuine}
               </div>
 
               <div className="rounded-full bg-white px-4 py-2 text-sm md:text-base shadow">
-                🚚 Fast Delivery
+                🚚 {t.about.hero.tags.fast}
               </div>
 
               <div className="rounded-full bg-white px-4 py-2 text-sm md:text-base shadow">
-                👨‍🌾 Expert Guidance
+                👨‍🌾 {t.about.hero.tags.expert}
               </div>
             </div>
           </div>
@@ -82,7 +83,7 @@ export default function AboutHero() {
             <div className="overflow-hidden rounded-3xl shadow-2xl">
               <Image
                 src="/about/about2.jpg"
-                alt="Patil Krushi Seva Kendra"
+                alt={t.about.accessibility.heroAlt}
                 width={1200}
                 height={800}
                 priority

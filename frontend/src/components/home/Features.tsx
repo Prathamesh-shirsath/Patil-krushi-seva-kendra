@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ShieldCheck,
   Truck,
@@ -6,43 +8,48 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { useLanguage } from "@/i18n/useLanguage";
 
-const features = [
+const featureKeys = [
   {
-    title: "Quality Products",
-    description: "Premium agricultural products",
+    titleKey: "qualityProducts" as const,
+    descriptionKey: "qualityProductsDescription" as const,
     icon: ShieldCheck,
   },
   {
-    title: "Fast Delivery",
-    description: "Quick delivery to your doorstep",
+    titleKey: "fastDelivery" as const,
+    descriptionKey: "fastDeliveryDescription" as const,
     icon: Truck,
   },
   {
-    title: "Secure Payment",
-    description: "100% safe payment methods",
+    titleKey: "securePayment" as const,
+    descriptionKey: "securePaymentDescription" as const,
     icon: CreditCard,
   },
   {
-    title: "Expert Support",
-    description: "Agriculture experts available",
+    titleKey: "expertSupport" as const,
+    descriptionKey: "expertSupportDescription" as const,
     icon: Headphones,
   },
 ];
 
 export default function Features() {
+  const { t } = useLanguage();
+
   return (
     <section className="w-full py-8 sm:py-10 md:py-12">
       <div className="mx-auto w-full max-w-[1500px] px-3 sm:px-4 md:px-8 lg:px-12">
         
         {/* 2 columns on mobile, 2 on tablet, 4 on desktop */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-          {features.map((feature) => {
+          {featureKeys.map((feature) => {
             const Icon = feature.icon;
+            const title = t.home.features[feature.titleKey];
+            const description = t.home.features[feature.descriptionKey];
 
             return (
               <Card
-                key={feature.title}
+                key={feature.titleKey}
                 className="
                   group
                   w-full
@@ -121,14 +128,14 @@ export default function Features() {
                       lg:text-lg
                     "
                   >
-                    {feature.title}
+                    {title}
                   </h3>
 
                   {/* Description */}
                   <p
                     className="
                       mt-1.5
-                      line-clamp-2
+                      line-clamp-3
                       text-[11px]
                       leading-relaxed
                       text-muted-foreground
@@ -137,7 +144,7 @@ export default function Features() {
                       lg:text-sm
                     "
                   >
-                    {feature.description}
+                    {description}
                   </p>
                 </CardContent>
               </Card>

@@ -22,6 +22,12 @@ import statisticRoutes from "./routes/statistic.routes";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import addressRoutes from "./routes/address.routes";
+import adminManagementRoutes from "./routes/admin-management.routes";
+import {
+  deliveryPincodeAdminRoutes,
+  deliveryPincodePublicRoutes,
+} from "./routes/delivery-pincode.routes";
+
 
 const app = express();
 
@@ -40,6 +46,9 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://localhost:3001",
+      "https://patilkrushi.com",
+      "https://www.patilkrushi.com",
+      "https://admin.patilkrushi.com",
     ],
     credentials: true,
   })
@@ -117,6 +126,19 @@ app.use("/api/users", userRoutes);
 
 // Addresses
 app.use("/api/addresses", addressRoutes);
+
+app.use("/api/admin/admins", adminManagementRoutes);
+
+app.use(
+  "/api/admin/delivery-pincodes",
+  deliveryPincodeAdminRoutes
+);
+
+app.use(
+  "/api/delivery-pincodes",
+  deliveryPincodePublicRoutes
+);
+
 
 // =====================================================
 // HEALTH CHECK

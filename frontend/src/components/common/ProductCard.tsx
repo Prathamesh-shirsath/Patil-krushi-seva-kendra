@@ -17,6 +17,12 @@ import {
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAddWishlist } from "@/hooks/useAddWishlist";
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
+import { useLanguage } from "@/i18n/useLanguage";
+import {
+  isProductInStock,
+  STOCK_IN,
+  type StockStatus,
+} from "@/lib/shop-filters";
 
 type Props = {
   id: string;
@@ -28,7 +34,7 @@ type Props = {
   rating?: number;
   reviewCount?: number;
   originalPrice?: number;
-  availability?: "In Stock" | "Out of Stock";
+  availability?: StockStatus;
   badge?: string;
   unit?: string;
   slug?: string;
@@ -44,12 +50,14 @@ export default function ProductCard({
   rating = 4.5,
   reviewCount,
   originalPrice,
-  availability = "In Stock",
+  availability = STOCK_IN,
   badge = "New",
   unit,
   slug,
 }: Props) {
-  const isAvailable = availability === "In Stock";
+  const { t } = useLanguage();
+
+  const isAvailable = isProductInStock(availability);
 
   const productHref = slug
     ? `/product/${slug}`
@@ -122,7 +130,7 @@ export default function ProductCard({
         new Event("cart-updated")
       );
 
-      toast.success("Product added to cart.");
+      toast.success(t.common.toast.addedToCart);
 
     } catch (error: any) {
       console.error(
@@ -132,7 +140,7 @@ export default function ProductCard({
 
       toast.error(
         error?.message ||
-          "Unable to add product to cart."
+          t.common.toast.addToCartFailed
       );
     } finally {
       setCartLoading(false);
@@ -189,7 +197,7 @@ export default function ProductCard({
       <CardContent className="flex flex-1 flex-col px-3 pb-3 pt-0">
 
         <p className="truncate text-[10px] font-bold uppercase tracking-wide text-green-700">
-          {category ?? "Product"}
+          {category ?? t.common.productFallback}
         </p>
 
         {productHref ? (
@@ -205,7 +213,7 @@ export default function ProductCard({
         )}
 
         <p className="mt-0.5 truncate text-[11px] text-gray-500">
-          Brand: {brand ?? "Generic"}
+          {t.common.brandLabel} {brand ?? t.common.genericBrand}
           {unit ? ` | ${unit}` : ""}
         </p>
 
@@ -260,14 +268,16 @@ export default function ProductCard({
             <ShoppingCart className="mr-1.5 h-3.5 w-3.5 shrink-0" />
 
             {cartLoading
-              ? "Adding..."
-              : "Add to Cart"}
+              ? t.common.addingToCart
+              : t.common.addToCart}
           </Button>
 
           {/* ================= WISHLIST ================= */}
 
           <button
+            type="button"
             disabled={wishlistLoading}
+            aria-label={t.wishlist.label}
             onClick={() => {
               if (isWishlisted) {
                 removeWishlist.mutate(id);

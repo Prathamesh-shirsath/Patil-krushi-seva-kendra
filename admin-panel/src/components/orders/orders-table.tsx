@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Eye,
-  SquarePen,
-  MoreHorizontal,
   Search,
+  SquarePen,
 } from "lucide-react";
+import { useState } from "react";
 
 import ResponsiveTable from "@/components/common/responsive-table";
 
@@ -25,8 +23,8 @@ import {
 
 import type { Order } from "@/hooks/use-orders";
 
-import OrderDetailsSheet from "./order-details-sheet";
 import OrderCard from "./order-card";
+import OrderDetailsSheet from "./order-details-sheet";
 
 interface Props {
   orders: Order[];
@@ -78,11 +76,12 @@ function orderBadge(status: string) {
 function formatAmount(
   amount: number | string | null | undefined
 ) {
-  const value = Number(amount ?? 0);
-
-  return value.toLocaleString("en-IN", {
-    maximumFractionDigits: 2,
-  });
+  return Number(amount ?? 0).toLocaleString(
+    "en-IN",
+    {
+      maximumFractionDigits: 2,
+    }
+  );
 }
 
 function formatDate(date: string) {
@@ -101,56 +100,40 @@ export default function OrdersTable({
   loading,
   onOrdersUpdated,
 }: Props) {
-  const router = useRouter();
-
   const [selectedOrder, setSelectedOrder] =
     useState<Order | null>(null);
 
-  const [open, setOpen] =
-    useState(false);
+  const [open, setOpen] = useState(false);
 
   const openOrder = (order: Order) => {
     setSelectedOrder(order);
     setOpen(true);
-  
-  const router = useRouter();
-
-   
-
   };
 
-  /*
-  |--------------------------------------------------------------------------
-  | Loading
-  |--------------------------------------------------------------------------
-  */
+  const handleOrderUpdated = async (
+    updatedOrder: Order
+  ) => {
+    setSelectedOrder(updatedOrder);
+    await onOrdersUpdated();
+  };
 
   if (loading) {
     return (
       <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
         <div className="flex flex-col items-center gap-3">
-
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-green-600" />
 
           <p className="text-slate-500">
             Loading Orders...
           </p>
-
         </div>
       </div>
     );
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | No Orders / No Filter Results
-  |--------------------------------------------------------------------------
-  */
-
   if (orders.length === 0) {
     return (
       <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
           <Search className="h-6 w-6 text-slate-400" />
         </div>
@@ -162,49 +145,32 @@ export default function OrdersTable({
         <p className="mt-1 text-sm text-slate-500">
           Try changing your search or filters.
         </p>
-
       </div>
     );
   }
 
   return (
     <>
-      {/* =========================================================
-          MOBILE VIEW
-      ========================================================= */}
+      {/* MOBILE */}
 
       <div className="grid gap-4 lg:hidden">
-
         {orders.map((order) => (
-          <div
+          <OrderCard
             key={order.id}
-            className="cursor-pointer"
-            onClick={() =>
-              openOrder(order)
-            }
-          >
-            <OrderCard
-              order={order}
-            />
-          </div>
+            order={order}
+            onView={() => openOrder(order)}
+            onEdit={() => openOrder(order)}
+          />
         ))}
-
       </div>
 
-      {/* =========================================================
-          DESKTOP VIEW
-      ========================================================= */}
+      {/* DESKTOP */}
 
       <div className="hidden overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm lg:block">
-
         <ResponsiveTable>
-
           <Table>
-
             <TableHeader>
-
               <TableRow className="bg-slate-50">
-
                 <TableHead className="font-semibold">
                   Order ID
                 </TableHead>
@@ -240,36 +206,27 @@ export default function OrdersTable({
                 <TableHead className="text-right font-semibold">
                   Actions
                 </TableHead>
-
               </TableRow>
-
             </TableHeader>
 
             <TableBody>
-
               {orders.map((order) => {
-
                 const itemCount =
                   order.items?.reduce(
-                    (
-                      total,
-                      item
-                    ) =>
+                    (total, item) =>
                       total +
-                      item.quantity,
+                      Number(item.quantity || 0),
                     0
                   ) || 0;
 
                 const customerName =
                   order.user?.name ||
-                  order.OrderAddress
-                    ?.fullName ||
+                  order.OrderAddress?.fullName ||
                   "Guest User";
 
                 const phone =
                   order.user?.phone ||
-                  order.OrderAddress
-                    ?.phone ||
+                  order.OrderAddress?.phone ||
                   "-";
 
                 return (
@@ -277,28 +234,15 @@ export default function OrdersTable({
                     key={order.id}
                     className="transition-colors hover:bg-green-50"
                   >
-
-                    {/* =================================================
-                        ORDER ID
-                    ================================================= */}
-
                     <TableCell className="font-semibold text-slate-800">
-
                       #
                       {order.id
                         .slice(-8)
                         .toUpperCase()}
-
                     </TableCell>
 
-                    {/* =================================================
-                        CUSTOMER
-                    ================================================= */}
-
                     <TableCell>
-
                       <div className="space-y-1">
-
                         <p className="font-medium text-slate-900">
                           {customerName}
                         </p>
@@ -308,25 +252,14 @@ export default function OrdersTable({
                             {order.user.email}
                           </p>
                         )}
-
                       </div>
-
                     </TableCell>
-
-                    {/* =================================================
-                        PHONE
-                    ================================================= */}
 
                     <TableCell className="text-slate-600">
                       {phone}
                     </TableCell>
 
-                    {/* =================================================
-                        ITEMS
-                    ================================================= */}
-
                     <TableCell>
-
                       <Badge
                         variant="outline"
                         className="rounded-full"
@@ -336,28 +269,16 @@ export default function OrdersTable({
                           ? "Item"
                           : "Items"}
                       </Badge>
-
                     </TableCell>
-
-                    {/* =================================================
-                        AMOUNT
-                    ================================================= */}
 
                     <TableCell className="font-semibold text-green-700">
-
                       ₹
                       {formatAmount(
-                        order.grandTotal as unknown as number
+                        order.grandTotal
                       )}
-
                     </TableCell>
 
-                    {/* =================================================
-                        PAYMENT
-                    ================================================= */}
-
                     <TableCell>
-
                       <Badge
                         className={paymentBadge(
                           order.paymentStatus
@@ -365,15 +286,9 @@ export default function OrdersTable({
                       >
                         {order.paymentStatus}
                       </Badge>
-
                     </TableCell>
 
-                    {/* =================================================
-                        ORDER STATUS
-                    ================================================= */}
-
                     <TableCell>
-
                       <Badge
                         className={orderBadge(
                           order.status
@@ -381,150 +296,66 @@ export default function OrdersTable({
                       >
                         {order.status}
                       </Badge>
-
                     </TableCell>
 
-                    {/* =================================================
-                        DATE
-                    ================================================= */}
-
                     <TableCell className="whitespace-nowrap text-slate-600">
-
                       {formatDate(
                         order.createdAt
                       )}
-
                     </TableCell>
 
-                    {/* =================================================
-                        ACTIONS
-                    ================================================= */}
-
                     <TableCell>
-
                       <div className="flex justify-end gap-2">
-
-                        {/* View */}
-
                         <Button
+                          type="button"
                           size="icon"
                           variant="outline"
                           className="rounded-xl"
                           onClick={() =>
-                            router.push(
-                              `/orders/${order.id}`
-                            )
+                            openOrder(order)
                           }
+                          title="View order"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-
-                        {/* Edit */}
 
                         <Button
                           type="button"
                           size="icon"
                           variant="outline"
                           className="rounded-xl"
-                          disabled
-                          title="Status update will be enabled after admin authentication"
+                          onClick={() =>
+                            openOrder(order)
+                          }
+                          title="Edit order status"
                         >
                           <SquarePen className="h-4 w-4" />
                         </Button>
-
-                        {/* More */}
-
-                        <Button
-                          type="button"
-                          size="icon"
-                          variant="ghost"
-                          className="rounded-xl"
-                          disabled
-                          title="More actions coming soon"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-
                       </div>
-
                     </TableCell>
-
                   </TableRow>
                 );
               })}
-
             </TableBody>
-
           </Table>
-
         </ResponsiveTable>
 
-        {/* =========================================================
-            FOOTER
-        ========================================================= */}
-
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-200 p-5 sm:flex-row">
-
+        <div className="flex items-center justify-between border-t border-slate-200 p-5">
           <p className="text-sm text-slate-500">
-
             Showing{" "}
-
             <span className="font-semibold text-slate-900">
               {orders.length}
-            </span>
-
-            {" "}Orders
-
+            </span>{" "}
+            Orders
           </p>
-
-          <div className="flex items-center gap-2">
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="rounded-xl"
-              disabled
-            >
-              Previous
-            </Button>
-
-            <Button
-              type="button"
-              size="sm"
-              className="rounded-xl bg-green-600 hover:bg-green-700"
-            >
-              1
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="rounded-xl"
-              disabled
-            >
-              Next
-            </Button>
-
-          </div>
-
         </div>
-
       </div>
-
-      {/* =========================================================
-          ORDER DETAILS
-      ========================================================= */}
 
       <OrderDetailsSheet
         open={open}
         onOpenChange={setOpen}
         order={selectedOrder}
-        onOrderUpdated={async (updatedOrder) => {
-          setSelectedOrder(updatedOrder);
-          await onOrdersUpdated();
-        }}
+        onOrderUpdated={handleOrderUpdated}
       />
     </>
   );

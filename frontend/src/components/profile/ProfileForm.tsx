@@ -11,6 +11,7 @@ import {
     useProfile,
     useUpdateProfile,
 } from "@/hooks/use-user";
+import { useLanguage } from "@/i18n/useLanguage";
 
 type ProfileFormValues = {
     name: string;
@@ -18,6 +19,7 @@ type ProfileFormValues = {
 };
 
 export default function ProfileForm() {
+    const { t } = useLanguage();
     const { data, isLoading } = useProfile();
 
     const updateProfile = useUpdateProfile();
@@ -49,7 +51,7 @@ export default function ProfileForm() {
     if (isLoading) {
         return (
             <p className="text-muted-foreground">
-                Loading profile...
+                {t.profile.form.loading}
             </p>
         );
     }
@@ -60,16 +62,16 @@ export default function ProfileForm() {
             className="space-y-6"
         >
             <div>
-                <Label>Name</Label>
+                <Label>{t.profile.form.nameLabel}</Label>
 
                 <Input
-                    placeholder="Enter your name"
+                    placeholder={t.profile.form.namePlaceholder}
                     {...register("name")}
                 />
             </div>
 
             <div>
-                <Label>Mobile Number</Label>
+                <Label>{t.profile.form.phoneLabel}</Label>
 
                 <Input
                     value={data?.phone ?? ""}
@@ -78,10 +80,10 @@ export default function ProfileForm() {
             </div>
 
             <div>
-                <Label>Email</Label>
+                <Label>{t.profile.form.emailLabel}</Label>
 
                 <Input
-                    placeholder="Enter email"
+                    placeholder={t.profile.form.emailPlaceholder}
                     {...register("email")}
                 />
             </div>
@@ -91,8 +93,8 @@ export default function ProfileForm() {
                 disabled={updateProfile.isPending}
             >
                 {updateProfile.isPending
-                    ? "Saving..."
-                    : "Save Changes"}
+                    ? t.profile.form.saving
+                    : t.profile.form.saveChanges}
             </Button>
         </form>
     );

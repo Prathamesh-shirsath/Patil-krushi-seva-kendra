@@ -3,8 +3,10 @@
 
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
+import { useLanguage } from "@/i18n/useLanguage";
 
 export default function CTASection() {
+  const { t } = useLanguage();
   return (
     <section className="relative overflow-hidden py-24">
       
@@ -18,17 +20,15 @@ export default function CTASection() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 text-center">
 
         <span className="inline-block rounded-full bg-white/20 px-5 py-2 text-white font-semibold">
-          🌱 READY TO GROW?
+          🌱 {t.about.cta.badge}
         </span>
 
         <h2 className="mt-6 text-4xl md:text-6xl font-extrabold text-white">
-          Ready To Grow Better Crops?
+          {t.about.cta.title}
         </h2>
 
         <p className="mt-5 max-w-3xl mx-auto text-lg text-white/90">
-          Explore our premium agricultural products and expert
-          farming solutions designed to help farmers achieve
-          higher productivity and better harvests.
+          {t.about.cta.description}
         </p>
 
         {/* Buttons */}
@@ -51,7 +51,7 @@ export default function CTASection() {
               transition-all
             "
           >
-            Shop Products
+            {t.about.cta.buttons.shop}
             <ArrowRight className="h-5 w-5" />
           </Link>
 
@@ -73,7 +73,7 @@ export default function CTASection() {
               transition-all
             "
           >
-            Contact Us
+            {t.about.cta.buttons.contact}
             <Phone className="h-5 w-5" />
           </Link>
 

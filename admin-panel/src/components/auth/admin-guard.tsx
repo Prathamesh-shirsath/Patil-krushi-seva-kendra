@@ -15,7 +15,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     const checkAdmin = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/admin-auth/me",
+          `${process.env.NEXT_PUBLIC_API_URL || "https://api.patilkrushi.com/api"}/admin-auth/me`,
           {
             method: "GET",
             credentials: "include",

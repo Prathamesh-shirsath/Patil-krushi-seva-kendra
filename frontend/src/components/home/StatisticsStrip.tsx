@@ -8,34 +8,38 @@ import {
   Users,
 } from "lucide-react";
 
-const statistics = [
+import { useLanguage } from "@/i18n/useLanguage";
+
+const statisticKeys = [
   {
     value: "50K+",
-    title: "Happy Farmers",
-    description: "Serving farmers across Maharashtra",
+    titleKey: "happyFarmers" as const,
+    descriptionKey: "happyFarmersDescription" as const,
     icon: Users,
   },
   {
     value: "1200+",
-    title: "Products",
-    description: "Agricultural products available",
+    titleKey: "products" as const,
+    descriptionKey: "productsDescription" as const,
     icon: Package,
   },
   {
     value: "100+",
-    title: "Trusted Brands",
-    description: "Leading agricultural companies",
+    titleKey: "trustedBrands" as const,
+    descriptionKey: "trustedBrandsDescription" as const,
     icon: ShieldCheck,
   },
   {
     value: "98%",
-    title: "Customer Satisfaction",
-    description: "Based on customer feedback",
+    titleKey: "customerSatisfaction" as const,
+    descriptionKey: "customerSatisfactionDescription" as const,
     icon: Star,
   },
 ];
 
 export default function StatisticsStrip() {
+  const { t } = useLanguage();
+
   const sectionRef = useRef<HTMLElement | null>(null);
   const [hasEntered, setHasEntered] = useState(false);
 
@@ -80,21 +84,24 @@ export default function StatisticsStrip() {
       <div className="mx-auto w-full max-w-[1500px] px-4 md:px-8 lg:px-12">
         <div className="mb-8 text-center md:mb-10">
           <span className="inline-block rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
-            Our Impact
+            {t.home.statistics.eyebrow}
           </span>
 
           <h2 className="mt-4 text-2xl font-extrabold text-gray-900 sm:text-3xl md:text-5xl">
-            Trusted by Farmers Every Day
+            {t.home.statistics.title}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 gap-4 min-[390px]:grid-cols-2 lg:grid-cols-4">
-          {statistics.map((statistic, index) => {
+          {statisticKeys.map((statistic, index) => {
             const Icon = statistic.icon;
+            const title = t.home.statistics[statistic.titleKey];
+            const description =
+              t.home.statistics[statistic.descriptionKey];
 
             return (
               <article
-                key={statistic.title}
+                key={statistic.titleKey}
                 className={`stat-card group rounded-2xl border border-gray-200 bg-white p-4 text-center shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-green-300 hover:bg-green-50/30 hover:shadow-lg hover:shadow-green-950/10 motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none sm:p-6 ${
                   hasEntered
                     ? "animate-[statReveal_500ms_ease-out_both]"
@@ -116,11 +123,11 @@ export default function StatisticsStrip() {
                 </p>
 
                 <h3 className="mt-2 text-sm font-extrabold text-gray-950 transition-colors duration-300 ease-out group-hover:text-gray-900 sm:text-base">
-                  {statistic.title}
+                  {title}
                 </h3>
 
                 <p className="mt-2 text-xs leading-5 text-gray-500 sm:text-sm sm:leading-6">
-                  {statistic.description}
+                  {description}
                 </p>
               </article>
             );

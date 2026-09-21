@@ -19,6 +19,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { getUserOrders } from "@/services/order.service";
 import type { Order, OrderStatus } from "@/types/order";
 import Link from "next/link";
+import { useLanguage } from "@/i18n/useLanguage";
 
 const statusConfig: Record<
   OrderStatus,
@@ -61,6 +62,7 @@ const statusConfig: Record<
 };
 
 export default function OrdersList() {
+  const { t } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const {
     data: orders = [],
@@ -100,32 +102,31 @@ export default function OrdersList() {
 
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-emerald-50 backdrop-blur-xl">
             <Package className="h-4 w-4" />
-            Premium Orders
+            {t.orders.list.premiumOrders}
           </div>
 
           <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
-            My Orders
+            {t.orders.list.myOrders}
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm leading-7 text-emerald-50/75 sm:text-base">
-            Track your agricultural products, manage your
-            purchases and view your complete order history.
+            {t.orders.list.description}
           </p>
 
           <div className="mt-7 grid max-w-xl grid-cols-3 gap-3">
 
             <HeroStat
-              label="Total Orders"
+              label={t.orders.list.totalOrders}
               value={hasOrdersData ? String(totalOrders) : "—"}
             />
 
             <HeroStat
-              label="Active"
+              label={t.orders.list.active}
               value={hasOrdersData ? String(activeOrders) : "—"}
             />
 
             <HeroStat
-              label="Delivered"
+              label={t.orders.list.delivered}
               value={hasOrdersData ? String(deliveredOrders) : "—"}
             />
 
@@ -149,19 +150,19 @@ export default function OrdersList() {
 
         <StatCard
           icon={<ShoppingBag className="h-5 w-5" />}
-          title="Total Orders"
+          title={t.orders.list.totalOrders}
           value={hasOrdersData ? String(totalOrders) : "—"}
         />
 
         <StatCard
           icon={<Truck className="h-5 w-5" />}
-          title="In Transit"
+          title={t.orders.list.inTransit}
           value={hasOrdersData ? String(inTransitOrders) : "—"}
         />
 
         <StatCard
           icon={<CheckCircle2 className="h-5 w-5" />}
-          title="Successfully Delivered"
+          title={t.orders.list.successfullyDelivered}
           value={hasOrdersData ? String(deliveredOrders) : "—"}
         />
 
@@ -174,25 +175,25 @@ export default function OrdersList() {
         <div>
 
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700">
-            Purchase History
+            {t.orders.list.purchaseHistory}
           </p>
 
           <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
-            Recent Orders
+            {t.orders.list.recentOrders}
           </h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            Your latest purchases from Patil Krushi Seva Kendra.
+            {t.orders.list.recentOrdersDesc}
           </p>
 
         </div>
 
         <span className="inline-flex w-fit rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-700">
           {hasOrdersData
-            ? `${totalOrders} Orders`
+            ? `${totalOrders} ${totalOrders === 1 ? t.orders.list.item : t.orders.list.items}`
             : isLoading
-            ? "Loading orders..."
-            : "Orders unavailable"}
+            ? t.orders.list.loading
+            : t.orders.list.unavailable}
         </span>
 
       </div>
@@ -201,25 +202,25 @@ export default function OrdersList() {
 
       <div className="space-y-6">
 
-        {isLoading && <OrdersStateCard message="Loading your orders..." />}
+        {isLoading && <OrdersStateCard message={t.orders.list.loading} />}
 
         {!isLoading && !user && (
-          <OrdersStateCard message="Please sign in to view your orders." />
+          <OrdersStateCard message={t.orders.list.signInRequired} />
         )}
 
         {!isLoading && user && isError && (
-          <OrdersStateCard message="We couldn't load your orders. Please try again." />
+          <OrdersStateCard message={t.orders.list.loadError} />
         )}
 
         {!isLoading && user && !isError && orders.length === 0 && (
-          <OrdersStateCard message="You haven't placed any orders yet." />
+          <OrdersStateCard message={t.orders.list.noOrders} />
         )}
 
         {!isLoading && !isError && orders.map((order) => {
 
           const status = statusConfig[order.status];
-
           const StatusIcon = status.icon;
+          const statusLabel = t.orders.status[order.status.toLowerCase() as keyof typeof t.orders.status] || status.label;
 
           return (
             <Card
@@ -238,7 +239,7 @@ export default function OrdersList() {
                     <div className="flex flex-wrap items-center gap-3">
 
                       <h3 className="text-lg font-black tracking-tight text-emerald-950">
-                        Order #{order.id.slice(-6).toUpperCase()}
+                        {t.orders.list.orderNum}{order.id.slice(-6).toUpperCase()}
                       </h3>
 
                       <span
@@ -246,20 +247,20 @@ export default function OrdersList() {
                       >
                         <StatusIcon className="h-3.5 w-3.5" />
 
-                        {status.label}
+                        {statusLabel}
                       </span>
 
                     </div>
 
                     <p className="mt-2 text-sm text-slate-500">
-                      Ordered on {formatOrderDate(order.createdAt)}
+                      {t.orders.list.orderedOn} {formatOrderDate(order.createdAt)}
 
                       <span className="mx-1 text-slate-300">
                         •
                       </span>
 
                       {order.items.length}{" "}
-                      {order.items.length === 1 ? "item" : "items"}
+                      {order.items.length === 1 ? t.orders.list.item : t.orders.list.items}
                     </p>
 
                   </div>
@@ -267,7 +268,7 @@ export default function OrdersList() {
                   <div className="text-left sm:text-right">
 
                     <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Order Total
+                      {t.orders.list.orderTotal}
                     </p>
 
                     <p className="mt-1 text-2xl font-black text-emerald-700">
@@ -317,7 +318,7 @@ export default function OrdersList() {
                         </h4>
 
                         <p className="mt-1 text-xs text-slate-400">
-                          Quantity: {item.quantity}
+                          {t.orders.list.quantity}: {item.quantity}
                         </p>
 
                       </div>
@@ -345,11 +346,11 @@ export default function OrdersList() {
                     <div className="min-w-0">
 
                       <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                        Delivery Address
+                        {t.orders.list.deliveryAddress}
                       </p>
 
                       <p className="mt-1 truncate text-sm font-semibold text-slate-700">
-                        {formatOrderAddress(order)}
+                        {formatOrderAddress(order, t)}
                       </p>
 
                     </div>
@@ -365,11 +366,11 @@ export default function OrdersList() {
                     <div>
 
                       <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                        Payment
+                        {t.orders.list.payment}
                       </p>
 
                       <p className="mt-1 text-sm font-semibold text-slate-700">
-                        {getPaymentLabel(order)}
+                        {getPaymentLabel(order, t)}
                       </p>
 
                     </div>
@@ -392,7 +393,7 @@ export default function OrdersList() {
                       variant="outline"
                       className="h-11 w-full rounded-xl border-slate-200 px-5 font-semibold text-slate-700 transition-all hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 sm:w-auto"
                     >
-                      View Details
+                      {t.orders.list.viewDetails}
 
                       <ChevronRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -408,7 +409,7 @@ export default function OrdersList() {
                     >
                       <Button className="h-11 w-full rounded-xl bg-emerald-700 px-6 font-bold text-white shadow-lg shadow-emerald-700/20 transition-all hover:-translate-y-0.5 hover:bg-emerald-800 sm:w-auto">
                         <Truck className="mr-2 h-4 w-4" />
-                        Track Order
+                        {t.orders.list.trackOrder}
                       </Button>
                     </Link>
                   )}
@@ -418,13 +419,12 @@ export default function OrdersList() {
                   {order.status === "DELIVERED" && (
                     <Button className="h-11 w-full rounded-xl bg-emerald-700 px-6 font-bold text-white shadow-lg shadow-emerald-700/20 transition-all hover:-translate-y-0.5 hover:bg-emerald-800 sm:w-auto">
 
-                      Buy Again
+                      {t.orders.list.buyAgain}
 
                       <ArrowRight className="ml-2 h-4 w-4" />
 
                     </Button>
                   )}
-
                 </div>
 
               </div>
@@ -451,11 +451,11 @@ function formatCurrency(amount: string) {
   return `₹${Number(amount).toLocaleString("en-IN")}`;
 }
 
-function formatOrderAddress(order: Order) {
+function formatOrderAddress(order: Order, t: any) {
   const address = order.OrderAddress;
 
   if (!address) {
-    return "Delivery address unavailable.";
+    return t.orders.list.addressUnavailable || "Delivery address unavailable.";
   }
 
   return [
@@ -472,24 +472,24 @@ function formatOrderAddress(order: Order) {
     .join(", ");
 }
 
-function getPaymentLabel(order: Order) {
+function getPaymentLabel(order: Order, t: any) {
   if (order.paymentMethod === "COD") {
-    return "Cash on Delivery";
+    return t.orders.payment.cod;
   }
 
   if (order.paymentStatus === "SUCCESS") {
-    return "Paid Online (Razorpay)";
+    return t.orders.payment.paidOnline;
   }
 
   if (order.paymentStatus === "FAILED") {
-    return "Online Payment Failed";
+    return t.orders.payment.paymentFailed;
   }
 
   if (order.paymentStatus === "REFUNDED") {
-    return "Payment Refunded";
+    return t.orders.payment.paymentRefunded;
   }
 
-  return "Online Payment Pending";
+  return t.orders.payment.paymentPending;
 }
 
 function OrdersStateCard({ message }: { message: string }) {

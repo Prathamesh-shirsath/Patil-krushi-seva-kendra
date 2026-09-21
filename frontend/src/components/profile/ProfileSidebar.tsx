@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
 import { ProfileSection } from "@/app/profile/page";
+import { useLanguage } from "@/i18n/useLanguage";
 
 interface Props {
     active: ProfileSection;
@@ -26,6 +27,7 @@ export default function ProfileSidebar({
     active,
     onChange,
 }: Props) {
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
 
     const handleChange = (value: ProfileSection) => {
@@ -76,11 +78,11 @@ export default function ProfileSidebar({
 
                         <div className="text-left">
                             <p className="text-sm font-bold text-slate-900">
-                                My Account
+                                {t.profile.sidebar.myAccount}
                             </p>
 
                             <p className="text-xs text-slate-500">
-                                Manage your profile
+                                {t.profile.sidebar.myProfile}
                             </p>
                         </div>
                     </div>
@@ -163,11 +165,11 @@ export default function ProfileSidebar({
                     >
                         <div>
                             <h2 className="text-lg font-black text-slate-900">
-                                My Account
+                                {t.profile.sidebar.myAccount}
                             </h2>
 
                             <p className="mt-0.5 text-xs text-slate-500">
-                                Manage your account
+                                {t.profile.sidebar.myProfile}
                             </p>
                         </div>
 
@@ -212,7 +214,7 @@ export default function ProfileSidebar({
                                 }
                             >
                                 <User className="mr-3 h-4 w-4" />
-                                My Profile
+                                {t.profile.sidebar.myProfile}
                             </Button>
 
                             {/* Addresses */}
@@ -235,31 +237,31 @@ export default function ProfileSidebar({
                                 }
                             >
                                 <MapPin className="mr-3 h-4 w-4" />
-                                My Addresses
+                                {t.profile.sidebar.myAddresses}
                             </Button>
 
-                            {/* Wishlist */}
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                className={`
+                            
+                            /* Wishlist */
+                            {/*   <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className={`
                                     h-11
                                     w-full
                                     justify-start
                                     rounded-xl
-                                    ${
-                                        active === "wishlist"
+                                    ${active === "wishlist"
                                             ? "bg-green-600 text-white shadow-md hover:bg-green-700 hover:text-white"
                                             : "text-slate-700 hover:bg-green-50 hover:text-green-700"
-                                    }
+                                        }
                                 `}
-                                onClick={() =>
-                                    handleChange("wishlist")
-                                }
-                            >
-                                <Heart className="mr-3 h-4 w-4" />
-                                Wishlist
-                            </Button>
+                                    onClick={() =>
+                                        handleChange("wishlist")
+                                    }
+                                >
+                                    <Heart className="mr-3 h-4 w-4" />
+                                    {t.profile.sidebar.wishlist}
+                                </Button>  */}
 
                             {/* Orders */}
                             <Button
@@ -281,7 +283,7 @@ export default function ProfileSidebar({
                                 }
                             >
                                 <Package className="mr-3 h-4 w-4" />
-                                My Orders
+                                {t.profile.sidebar.myOrders}
                             </Button>
 
                             <Separator className="my-5" />
@@ -302,7 +304,7 @@ export default function ProfileSidebar({
                                 "
                             >
                                 <LogOut className="mr-3 h-4 w-4" />
-                                Logout
+                                {t.profile.sidebar.logout}
                             </Button>
                         </div>
                     </div>
@@ -342,7 +344,7 @@ export default function ProfileSidebar({
                     "
                 >
                     <h2 className="mb-4 text-lg font-bold text-slate-900">
-                        My Account
+                        {t.profile.sidebar.myAccount}
                     </h2>
 
                     <Separator className="mb-4" />
@@ -368,7 +370,7 @@ export default function ProfileSidebar({
                             }
                         >
                             <User className="mr-3 h-4 w-4" />
-                            My Profile
+                            {t.profile.sidebar.myProfile}
                         </Button>
 
                         {/* Addresses */}
@@ -391,11 +393,11 @@ export default function ProfileSidebar({
                             }
                         >
                             <MapPin className="mr-3 h-4 w-4" />
-                            My Addresses
+                            {t.profile.sidebar.myAddresses}
                         </Button>
 
                         {/* Wishlist */}
-                        <Button
+                        {/*} <Button
                             type="button"
                             variant="ghost"
                             className={`
@@ -414,8 +416,8 @@ export default function ProfileSidebar({
                             }
                         >
                             <Heart className="mr-3 h-4 w-4" />
-                            Wishlist
-                        </Button>
+                            {t.profile.sidebar.wishlist}
+                        </Button>*/}
 
                         {/* Orders */}
                         <Button
@@ -437,7 +439,7 @@ export default function ProfileSidebar({
                             }
                         >
                             <Package className="mr-3 h-4 w-4" />
-                            My Orders
+                            {t.profile.sidebar.myOrders}
                         </Button>
 
                         <Separator className="my-4" />
@@ -458,7 +460,7 @@ export default function ProfileSidebar({
                             "
                         >
                             <LogOut className="mr-3 h-4 w-4" />
-                            Logout
+                            {t.profile.sidebar.logout}
                         </Button>
                     </div>
                 </Card>

@@ -160,6 +160,13 @@ export default function CategoryEditDialog({
     ) {
         event.preventDefault();
 
+        if (!category) {
+            setError(
+                "Category information is not available."
+            );
+            return;
+        }
+
         if (!name.trim()) {
             setError(
                 "Category name is required."

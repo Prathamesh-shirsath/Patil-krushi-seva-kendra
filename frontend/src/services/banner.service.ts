@@ -40,6 +40,10 @@ export type Banner = {
   updatedAt?: string;
 };
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "https://api.patilkrushi.com/api";
+
 export async function getPublicBanners(
   placement: BannerPlacement = "HOME_HERO",
   scopeSlug?: string
@@ -53,7 +57,7 @@ export async function getPublicBanners(
   }
 
   const response = await fetch(
-    `http://localhost:5000/api/banners/public?${params.toString()}`,
+    `${API_BASE_URL}/banners/public?${params.toString()}`,
     {
       cache: "no-store",
     }
