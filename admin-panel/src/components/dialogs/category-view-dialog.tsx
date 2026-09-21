@@ -74,6 +74,10 @@ export default function CategoryViewDialog({
     }
 
     function handleEdit() {
+        if (!category) {
+            return;
+        }
+
         onOpenChange(false);
 
         if (onEdit) {

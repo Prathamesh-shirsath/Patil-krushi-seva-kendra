@@ -20,6 +20,11 @@ import { useProducts } from "@/hooks/use-products";
 
 import DashboardLayout from "@/components/layout/dashboard-layout";
 
+type ProductSummary = {
+    status?: boolean;
+    stock?: number | string | null;
+};
+
 export default function ProductsPage() {
     const { data, isLoading } = useProducts({
         page: 1,
@@ -27,7 +32,7 @@ export default function ProductsPage() {
         includeInactive: true,
     });
 
-    const products = data?.data ?? [];
+    const products = (data?.data ?? []) as ProductSummary[];
 
     const totalProducts = products.length;
 
@@ -74,11 +79,9 @@ export default function ProductsPage() {
                             lg:justify-between
                         "
                     >
-
                         {/* TITLE */}
 
                         <div className="min-w-0">
-
                             <h1
                                 className="
                                     text-2xl
@@ -101,9 +104,7 @@ export default function ProductsPage() {
                             >
                                 Manage all agricultural products
                             </p>
-
                         </div>
-
 
                         {/* ACTIONS */}
 
@@ -117,7 +118,6 @@ export default function ProductsPage() {
                                 sm:flex-row
                             "
                         >
-
                             <Button
                                 type="button"
                                 variant="outline"
@@ -136,7 +136,6 @@ export default function ProductsPage() {
                                 <Download className="mr-2 h-4 w-4" />
                                 Export
                             </Button>
-
 
                             <Button
                                 asChild
@@ -158,12 +157,9 @@ export default function ProductsPage() {
                                     Add Product
                                 </Link>
                             </Button>
-
                         </div>
-
                     </div>
                 </div>
-
 
                 {/* =====================================================
                     STATS
@@ -178,7 +174,6 @@ export default function ProductsPage() {
                         lg:grid-cols-4
                     "
                 >
-
                     <ProductStatsCard
                         title="Total Products"
                         value={isLoading ? 0 : totalProducts}
@@ -188,7 +183,6 @@ export default function ProductsPage() {
                         }
                         iconBg="bg-emerald-600"
                     />
-
 
                     <ProductStatsCard
                         title="Active Products"
@@ -200,7 +194,6 @@ export default function ProductsPage() {
                         iconBg="bg-emerald-600"
                     />
 
-
                     <ProductStatsCard
                         title="Inactive Products"
                         value={isLoading ? 0 : inactiveProducts}
@@ -211,7 +204,6 @@ export default function ProductsPage() {
                         iconBg="bg-orange-500"
                     />
 
-
                     <ProductStatsCard
                         title="Low Stock"
                         value={isLoading ? 0 : lowStockProducts}
@@ -221,9 +213,7 @@ export default function ProductsPage() {
                         }
                         iconBg="bg-red-500"
                     />
-
                 </div>
-
 
                 {/* =====================================================
                     PRODUCT MANAGEMENT
