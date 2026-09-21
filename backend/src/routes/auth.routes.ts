@@ -1,12 +1,10 @@
 import { Router } from "express";
 import * as authController from "../controllers/auth.controller";
-import {
-    authenticate,
-} from "../middleware/auth.middleware";
+import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// Existing Firebase phone authentication
+// Customer authentication
 router.post("/login", authController.login);
 
 // Email authentication
