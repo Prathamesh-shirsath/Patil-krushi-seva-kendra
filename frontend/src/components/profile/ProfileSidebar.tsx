@@ -240,28 +240,28 @@ export default function ProfileSidebar({
                                 {t.profile.sidebar.myAddresses}
                             </Button>
 
-                            {/* Wishlist */}
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                className={`
+                            
+                            /* Wishlist */
+                            {/*   <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className={`
                                     h-11
                                     w-full
                                     justify-start
                                     rounded-xl
-                                    ${
-                                        active === "wishlist"
+                                    ${active === "wishlist"
                                             ? "bg-green-600 text-white shadow-md hover:bg-green-700 hover:text-white"
                                             : "text-slate-700 hover:bg-green-50 hover:text-green-700"
-                                    }
+                                        }
                                 `}
-                                onClick={() =>
-                                    handleChange("wishlist")
-                                }
-                            >
-                                <Heart className="mr-3 h-4 w-4" />
-                                {t.profile.sidebar.wishlist}
-                            </Button>
+                                    onClick={() =>
+                                        handleChange("wishlist")
+                                    }
+                                >
+                                    <Heart className="mr-3 h-4 w-4" />
+                                    {t.profile.sidebar.wishlist}
+                                </Button>  */}
 
                             {/* Orders */}
                             <Button
@@ -397,7 +397,7 @@ export default function ProfileSidebar({
                         </Button>
 
                         {/* Wishlist */}
-                        <Button
+                        {/*} <Button
                             type="button"
                             variant="ghost"
                             className={`
@@ -417,7 +417,7 @@ export default function ProfileSidebar({
                         >
                             <Heart className="mr-3 h-4 w-4" />
                             {t.profile.sidebar.wishlist}
-                        </Button>
+                        </Button>*/}
 
                         {/* Orders */}
                         <Button

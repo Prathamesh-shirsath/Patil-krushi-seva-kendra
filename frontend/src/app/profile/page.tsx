@@ -13,7 +13,6 @@ import { useLanguage } from "@/i18n/useLanguage";
 export type ProfileSection =
   | "profile"
   | "addresses"
-  | "wishlist"
   | "orders";
 
 export default function ProfilePage() {
@@ -323,8 +322,8 @@ export default function ProfilePage() {
 
               {/* =================================================
                   WISHLIST
-              ================================================== */}
-              {section === "wishlist" && (
+              /*================================================== */}
+              {/* {section === "wishlist" && (
                 <div
                   className="
                     min-h-[300px]
@@ -357,7 +356,7 @@ export default function ProfilePage() {
                     {t.profile.description}
                   </p>
                 </div>
-              )}
+              )}*/}
 
               {/* =================================================
                   ORDERS
