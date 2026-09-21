@@ -43,6 +43,10 @@ const navLinks = [
   { key: "contact", href: "/contact" },
 ] as const;
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:5000/api";
+
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
@@ -71,7 +75,7 @@ export default function Header() {
       setWishlistLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/wishlist",
+        `${API_URL}/wishlist`,
         {
           method: "GET",
           credentials: "include",
@@ -118,7 +122,7 @@ export default function Header() {
       setCartLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/cart/count",
+        `${API_URL}/cart/count`,
         {
           method: "GET",
           credentials: "include",
@@ -352,6 +356,8 @@ export default function Header() {
               >
                 <Search className="h-5 w-5" />
               </Button>
+
+              {/* Language */}
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -775,6 +781,7 @@ export default function Header() {
               />
             </div>
           </div>
+
         </div>
       </header>
     </>
