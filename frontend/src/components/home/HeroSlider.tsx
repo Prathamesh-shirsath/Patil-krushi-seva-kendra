@@ -20,11 +20,11 @@ import { useLanguage } from "@/i18n/useLanguage";
 import type { Locale, TranslationDictionary } from "@/i18n/types";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { Autoplay, Pagination} from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation";
+
 
 function buildDefaultBanner(t: TranslationDictionary): Banner {
   return {
@@ -460,22 +460,7 @@ export default function HeroSlider() {
     [t]
   );
 
-  useEffect(() => {
-    const prevButton = document.querySelector(
-      ".premium-hero-swiper .swiper-button-prev"
-    );
-    const nextButton = document.querySelector(
-      ".premium-hero-swiper .swiper-button-next"
-    );
-
-    if (prevButton instanceof HTMLElement) {
-      prevButton.setAttribute("aria-label", t.home.hero.previousBanner);
-    }
-
-    if (nextButton instanceof HTMLElement) {
-      nextButton.setAttribute("aria-label", t.home.hero.nextBanner);
-    }
-  }, [t, isLoading, banners.length, isError]);
+  
 
   if (isLoading) {
     return <HeroSkeleton />;
@@ -492,7 +477,6 @@ export default function HeroSlider() {
         modules={[
           Autoplay,
           Pagination,
-          Navigation,
         ]}
         autoplay={{
           delay: 4500,
@@ -513,6 +497,10 @@ export default function HeroSlider() {
           shadow-2xl
           shadow-green-950/20
           sm:rounded-[32px]
+
+          [&_.swiper-button-next]:!hidden
+          [&_.swiper-button-prev]:!hidden
+
 
           [&_.swiper-button-next]:hidden
           [&_.swiper-button-prev]:hidden
