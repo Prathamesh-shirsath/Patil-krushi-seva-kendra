@@ -207,8 +207,10 @@ const mr = {
       items: "आयटम्स",
     },
     card: {
+      packSize: "पॅक आकार:",
       addCart: "कार्टमध्ये जोडा",
       view: "पहा",
+      remove: "काढून टाका",
       removing: "काढत आहे...",
     },
     summary: {

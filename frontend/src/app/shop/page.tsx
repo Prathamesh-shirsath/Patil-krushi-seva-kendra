@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Suspense,
   useEffect,
   useMemo,
   useState,
@@ -60,7 +61,7 @@ const SORT_PRICE_LOW = "price-low";
 const SORT_PRICE_HIGH = "price-high";
 const SORT_RATING = "rating";
 
-export default function ShopPage() {
+function ShopContent() {
   const { t } = useLanguage();
 
   const router = useRouter();
@@ -85,23 +86,35 @@ export default function ShopPage() {
   /**
    * Local filters
    */
-  const [selectedCategory, setSelectedCategory] =
-    useState(FILTER_ALL);
+  const [
+    selectedCategory,
+    setSelectedCategory,
+  ] = useState(FILTER_ALL);
 
-  const [selectedBrand, setSelectedBrand] =
-    useState(FILTER_ALL);
+  const [
+    selectedBrand,
+    setSelectedBrand,
+  ] = useState(FILTER_ALL);
 
-  const [selectedProductType, setSelectedProductType] =
-    useState(FILTER_ALL);
+  const [
+    selectedProductType,
+    setSelectedProductType,
+  ] = useState(FILTER_ALL);
 
-  const [selectedAvailability, setSelectedAvailability] =
-    useState<AvailabilityFilter>(FILTER_ALL);
+  const [
+    selectedAvailability,
+    setSelectedAvailability,
+  ] = useState<AvailabilityFilter>(
+    FILTER_ALL
+  );
 
   const [minPrice, setMinPrice] =
     useState(0);
 
-  const [maxPriceValue, setMaxPriceValue] =
-    useState(0);
+  const [
+    maxPriceValue,
+    setMaxPriceValue,
+  ] = useState(0);
 
   const [sortBy, setSortBy] =
     useState(SORT_FEATURED);
@@ -131,54 +144,58 @@ export default function ShopPage() {
   const shopBenefits = useMemo(
     () => [
       {
-        title: t.shop.benefits.originalProducts,
+        title:
+          t.shop.benefits.originalProducts,
         description:
-          t.shop.benefits.originalProductsDescription,
+          t.shop.benefits
+            .originalProductsDescription,
         icon: ShieldCheck,
       },
       {
-        title: t.shop.benefits.fastDelivery,
+        title:
+          t.shop.benefits.fastDelivery,
         description:
-          t.shop.benefits.fastDeliveryDescription,
+          t.shop.benefits
+            .fastDeliveryDescription,
         icon: Truck,
       },
       {
-        title: t.shop.benefits.securePayments,
+        title:
+          t.shop.benefits.securePayments,
         description:
-          t.shop.benefits.securePaymentsDescription,
+          t.shop.benefits
+            .securePaymentsDescription,
         icon: CreditCard,
       },
       {
-        title: t.shop.benefits.easyReturns,
+        title:
+          t.shop.benefits.easyReturns,
         description:
-          t.shop.benefits.easyReturnsDescription,
+          t.shop.benefits
+            .easyReturnsDescription,
         icon: RefreshCw,
       },
       {
-        title: t.shop.benefits.expertSupport,
+        title:
+          t.shop.benefits.expertSupport,
         description:
-          t.shop.benefits.expertSupportDescription,
+          t.shop.benefits
+            .expertSupportDescription,
         icon: Headphones,
       },
     ],
     [t]
   );
 
-  const [currentPage, setCurrentPage] =
-    useState(1);
+  const [
+    currentPage,
+    setCurrentPage,
+  ] = useState(1);
 
   /**
    * ---------------------------------------------------------
    * Fetch Products
    * ---------------------------------------------------------
-   *
-   * If brandId exists in URL:
-   *
-   * /shop?brandId=cmabc123
-   *
-   * request:
-   *
-   * GET /api/products?brandId=cmabc123
    */
   const {
     data: backendProducts = [],
@@ -216,11 +233,6 @@ export default function ShopPage() {
    * ---------------------------------------------------------
    * Sync URL Brand ID -> Brand Name for UI
    * ---------------------------------------------------------
-   *
-   * FilterSidebar currently uses brand names
-   * as its selected value.
-   *
-   * Backend filtering still uses brand ID.
    */
   useEffect(() => {
     if (!brandIdFromUrl) {
@@ -252,18 +264,20 @@ export default function ShopPage() {
    * Maximum Product Price
    * ---------------------------------------------------------
    */
-  const maximumProductPrice = useMemo(() => {
-    if (products.length === 0) {
-      return 0;
-    }
+  const maximumProductPrice =
+    useMemo(() => {
+      if (products.length === 0) {
+        return 0;
+      }
 
-    return Math.max(
-      ...products.map(
-        (product) =>
-          Number(product.price) || 0
-      )
-    );
-  }, [products]);
+      return Math.max(
+        ...products.map(
+          (product) =>
+            Number(product.price) ||
+            0
+        )
+      );
+    }, [products]);
 
   /**
    * Keep maximum price synchronized.
@@ -301,7 +315,8 @@ export default function ShopPage() {
       () => [
         {
           value: FILTER_ALL,
-          label: t.shop.filterAll.categories,
+          label:
+            t.shop.filterAll.categories,
           count: products.length,
         },
 
@@ -349,7 +364,8 @@ export default function ShopPage() {
       () => [
         {
           value: FILTER_ALL,
-          label: t.shop.filterAll.brands,
+          label:
+            t.shop.filterAll.brands,
           count: products.length,
         },
 
@@ -382,7 +398,9 @@ export default function ShopPage() {
       () => [
         {
           value: FILTER_ALL,
-          label: t.shop.filterAll.productTypes,
+          label:
+            t.shop.filterAll
+              .productTypes,
           count: products.length,
         },
       ],
@@ -394,30 +412,36 @@ export default function ShopPage() {
    * Availability
    * ---------------------------------------------------------
    */
-  const availabilityOptions: FilterOption[] =
-    useMemo(
+  const availabilityOptions:
+    FilterOption[] = useMemo(
       () => [
         {
           value: FILTER_ALL,
-          label: t.shop.filterAll.availability,
+          label:
+            t.shop.filterAll
+              .availability,
           count: products.length,
         },
 
         {
           value: STOCK_IN,
-          label: t.shop.stock.inStock,
+          label:
+            t.shop.stock.inStock,
           count: products.filter(
             (product) =>
-              product.availability === STOCK_IN
+              product.availability ===
+              STOCK_IN
           ).length,
         },
 
         {
           value: STOCK_OUT,
-          label: t.shop.stock.outOfStock,
+          label:
+            t.shop.stock.outOfStock,
           count: products.filter(
             (product) =>
-              product.availability === STOCK_OUT
+              product.availability ===
+              STOCK_OUT
           ).length,
         },
       ],
@@ -434,22 +458,16 @@ export default function ShopPage() {
       return products
         .filter((product) => {
           const categoryMatch =
-            selectedCategory === FILTER_ALL ||
+            selectedCategory ===
+            FILTER_ALL ||
             product.category ===
             selectedCategory;
 
-          /**
-           * If brandId exists in URL,
-           * backend has already filtered
-           * products by brand ID.
-           *
-           * selectedBrand is only used
-           * for displaying the active UI state.
-           */
           const brandMatch =
             brandIdFromUrl
               ? true
-              : selectedBrand === FILTER_ALL ||
+              : selectedBrand ===
+              FILTER_ALL ||
               product.brand ===
               selectedBrand;
 
@@ -460,10 +478,12 @@ export default function ShopPage() {
             );
 
           const productTypeMatch =
-            selectedProductType === FILTER_ALL;
+            selectedProductType ===
+            FILTER_ALL;
 
           const productPrice =
-            Number(product.price) || 0;
+            Number(product.price) ||
+            0;
 
           const minPriceMatch =
             productPrice >= minPrice;
@@ -483,7 +503,8 @@ export default function ShopPage() {
         })
         .sort((a, b) => {
           if (
-            sortBy === SORT_PRICE_LOW
+            sortBy ===
+            SORT_PRICE_LOW
           ) {
             return (
               a.price -
@@ -492,7 +513,8 @@ export default function ShopPage() {
           }
 
           if (
-            sortBy === SORT_PRICE_HIGH
+            sortBy ===
+            SORT_PRICE_HIGH
           ) {
             return (
               b.price -
@@ -501,7 +523,8 @@ export default function ShopPage() {
           }
 
           if (
-            sortBy === SORT_RATING
+            sortBy ===
+            SORT_RATING
           ) {
             return (
               b.rating -
@@ -568,37 +591,28 @@ export default function ShopPage() {
    * ---------------------------------------------------------
    * CLEAR ALL FILTERS
    * ---------------------------------------------------------
-   *
-   * This resets:
-   *
-   * Category
-   * Brand
-   * Product Type
-   * Availability
-   * Min Price
-   * Max Price
-   * Pagination
-   *
-   * AND removes filter params
-   * from URL.
    */
   const clearFilters = () => {
-    setSelectedCategory(FILTER_ALL);
+    setSelectedCategory(
+      FILTER_ALL
+    );
 
-    setSelectedBrand(FILTER_ALL);
+    setSelectedBrand(
+      FILTER_ALL
+    );
 
-    setSelectedProductType(FILTER_ALL);
+    setSelectedProductType(
+      FILTER_ALL
+    );
 
-    setSelectedAvailability(FILTER_ALL);
+    setSelectedAvailability(
+      FILTER_ALL
+    );
 
     setMinPrice(0);
     setMaxPriceValue(0);
     setCurrentPage(1);
 
-    /**
-     * Remove supported filter
-     * query parameters.
-     */
     const params =
       new URLSearchParams(
         searchParams.toString()
@@ -608,10 +622,6 @@ export default function ShopPage() {
     params.delete("categoryId");
     params.delete("search");
 
-    /**
-     * Keep only unrelated
-     * query parameters if any.
-     */
     const queryString =
       params.toString();
 
@@ -659,14 +669,6 @@ export default function ShopPage() {
     onBrandChange: (
       value: string
     ) => {
-      /**
-       * Manual brand selection
-       * is handled client-side.
-       *
-       * If user selected a brand
-       * from URL, Clear Filters
-       * removes the URL filter.
-       */
       resetPage(() =>
         setSelectedBrand(
           value
@@ -688,7 +690,7 @@ export default function ShopPage() {
     ) =>
       resetPage(() =>
         setSelectedAvailability(
-          value
+          value as AvailabilityFilter
         )
       ),
 
@@ -842,11 +844,15 @@ export default function ShopPage() {
               <p className="order-3 w-full text-xs text-gray-600 sm:order-none sm:w-auto">
                 {t.shop.showing}{" "}
                 <span className="font-semibold text-gray-900">
-                  {visibleProducts.length}
+                  {
+                    visibleProducts.length
+                  }
                 </span>{" "}
                 {t.shop.of}{" "}
                 <span className="font-semibold text-gray-900">
-                  {filteredProducts.length}
+                  {
+                    filteredProducts.length
+                  }
                 </span>{" "}
                 {t.shop.products}
               </p>
@@ -873,7 +879,6 @@ export default function ShopPage() {
                   className="
                     h-9
                     max-w-[min(100%,11rem)]
-                    sm:max-w-[12.5rem]
                     rounded-lg
                     border
                     border-gray-200
@@ -884,6 +889,7 @@ export default function ShopPage() {
                     text-gray-800
                     outline-none
                     focus:border-green-600
+                    sm:max-w-[12.5rem]
                   "
                 >
                   {sortOptions.map(
@@ -915,7 +921,9 @@ export default function ShopPage() {
                       bg-green-700
                       text-white
                     "
-                    aria-label={t.shop.viewGrid}
+                    aria-label={
+                      t.shop.viewGrid
+                    }
                   >
                     <LayoutGrid className="h-4 w-4" />
                   </button>
@@ -933,7 +941,9 @@ export default function ShopPage() {
                       border-gray-200
                       text-gray-500
                     "
-                    aria-label={t.shop.viewList}
+                    aria-label={
+                      t.shop.viewList
+                    }
                   >
                     <List className="h-4 w-4" />
                   </button>
@@ -1069,5 +1079,21 @@ export default function ShopPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-white">
+          <div className="flex min-h-[50vh] items-center justify-center">
+            <div className="h-7 w-7 animate-spin rounded-full border-2 border-green-700 border-t-transparent" />
+          </div>
+        </main>
+      }
+    >
+      <ShopContent />
+    </Suspense>
   );
 }

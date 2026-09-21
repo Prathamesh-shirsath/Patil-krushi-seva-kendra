@@ -241,7 +241,7 @@ export default function CheckoutPage() {
 
     if (checkingDelivery) {
       toast.info(
-        t.checkout.toast.checkingDelivery || "Checking delivery availability. Please wait."
+        "Checking delivery availability. Please wait."
       );
 
       return false;
@@ -249,7 +249,7 @@ export default function CheckoutPage() {
 
     if (deliveryAvailable !== true) {
       toast.error(
-        t.checkout.toast.deliveryNotAvailable?.replace("{pincode}", activeAddress.pincode) || `Sorry, we currently don't deliver to pincode ${activeAddress.pincode}.`
+        `Sorry, we currently don't deliver to pincode ${activeAddress.pincode}.`
       );
 
       return false;
@@ -307,7 +307,7 @@ export default function CheckoutPage() {
         !window.Razorpay
       ) {
         toast.error(
-          t.checkout.toast.paymentGatewayLoading || "Payment gateway is still loading. Please try again."
+          `Sorry, we currently don't deliver to pincode ${activeAddress.pincode}.`
         );
 
         return;
@@ -938,8 +938,8 @@ export default function CheckoutPage() {
                                 )
                               }
                               className={`relative cursor-pointer rounded-2xl border p-4 transition-all ${isSelected
-                                  ? "border-emerald-600 bg-emerald-50/40 ring-2 ring-emerald-600/20"
-                                  : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                                ? "border-emerald-600 bg-emerald-50/40 ring-2 ring-emerald-600/20"
+                                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                                 }`}
                             >
                               <div className="flex items-start justify-between gap-2">
@@ -978,7 +978,7 @@ export default function CheckoutPage() {
 
                                   <p className="text-xs font-medium text-slate-500">
                                     {address.isDefault && (<span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800 mr-2">{t.checkout.address.defaultBadge}</span>)}
-{address.village}, {" "}
+                                    {address.village}, {" "}
 
                                     {address.taluka
                                       ? `${address.taluka}, `
@@ -1005,8 +1005,8 @@ export default function CheckoutPage() {
 
                                 <div
                                   className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${isSelected
-                                      ? "border-emerald-600 bg-emerald-600 text-white"
-                                      : "border-slate-300 bg-white"
+                                    ? "border-emerald-600 bg-emerald-600 text-white"
+                                    : "border-slate-300 bg-white"
                                     }`}
                                 >
                                   {isSelected && (
@@ -1030,10 +1030,10 @@ export default function CheckoutPage() {
                   {activeAddress && (
                     <div
                       className={`mt-5 rounded-2xl border p-4 transition-all ${checkingDelivery
-                          ? "border-slate-200 bg-slate-50"
-                          : deliveryAvailable
-                            ? "border-emerald-200 bg-emerald-50"
-                            : "border-red-200 bg-red-50"
+                        ? "border-slate-200 bg-slate-50"
+                        : deliveryAvailable
+                          ? "border-emerald-200 bg-emerald-50"
+                          : "border-red-200 bg-red-50"
                         }`}
                     >
                       <div className="flex items-start gap-3">
@@ -1150,9 +1150,9 @@ export default function CheckoutPage() {
                       )
                     }
                     className={`cursor-pointer rounded-2xl border p-4 transition-all sm:p-5 ${paymentMethod ===
-                        "RAZORPAY"
-                        ? "border-emerald-600 bg-emerald-50/30 ring-2 ring-emerald-600/20"
-                        : "border-slate-200 bg-white hover:border-slate-300"
+                      "RAZORPAY"
+                      ? "border-emerald-600 bg-emerald-50/30 ring-2 ring-emerald-600/20"
+                      : "border-slate-200 bg-white hover:border-slate-300"
                       }`}
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -1194,9 +1194,9 @@ export default function CheckoutPage() {
 
                       <div
                         className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${paymentMethod ===
-                            "RAZORPAY"
-                            ? "border-emerald-600 bg-emerald-600 text-white"
-                            : "border-slate-300 bg-white"
+                          "RAZORPAY"
+                          ? "border-emerald-600 bg-emerald-600 text-white"
+                          : "border-slate-300 bg-white"
                           }`}
                       >
                         {paymentMethod ===
@@ -1217,9 +1217,9 @@ export default function CheckoutPage() {
                       )
                     }
                     className={`cursor-pointer rounded-2xl border p-4 transition-all sm:p-5 ${paymentMethod ===
-                        "COD"
-                        ? "border-emerald-600 bg-emerald-50/30 ring-2 ring-emerald-600/20"
-                        : "border-slate-200 bg-white hover:border-slate-300"
+                      "COD"
+                      ? "border-emerald-600 bg-emerald-50/30 ring-2 ring-emerald-600/20"
+                      : "border-slate-200 bg-white hover:border-slate-300"
                       }`}
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -1238,9 +1238,9 @@ export default function CheckoutPage() {
 
                       <div
                         className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${paymentMethod ===
-                            "COD"
-                            ? "border-emerald-600 bg-emerald-600 text-white"
-                            : "border-slate-300 bg-white"
+                          "COD"
+                          ? "border-emerald-600 bg-emerald-600 text-white"
+                          : "border-slate-300 bg-white"
                           }`}
                       >
                         {paymentMethod ===
@@ -1504,10 +1504,10 @@ export default function CheckoutPage() {
                   {activeAddress && (
                     <div
                       className={`mb-4 rounded-2xl border px-3 py-2.5 ${checkingDelivery
-                          ? "border-slate-200 bg-slate-50"
-                          : deliveryAvailable
-                            ? "border-emerald-200 bg-emerald-50"
-                            : "border-red-200 bg-red-50"
+                        ? "border-slate-200 bg-slate-50"
+                        : deliveryAvailable
+                          ? "border-emerald-200 bg-emerald-50"
+                          : "border-red-200 bg-red-50"
                         }`}
                     >
                       <div className="flex items-center gap-2">
@@ -1522,10 +1522,10 @@ export default function CheckoutPage() {
 
                         <span
                           className={`text-xs font-bold ${checkingDelivery
-                              ? "text-slate-600"
-                              : deliveryAvailable
-                                ? "text-emerald-700"
-                                : "text-red-700"
+                            ? "text-slate-600"
+                            : deliveryAvailable
+                              ? "text-emerald-700"
+                              : "text-red-700"
                             }`}
                         >
                           {checkingDelivery
@@ -1553,10 +1553,10 @@ export default function CheckoutPage() {
                       true
                     }
                     className={`h-12 w-full rounded-2xl text-sm font-bold text-white shadow-md transition-all active:scale-[0.99] ${deliveryAvailable ===
-                        true &&
-                        !checkingDelivery
-                        ? "bg-emerald-700 shadow-emerald-700/20 hover:bg-emerald-800"
-                        : "cursor-not-allowed bg-slate-300 shadow-none hover:bg-slate-300"
+                      true &&
+                      !checkingDelivery
+                      ? "bg-emerald-700 shadow-emerald-700/20 hover:bg-emerald-800"
+                      : "cursor-not-allowed bg-slate-300 shadow-none hover:bg-slate-300"
                       }`}
                   >
                     {isProcessing ? (

@@ -6,6 +6,7 @@ export type TranslationDictionary = {
     english: string;
     marathi: string;
   };
+
   header: {
     brandName: string;
     logoAlt: string;
@@ -17,6 +18,7 @@ export type TranslationDictionary = {
     wishlistLabel: string;
     cartLabel: string;
   };
+
   navigation: {
     home: string;
     shop: string;
@@ -25,6 +27,7 @@ export type TranslationDictionary = {
     about: string;
     contact: string;
   };
+
   common: {
     search: string;
     addToCart: string;
@@ -40,6 +43,7 @@ export type TranslationDictionary = {
     };
     continueShopping: string;
   };
+
   shop: {
     title: string;
     subtitle: string;
@@ -53,27 +57,32 @@ export type TranslationDictionary = {
     of: string;
     products: string;
     sortBy: string;
+
     sort: {
       featured: string;
       priceLow: string;
       priceHigh: string;
       rating: string;
     };
+
     viewGrid: string;
     viewList: string;
     emptyTitle: string;
     emptyMessage: string;
     emptyHint: string;
+
     filterAll: {
       categories: string;
       brands: string;
       productTypes: string;
       availability: string;
     };
+
     stock: {
       inStock: string;
       outOfStock: string;
     };
+
     sections: {
       categories: string;
       brands: string;
@@ -81,11 +90,13 @@ export type TranslationDictionary = {
       productType: string;
       availability: string;
     };
+
     price: {
       to: string;
       minPlaceholder: string;
       maxPlaceholder: string;
     };
+
     benefits: {
       originalProducts: string;
       originalProductsDescription: string;
@@ -98,11 +109,13 @@ export type TranslationDictionary = {
       expertSupport: string;
       expertSupportDescription: string;
     };
+
     aria: {
       closeFilters: string;
       minPrice: string;
       maxPrice: string;
     };
+
     categoriesPage: {
       title: string;
       subtitle: string;
@@ -120,15 +133,18 @@ export type TranslationDictionary = {
       loadingProducts: string;
     };
   };
+
   account: {
     login: string;
     logout: string;
     profile: string;
     adminDashboard: string;
   };
+
   cart: {
     label: string;
     title: string;
+
     summary: {
       title: string;
       totalItems: string;
@@ -140,19 +156,23 @@ export type TranslationDictionary = {
       checkout: string;
       clear: string;
     };
+
     empty: {
       title: string;
       message: string;
     };
+
     item: {
       packSize: string;
       stock: string;
       remove: string;
     };
+
     aria: {
       decreaseQuantity: string;
       increaseQuantity: string;
     };
+
     toast: {
       cleared: string;
       clearFailed: string;
@@ -162,8 +182,10 @@ export type TranslationDictionary = {
       updateFailed: string;
     };
   };
+
   wishlist: {
     label: string;
+
     hero: {
       premiumBadge: string;
       title1: string;
@@ -171,14 +193,17 @@ export type TranslationDictionary = {
       description: string;
       share: string;
     };
+
     stats: {
       savedProducts: string;
       wishlistValue: string;
       offers: string;
       backInStock: string;
     };
+
     filters: {
       search: string;
+
       categories: {
         all: string;
         seeds: string;
@@ -186,22 +211,26 @@ export type TranslationDictionary = {
         pesticides: string;
         bioProducts: string;
       };
+
       sortOptions: {
         newest: string;
         priceLowHigh: string;
         priceHighLow: string;
         highestRated: string;
       };
+
       filter: string;
       clear: string;
       sort: string;
       showing: string;
       productsInWishlist: string;
     };
+
     grid: {
       title: string;
       items: string;
     };
+
     card: {
       packSize: string;
       addCart: string;
@@ -209,6 +238,7 @@ export type TranslationDictionary = {
       remove: string;
       removing: string;
     };
+
     summary: {
       title: string;
       subtitle: string;
@@ -219,6 +249,7 @@ export type TranslationDictionary = {
       addAll: string;
       addingProducts: string;
     };
+
     benefits: {
       title: string;
       delivery: string;
@@ -228,15 +259,18 @@ export type TranslationDictionary = {
       offers: string;
       offersSubtitle: string;
     };
+
     cta: {
       title: string;
       description: string;
       explore: string;
     };
+
     empty: {
       title: string;
       message: string;
     };
+
     toast: {
       added: string;
       addFailed: string;
@@ -249,6 +283,7 @@ export type TranslationDictionary = {
       genericError: string;
     };
   };
+
   checkout: {
     header: {
       breadcrumbs: {
@@ -260,11 +295,13 @@ export type TranslationDictionary = {
       title: string;
       subtitle: string;
     };
+
     auth: {
       warningTitle: string;
       warningDesc: string;
       signIn: string;
     };
+
     address: {
       title: string;
       subtitle: string;
@@ -275,6 +312,7 @@ export type TranslationDictionary = {
       defaultBadge: string;
       deliveringTo: string;
     };
+
     payment: {
       title: string;
       subtitle: string;
@@ -288,6 +326,7 @@ export type TranslationDictionary = {
       codTitle: string;
       codDesc: string;
     };
+
     trust: {
       genuineTitle: string;
       genuineDesc: string;
@@ -296,6 +335,7 @@ export type TranslationDictionary = {
       deliveryTitle: string;
       deliveryDesc: string;
     };
+
     summary: {
       title: string;
       item: string;
@@ -303,12 +343,14 @@ export type TranslationDictionary = {
       qty: string;
       taxesDesc: string;
     };
+
     actions: {
       processing: string;
       payRazorpay: (amount: string) => string;
       confirmCod: string;
       loadingDetails: string;
     };
+
     toast: {
       signInRequiredCheckout: string;
       addressRequired: string;
@@ -326,10 +368,12 @@ export type TranslationDictionary = {
       orderFailedGeneric: string;
     };
   };
+
   profile: {
     title: string;
     premiumMember: string;
     description: string;
+
     sidebar: {
       myProfile: string;
       myAddresses: string;
@@ -338,6 +382,7 @@ export type TranslationDictionary = {
       logout: string;
       myAccount: string;
     };
+
     form: {
       loading: string;
       nameLabel: string;
@@ -348,6 +393,7 @@ export type TranslationDictionary = {
       saving: string;
       saveChanges: string;
     };
+
     addresses: {
       title: string;
       description: string;
@@ -361,9 +407,11 @@ export type TranslationDictionary = {
       delete: string;
       confirmDelete: string;
     };
+
     addressDialog: {
       addTitle: string;
       editTitle: string;
+
       labels: {
         fullName: string;
         phone: string;
@@ -376,6 +424,7 @@ export type TranslationDictionary = {
         address: string;
         landmark: string;
       };
+
       placeholders: {
         fullName: string;
         phone: string;
@@ -388,6 +437,7 @@ export type TranslationDictionary = {
         address: string;
         landmark: string;
       };
+
       validation: {
         nameRequired: string;
         nameMin: string;
@@ -404,12 +454,14 @@ export type TranslationDictionary = {
         addressRequired: string;
         addressMin: string;
       };
+
       buttons: {
         cancel: string;
         update: string;
         add: string;
         saving: string;
       };
+
       toast: {
         updateSuccess: string;
         addSuccess: string;
@@ -417,6 +469,7 @@ export type TranslationDictionary = {
       };
     };
   };
+
   orders: {
     list: {
       premiumOrders: string;
@@ -448,6 +501,7 @@ export type TranslationDictionary = {
       buyAgain: string;
       addressUnavailable: string;
     };
+
     details: {
       loading: string;
       notFoundTitle: string;
@@ -481,6 +535,7 @@ export type TranslationDictionary = {
       transactionId: string;
       trackThisOrder: string;
     };
+
     track: {
       loading: string;
       orderStatus: string;
@@ -493,6 +548,7 @@ export type TranslationDictionary = {
       paymentMethod: string;
       paymentStatus: string;
     };
+
     status: {
       pending: string;
       pendingDesc: string;
@@ -505,6 +561,7 @@ export type TranslationDictionary = {
       cancelled: string;
       cancelledDesc: string;
     };
+
     payment: {
       cod: string;
       paidOnline: string;
@@ -515,6 +572,7 @@ export type TranslationDictionary = {
       methodRazorpay: string;
     };
   };
+
   footer: {
     description: string;
     quickLinks: string;
@@ -535,6 +593,7 @@ export type TranslationDictionary = {
     hours: string;
     copyright: string;
   };
+
   home: {
     hero: {
       fallbackLabel: string;
@@ -549,6 +608,7 @@ export type TranslationDictionary = {
       goToBanner: string;
       openBanner: string;
     };
+
     features: {
       qualityProducts: string;
       qualityProductsDescription: string;
@@ -559,30 +619,35 @@ export type TranslationDictionary = {
       expertSupport: string;
       expertSupportDescription: string;
     };
+
     categories: {
       featured: string;
       title: string;
       description: string;
       noCategories: string;
     };
+
     brands: {
       trustedPartners: string;
       title: string;
       noBrands: string;
       viewBrandDetails: string;
     };
+
     featuredProducts: {
       eyebrow: string;
       title: string;
       description: string;
       empty: string;
     };
+
     bestSelling: {
       eyebrow: string;
       title: string;
       description: string;
       empty: string;
     };
+
     productsByCategory: {
       eyebrow: string;
       title: string;
@@ -592,6 +657,7 @@ export type TranslationDictionary = {
       product: string;
       products: string;
     };
+
     statistics: {
       eyebrow: string;
       title: string;
@@ -604,40 +670,47 @@ export type TranslationDictionary = {
       customerSatisfaction: string;
       customerSatisfactionDescription: string;
     };
+
     newsletter: {
       title: string;
       description: string;
       emailPlaceholder: string;
       subscribe: string;
     };
+
     productSection: {
       previous: string;
       next: string;
     };
   };
+
   product: {
     notFound: {
       title: string;
       message: string;
       backToShop: string;
     };
+
     details: {
       quantity: string;
       addWishlist: string;
       removeWishlist: string;
       pleaseWait: string;
       whyShopWithUs: string;
+
       tabs: {
         description: string;
         specifications: string;
         usageGuide: string;
       };
+
       emptyFeatures: string;
       emptyCropRecommendations: string;
       emptyUsageGuide: string;
       recommendedFor: string;
       youMayAlsoLike: string;
     };
+
     aria: {
       previousImage: string;
       nextImage: string;
@@ -646,6 +719,7 @@ export type TranslationDictionary = {
       increaseQuantity: string;
     };
   };
+
   reviews: {
     customerFeedback: string;
     title: string;
@@ -676,6 +750,7 @@ export type TranslationDictionary = {
     errorSubmit: string;
     defaultCustomerName: string;
   };
+
   contact: {
     hero: {
       title: string;
@@ -686,6 +761,7 @@ export type TranslationDictionary = {
       farmerFirst: string;
       successPriority: string;
     };
+
     cards: {
       callUs: string;
       callHours: string;
@@ -696,10 +772,12 @@ export type TranslationDictionary = {
       emailDescription: string;
       visitStore: string;
     };
+
     form: {
       title: string;
       description: string;
       success: string;
+
       labels: {
         name: string;
         email: string;
@@ -707,12 +785,14 @@ export type TranslationDictionary = {
         subject: string;
         message: string;
       };
+
       placeholders: {
         name: string;
         email: string;
         phone: string;
         message: string;
       };
+
       subjects: {
         select: string;
         productInquiry: string;
@@ -721,8 +801,10 @@ export type TranslationDictionary = {
         returnRefund: string;
         other: string;
       };
+
       submit: string;
     };
+
     location: {
       title: string;
       mapsCta: string;
@@ -734,6 +816,7 @@ export type TranslationDictionary = {
       online247: string;
       onlineDescription: string;
     };
+
     trust: {
       originalProducts: string;
       originalProductsDescription: string;
@@ -746,24 +829,30 @@ export type TranslationDictionary = {
       securePayments: string;
       securePaymentsDescription: string;
     };
+
     accessibility: {
       farmSupport: string;
       storeLocation: string;
     };
+  };
+
   brands: {
     title: string;
     subtitle: string;
     authorizedPartners: string;
     breadcrumb: string;
     loading: string;
+
     error: {
       title: string;
       message: string;
     };
+
     empty: {
       title: string;
       message: string;
     };
+
     card: {
       trustedBrand: string;
       fallbackDescription: string;
@@ -774,10 +863,12 @@ export type TranslationDictionary = {
       exploreProducts: string;
       unavailable: string;
     };
+
     accessibility: {
       logoAlt: string;
     };
   };
+
   about: {
     hero: {
       badge: string;
@@ -785,21 +876,25 @@ export type TranslationDictionary = {
       title2: string;
       subtitle: string;
       description: string;
+
       tags: {
         genuine: string;
         fast: string;
         expert: string;
       };
+
       buttons: {
         explore: string;
         contact: string;
       };
     };
+
     whoWeAre: {
       badge: string;
       title1: string;
       title2: string;
       description: string;
+
       features: {
         genuine: string;
         expert: string;
@@ -807,10 +902,12 @@ export type TranslationDictionary = {
         affordable: string;
       };
     };
+
     journey: {
       badge: string;
       title: string;
       description: string;
+
       milestones: {
         year2018: string;
         year2020: string;
@@ -819,47 +916,90 @@ export type TranslationDictionary = {
         year2025: string;
       };
     };
+
     mission: {
       badge: string;
       title: string;
       description: string;
+
       cards: {
         mission: {
           title: string;
           desc: string;
         };
+
         vision: {
           title: string;
           desc: string;
         };
+
         values: {
           title: string;
           desc: string;
         };
       };
     };
+
     certifications: {
       badge: string;
       title: string;
       description: string;
+
       items: {
-        iso: { title: string; desc: string };
-        govt: { title: string; desc: string };
-        genuine: { title: string; desc: string };
-        fast: { title: string; desc: string };
+        iso: {
+          title: string;
+          desc: string;
+        };
+
+        govt: {
+          title: string;
+          desc: string;
+        };
+
+        genuine: {
+          title: string;
+          desc: string;
+        };
+
+        fast: {
+          title: string;
+          desc: string;
+        };
       };
+
       trustBanner: {
-        quality: { title: string; desc: string };
-        support: { title: string; desc: string };
-        price: { title: string; desc: string };
-        products: { title: string; desc: string };
-        available: { title: string; desc: string };
+        quality: {
+          title: string;
+          desc: string;
+        };
+
+        support: {
+          title: string;
+          desc: string;
+        };
+
+        price: {
+          title: string;
+          desc: string;
+        };
+
+        products: {
+          title: string;
+          desc: string;
+        };
+
+        available: {
+          title: string;
+          desc: string;
+        };
       };
     };
+
     stats: {
       badge: string;
       title: string;
       description: string;
+
       labels: {
         farmers: string;
         products: string;
@@ -867,6 +1007,7 @@ export type TranslationDictionary = {
         genuine: string;
       };
     };
+
     founder: {
       badge: string;
       title: string;
@@ -874,36 +1015,51 @@ export type TranslationDictionary = {
       role: string;
       quote: string;
       description: string;
+
       stats: {
         farmers: string;
         products: string;
       };
     };
+
     team: {
       badge: string;
       title: string;
       description: string;
+
       members: {
-        expert: { name: string; role: string };
-        support: { name: string; role: string };
-        logistics: { name: string; role: string };
+        expert: {
+          name: string;
+          role: string;
+        };
+
+        support: {
+          name: string;
+          role: string;
+        };
+
+        logistics: {
+          name: string;
+          role: string;
+        };
       };
     };
+
     cta: {
       badge: string;
       title: string;
       description: string;
+
       buttons: {
         shop: string;
         contact: string;
       };
     };
+
     accessibility: {
       heroAlt: string;
       whoWeAreAlt: string;
       founderAlt: string;
     };
   };
-};
-
 };

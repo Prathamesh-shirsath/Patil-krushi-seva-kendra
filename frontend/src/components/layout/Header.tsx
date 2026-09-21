@@ -168,7 +168,7 @@ export default function Header() {
   ]);
 
   // =========================================================
-  // 🔥 INSTANT WISHLIST UPDATE
+  // INSTANT WISHLIST UPDATE
   // =========================================================
 
   useEffect(() => {
@@ -190,7 +190,7 @@ export default function Header() {
   }, [fetchWishlistCount]);
 
   // =========================================================
-  // 🔥 INSTANT CART UPDATE
+  // INSTANT CART UPDATE
   // =========================================================
 
   useEffect(() => {
@@ -301,11 +301,10 @@ export default function Header() {
                 <Link
                   key={item.key}
                   href={item.href}
-                  className={`text-sm font-medium transition-colors hover:text-green-600 whitespace-normal text-center leading-snug ${
-                    pathname === item.href
+                  className={`text-sm font-medium transition-colors hover:text-green-600 whitespace-normal text-center leading-snug ${pathname === item.href
                       ? "text-green-600 border-b-2 border-green-600 pb-0.5"
                       : "text-gray-700"
-                  }`}
+                    }`}
                 >
                   {t.navigation[item.key]}
                 </Link>
@@ -362,6 +361,7 @@ export default function Header() {
                     aria-label={t.language.label}
                   >
                     <Languages className="h-4 w-4" />
+
                     {locale === "en"
                       ? t.language.english
                       : t.language.marathi}
@@ -371,14 +371,22 @@ export default function Header() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
                     onSelect={() => setLocale("en")}
-                    className={locale === "en" ? "bg-green-50 font-semibold text-green-700" : ""}
+                    className={
+                      locale === "en"
+                        ? "bg-green-50 font-semibold text-green-700"
+                        : ""
+                    }
                   >
                     {t.language.english}
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
                     onSelect={() => setLocale("mr")}
-                    className={locale === "mr" ? "bg-green-50 font-semibold text-green-700" : ""}
+                    className={
+                      locale === "mr"
+                        ? "bg-green-50 font-semibold text-green-700"
+                        : ""
+                    }
                   >
                     {t.language.marathi}
                   </DropdownMenuItem>
@@ -406,11 +414,10 @@ export default function Header() {
                   aria-label={t.wishlist.label}
                 >
                   <Heart
-                    className={`h-5 w-5 ${
-                      wishlistCount > 0
+                    className={`h-5 w-5 ${wishlistCount > 0
                         ? "fill-red-500 text-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
 
                   <span
@@ -466,7 +473,7 @@ export default function Header() {
 
                       <DropdownMenuItem asChild>
                         <Link href="/orders">
-                          {t.orders.label}
+                          {t.orders.list.purchaseHistory}
                         </Link>
                       </DropdownMenuItem>
 
@@ -507,6 +514,7 @@ export default function Header() {
                       "
                     >
                       <User className="h-4 w-4" />
+
                       {t.account.login}
                     </Button>
                   </Link>
@@ -593,16 +601,19 @@ export default function Header() {
                         {t.language.label}
                       </p>
 
-                      <div className="mt-2 grid grid-cols-2 gap-2" role="group" aria-label={t.language.label}>
+                      <div
+                        className="mt-2 grid grid-cols-2 gap-2"
+                        role="group"
+                        aria-label={t.language.label}
+                      >
                         <button
                           type="button"
                           onClick={() => setLocale("en")}
                           aria-pressed={locale === "en"}
-                          className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition-colors ${
-                            locale === "en"
+                          className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition-colors ${locale === "en"
                               ? "border-green-700 bg-green-50 text-green-700"
                               : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           {t.language.english}
                         </button>
@@ -611,11 +622,10 @@ export default function Header() {
                           type="button"
                           onClick={() => setLocale("mr")}
                           aria-pressed={locale === "mr"}
-                          className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition-colors ${
-                            locale === "mr"
+                          className={`min-h-11 rounded-lg border px-3 text-sm font-semibold transition-colors ${locale === "mr"
                               ? "border-green-700 bg-green-50 text-green-700"
                               : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                          }`}
+                            }`}
                         >
                           {t.language.marathi}
                         </button>
@@ -630,11 +640,10 @@ export default function Header() {
                     >
                       <span className="flex items-center gap-2">
                         <Heart
-                          className={`h-5 w-5 ${
-                            wishlistCount > 0
+                          className={`h-5 w-5 ${wishlistCount > 0
                               ? "fill-red-500 text-red-500"
                               : ""
-                          }`}
+                            }`}
                         />
 
                         {t.wishlist.label}
@@ -692,7 +701,7 @@ export default function Header() {
                             variant="outline"
                             className="w-full"
                           >
-                            {t.orders.label}
+                            {t.orders.list.purchaseHistory}
                           </Button>
                         </Link>
 
@@ -732,6 +741,7 @@ export default function Header() {
                           "
                         >
                           <User className="mr-2 h-4 w-4" />
+
                           {t.account.login}
                         </Button>
                       </Link>

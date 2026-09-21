@@ -207,8 +207,10 @@ const en = {
       items: "Items",
     },
     card: {
+      packSize: "Pack Size:",
       addCart: "Add Cart",
       view: "View",
+      remove: "Remove",
       removing: "Removing...",
     },
     summary: {
