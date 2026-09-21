@@ -46,6 +46,9 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://localhost:3001",
+      "https://patilkrushi.com",
+      "https://www.patilkrushi.com",
+      "https://admin.patilkrushi.com",
     ],
     credentials: true,
   })
