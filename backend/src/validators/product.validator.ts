@@ -10,23 +10,24 @@ const booleanFromFormData = z.preprocess(
   },
   z.boolean()
 );
-
 const variantSchema = z.object({
   packSize: z
     .string()
     .trim()
-    .min(
-      1,
-      "Variant pack size is required"
-    ),
+    .min(1, "Variant pack size is required"),
 
   price: z.coerce
     .number()
-    .positive(
-      "Variant price must be greater than 0"
-    ),
-});
+    .positive("Variant price must be greater than 0"),
 
+  stock: z.coerce
+    .number()
+    .int()
+    .min(0, "Variant stock cannot be negative")
+    .default(0),
+
+  status: booleanFromFormData.default(true),
+});
 export const createProductSchema =
   z.object({
     name: z

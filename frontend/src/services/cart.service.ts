@@ -21,13 +21,15 @@ export const getCartCount = async (): Promise<number> => {
 
 export const addToCart = async (
     productId: string,
-    quantity = 1
+    quantity = 1,
+    variantId?: string
 ) => {
     const { data } = await axios.post(
         `${API}/cart`,
         {
             productId,
             quantity,
+            ...(variantId ? { variantId } : {}),
         },
         {
             withCredentials: true,

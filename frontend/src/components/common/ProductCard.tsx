@@ -18,6 +18,7 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useAddWishlist } from "@/hooks/useAddWishlist";
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
 import { useLanguage } from "@/i18n/useLanguage";
+
 import {
   isProductInStock,
   STOCK_IN,
@@ -122,17 +123,21 @@ export default function ProductCard({
       if (!response.ok) {
         throw new Error(
           result?.message ||
-          "Unable to add product to cart."
+            "Unable to add product to cart."
         );
       }
 
       // =====================================================
-      // CART HEADER BADGE INSTANT UPDATE
+      // CART HEADER - INSTANT UPDATE
       // =====================================================
 
       window.dispatchEvent(
         new Event("cart-updated")
       );
+
+      // =====================================================
+      // CART SUCCESS NOTIFICATION
+      // =====================================================
 
       toast.success(
         t.common.toast.addedToCart
@@ -145,11 +150,49 @@ export default function ProductCard({
 
       toast.error(
         error?.message ||
-        t.common.toast.addToCartFailed
+          t.common.toast.addToCartFailed
       );
     } finally {
       setCartLoading(false);
     }
+  };
+
+  // =========================================================
+  // WISHLIST HANDLER
+  // =========================================================
+
+  const handleWishlist = () => {
+    if (wishlistLoading) return;
+
+    // =======================================================
+    // REMOVE FROM WISHLIST
+    // =======================================================
+
+    if (isWishlisted) {
+      removeWishlist.mutate(id, {
+        onSuccess: () => {
+          // Header wishlist count instant update
+          window.dispatchEvent(
+            new Event("wishlist-updated")
+          );
+        },
+      });
+
+      return;
+    }
+
+    // =======================================================
+    // ADD TO WISHLIST
+    // =======================================================
+
+    addWishlist.mutate(id, {
+      onSuccess: () => {
+        // Header wishlist count instant update
+        window.dispatchEvent(
+          new Event("wishlist-updated")
+        );
+      },
+    });
   };
 
   // =========================================================
@@ -201,9 +244,13 @@ export default function ProductCard({
 
       <CardContent className="flex flex-1 flex-col px-3 pb-3 pt-0">
 
+        {/* Category */}
+
         <p className="truncate text-[10px] font-bold uppercase tracking-wide text-green-700">
           {category ?? t.common.productFallback}
         </p>
+
+        {/* Product Name */}
 
         {productHref ? (
           <Link href={productHref}>
@@ -216,6 +263,8 @@ export default function ProductCard({
             {name}
           </h3>
         )}
+
+        {/* Brand */}
 
         <p className="mt-0.5 truncate text-[11px] text-gray-500">
           {t.common.brandLabel}{" "}
@@ -269,7 +318,7 @@ export default function ProductCard({
               cartLoading
             }
             onClick={handleAddToCart}
-            className="flex-1 bg-green-700 px-2 text-xs font-bold hover:bg-green-800 sm:px-3 h-10"
+            className="h-10 flex-1 bg-green-700 px-2 text-xs font-bold hover:bg-green-800 sm:px-3"
           >
             <ShoppingCart className="mr-1.5 h-3.5 w-3.5 shrink-0" />
 
@@ -284,14 +333,8 @@ export default function ProductCard({
             type="button"
             disabled={wishlistLoading}
             aria-label={t.wishlist.label}
-            onClick={() => {
-              if (isWishlisted) {
-                removeWishlist.mutate(id);
-              } else {
-                addWishlist.mutate(id);
-              }
-            }}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-green-200 transition hover:bg-green-50 disabled:opacity-50"
+            onClick={handleWishlist}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-green-200 transition-all duration-200 hover:bg-green-50 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Heart
               size={18}
@@ -305,6 +348,6 @@ export default function ProductCard({
 
         </div>
       </CardContent>
-    </Card>
+    </Card>                                                                                                                                                    
   );
 }
