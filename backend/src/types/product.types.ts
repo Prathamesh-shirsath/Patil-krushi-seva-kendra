@@ -1,6 +1,8 @@
 export interface ProductVariantInput {
     packSize: string;
     price: number;
+    stock: number;
+    status: boolean;
 }
 
 export interface CreateProductInput {

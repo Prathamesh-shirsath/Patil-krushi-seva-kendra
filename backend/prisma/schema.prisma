@@ -74,12 +74,13 @@ model CartItem {
   id        String   @id @default(cuid())
   cartId    String
   productId String
+  variantId String?
   quantity  Int      @default(1)
   createdAt DateTime @default(now())
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id])
 
-  @@unique([cartId, productId])
+  cart    Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product         @relation(fields: [productId], references: [id])
+  variant ProductVariant? @relation(fields: [variantId], references: [id])
 }
 
 model Wishlist {
@@ -234,12 +235,15 @@ model Product {
 }
 
 model ProductVariant {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   packSize  String
   price     Float
+  stock     Int        @default(0)
+  status    Boolean    @default(true)
   productId String
-  createdAt DateTime @default(now())
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems CartItem[]
 }
 
 model Brand {
@@ -308,7 +312,6 @@ model AppSettings {
   updatedAt          DateTime
 }
 
-
 model DeliveryPincode {
   id        String   @id @default(cuid())
   pincode   String   @unique
@@ -319,7 +322,6 @@ model DeliveryPincode {
   @@index([pincode])
   @@index([isActive])
 }
-
 
 model OrderAddress {
   id          String  @id

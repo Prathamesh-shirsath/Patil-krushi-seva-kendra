@@ -15,3 +15,9 @@ export interface CartSummary {
   discount: number;
   grandTotal: number;
 }
+export interface CreateCartItemInput {
+  userId: string;
+  productId: string;
+  variantId?: string;
+  quantity: number;
+}

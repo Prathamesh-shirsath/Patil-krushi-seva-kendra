@@ -15,11 +15,12 @@ export type ProductBrand = {
   createdAt?: string;
   updatedAt?: string;
 };
-
 export type ProductVariant = {
   id: string;
   packSize: string;
   price: number | string;
+  stock: number;
+  status: boolean;
   productId?: string;
   createdAt?: string;
 };

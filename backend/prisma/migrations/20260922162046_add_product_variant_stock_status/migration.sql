@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "ProductVariant" ADD COLUMN     "status" BOOLEAN NOT NULL DEFAULT true,
+ADD COLUMN     "stock" INTEGER NOT NULL DEFAULT 0;

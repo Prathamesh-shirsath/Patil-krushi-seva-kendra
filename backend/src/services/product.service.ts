@@ -42,21 +42,31 @@ export const createProduct = async (
       status:
         data.status ?? true,
 
+      // =================================================
+      // PRODUCT VARIANTS
+      // =================================================
+
       variants:
         data.variants &&
-          data.variants.length > 0
+        data.variants.length > 0
           ? {
-            create:
-              data.variants.map(
-                (variant) => ({
-                  packSize:
-                    variant.packSize,
+              create:
+                data.variants.map(
+                  (variant) => ({
+                    packSize:
+                      variant.packSize,
 
-                  price:
-                    variant.price,
-                })
-              ),
-          }
+                    price:
+                      variant.price,
+
+                    stock:
+                      variant.stock ?? 0,
+
+                    // Variant automatically ACTIVE
+                    status: true,
+                  })
+                ),
+            }
           : undefined,
     },
 
@@ -96,8 +106,8 @@ export const getAllProducts = async (
     ...(includeInactive
       ? {}
       : {
-        status: true,
-      }),
+          status: true,
+        }),
 
     ...(search && {
       OR: [
@@ -239,6 +249,10 @@ export const updateProduct = async (
   id: string,
   data: UpdateProductInput
 ) => {
+  // ---------------------------------------------------
+  // Find existing product first
+  // ---------------------------------------------------
+
   const existing =
     await prisma.product.findUnique({
       where: {
@@ -251,6 +265,10 @@ export const updateProduct = async (
       "Product not found"
     );
   }
+
+  // ---------------------------------------------------
+  // Update data object
+  // ---------------------------------------------------
 
   const updateData: any = {};
 
@@ -337,16 +355,18 @@ export const updateProduct = async (
       data.status;
   }
 
-  // ---------------------------------------------------
-  // Variants
-  // ---------------------------------------------------
+  // ===================================================
+  // UPDATE PRODUCT VARIANTS
+  // ===================================================
 
   if (
     data.variants !== undefined
   ) {
     updateData.variants = {
+      // Remove old variants
       deleteMany: {},
 
+      // Create new variants
       create:
         data.variants.map(
           (variant) => ({
@@ -355,13 +375,19 @@ export const updateProduct = async (
 
             price:
               variant.price,
+
+            stock:
+              variant.stock ?? 0,
+
+            // Variant automatically ACTIVE
+            status: true,
           })
         ),
     };
   }
 
   // ---------------------------------------------------
-  // Update
+  // Update product
   // ---------------------------------------------------
 
   return prisma.product.update({

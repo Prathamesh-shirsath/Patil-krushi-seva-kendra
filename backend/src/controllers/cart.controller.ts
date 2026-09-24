@@ -1,3 +1,4 @@
+
 import { Request, Response } from "express";
 
 import {
@@ -28,7 +29,11 @@ export const addToCartController = async (
       });
     }
 
-    const { productId, quantity } = req.body;
+    const {
+      productId,
+      variantId,
+      quantity,
+    } = req.body;
 
     if (!productId) {
       return res.status(400).json({
@@ -53,6 +58,9 @@ export const addToCartController = async (
     const item = await addToCart({
       userId,
       productId: String(productId),
+      variantId: variantId
+        ? String(variantId)
+        : undefined,
       quantity: parsedQuantity,
     });
 
@@ -288,9 +296,7 @@ export const getCartCountController = async (
       });
     }
 
-    const count = await getCartCount(
-      userId
-    );
+    const count = await getCartCount(userId);
 
     return res.status(200).json({
       success: true,
