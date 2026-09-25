@@ -63,7 +63,7 @@ export const createProduct = async (
                       variant.stock ?? 0,
 
                     // Variant automatically ACTIVE
-                    status: true,
+                   status: variant.status ?? true,
                   })
                 ),
             }
@@ -245,25 +245,29 @@ export const getProductBySlug = async (
 // UPDATE PRODUCT
 // =====================================================
 
+// =====================================================
+// UPDATE PRODUCT
+// =====================================================
+
 export const updateProduct = async (
   id: string,
   data: UpdateProductInput
 ) => {
   // ---------------------------------------------------
-  // Find existing product first
+  // Find existing product
   // ---------------------------------------------------
 
-  const existing =
-    await prisma.product.findUnique({
-      where: {
-        id,
-      },
-    });
+  const existing = await prisma.product.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      variants: true,
+    },
+  });
 
   if (!existing) {
-    throw new Error(
-      "Product not found"
-    );
+    throw new Error("Product not found");
   }
 
   // ---------------------------------------------------
@@ -282,108 +286,153 @@ export const updateProduct = async (
   ) {
     updateData.name = data.name;
 
-    updateData.slug =
-      await generateUniqueSlug(
-        data.name
-      );
+    updateData.slug = await generateUniqueSlug(
+      data.name
+    );
   }
 
   // ---------------------------------------------------
   // Basic fields
   // ---------------------------------------------------
 
-  if (
-    data.description !== undefined
-  ) {
-    updateData.description =
-      data.description;
+  if (data.description !== undefined) {
+    updateData.description = data.description;
   }
 
-  if (
-    data.categoryId !== undefined
-  ) {
-    updateData.categoryId =
-      data.categoryId;
+  if (data.categoryId !== undefined) {
+    updateData.categoryId = data.categoryId;
   }
 
-  if (
-    data.brandId !== undefined
-  ) {
-    updateData.brandId =
-      data.brandId;
+  if (data.brandId !== undefined) {
+    updateData.brandId = data.brandId;
   }
 
-  if (
-    data.packSize !== undefined
-  ) {
-    updateData.packSize =
-      data.packSize;
+  if (data.packSize !== undefined) {
+    updateData.packSize = data.packSize;
   }
 
-  if (
-    data.price !== undefined
-  ) {
-    updateData.price =
-      data.price;
+  if (data.price !== undefined) {
+    updateData.price = data.price;
   }
 
-  if (
-    data.stock !== undefined
-  ) {
-    updateData.stock =
-      data.stock;
+  if (data.stock !== undefined) {
+    updateData.stock = data.stock;
   }
 
-  if (
-    data.image !== undefined
-  ) {
-    updateData.image =
-      data.image;
+  if (data.image !== undefined) {
+    updateData.image = data.image;
   }
 
-  if (
-    data.usedForCrops !== undefined
-  ) {
-    updateData.usedForCrops =
-      data.usedForCrops;
+  if (data.usedForCrops !== undefined) {
+    updateData.usedForCrops = data.usedForCrops;
   }
 
-  if (
-    data.status !== undefined
-  ) {
-    updateData.status =
-      data.status;
+  if (data.status !== undefined) {
+    updateData.status = data.status;
   }
 
   // ===================================================
   // UPDATE PRODUCT VARIANTS
   // ===================================================
 
-  if (
-    data.variants !== undefined
-  ) {
-    updateData.variants = {
-      // Remove old variants
-      deleteMany: {},
+  if (data.variants !== undefined) {
+    const incomingVariants = data.variants as Array<
+      (typeof data.variants)[number] & { id?: string }
+    >;
 
-      // Create new variants
-      create:
-        data.variants.map(
-          (variant) => ({
-            packSize:
-              variant.packSize,
+    // -------------------------------------------------
+    // Existing variant IDs
+    // -------------------------------------------------
 
-            price:
-              variant.price,
+    const existingVariantIds = existing.variants.map(
+      (variant) => variant.id
+    );
 
-            stock:
-              variant.stock ?? 0,
+    // -------------------------------------------------
+    // Incoming existing variant IDs
+    // -------------------------------------------------
 
-            // Variant automatically ACTIVE
-            status: true,
-          })
-        ),
-    };
+    const incomingVariantIds = incomingVariants
+      .filter((variant) => variant.id)
+      .map((variant) => variant.id as string);
+
+    // -------------------------------------------------
+    // Delete variants removed from admin
+    // -------------------------------------------------
+
+    const variantsToDelete = existingVariantIds.filter(
+      (variantId) =>
+        !incomingVariantIds.includes(variantId)
+    );
+
+    if (variantsToDelete.length > 0) {
+      await prisma.productVariant.deleteMany({
+        where: {
+          id: {
+            in: variantsToDelete,
+          },
+          productId: id,
+        },
+      });
+    }
+
+    // -------------------------------------------------
+    // Update / Create variants
+    // -------------------------------------------------
+
+    for (const variant of incomingVariants) {
+      // -----------------------------------------------
+      // Existing variant
+      // -----------------------------------------------
+
+      if (variant.id) {
+        await prisma.productVariant.update({
+          where: {
+            id: variant.id,
+          },
+
+          data: {
+            packSize: variant.packSize,
+
+            price: Number(
+              variant.price
+            ),
+
+            stock: Number(
+              variant.stock ?? 0
+            ),
+
+            status:
+              variant.status ?? true,
+          },
+        });
+      }
+
+      // -----------------------------------------------
+      // New variant
+      // -----------------------------------------------
+
+      else {
+        await prisma.productVariant.create({
+          data: {
+            packSize: variant.packSize,
+
+            price: Number(
+              variant.price
+            ),
+
+            stock: Number(
+              variant.stock ?? 0
+            ),
+
+            status:
+              variant.status ?? true,
+
+            productId: id,
+          },
+        });
+      }
+    }
   }
 
   // ---------------------------------------------------

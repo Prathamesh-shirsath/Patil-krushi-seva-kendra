@@ -45,12 +45,23 @@ function normalizeProduct(raw: any): Product {
             ? Number(raw.price)
             : 0;
 
+    /*
+    |--------------------------------------------------------------------------
+    | Normalize Product Variants
+    |--------------------------------------------------------------------------
+    |
+    | IMPORTANT:
+    | Do NOT remove stock/status here.
+    | These values are required when opening the Edit Product page.
+    |
+    */
+
     const variants: ProductVariant[] =
         Array.isArray(raw?.variants)
             ? raw.variants.map(
                 (variant: any) => ({
                     id:
-                        variant?.id,
+                        variant?.id ?? "",
 
                     packSize:
                         variant?.packSize ??
@@ -61,6 +72,26 @@ function normalizeProduct(raw: any): Product {
                             variant?.price ??
                             0
                         ),
+
+                    stock:
+                        Number(
+                            variant?.stock ??
+                            0
+                        ),
+
+                    status:
+                        variant?.status !==
+                        undefined
+                            ? Boolean(
+                                variant.status
+                            )
+                            : true,
+
+                    productId:
+                        variant?.productId,
+
+                    createdAt:
+                        variant?.createdAt,
                 })
             )
             : [];

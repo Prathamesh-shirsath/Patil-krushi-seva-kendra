@@ -88,21 +88,33 @@ export default function ProductDetailsClient({
     [product.variants]
   );
 
-  const activeVariants = useMemo(
+  // Normalize variant data from the API.
+  // Prevents undefined/null stock values from becoming NaN.
+  const normalizedVariants = useMemo(
     () =>
-      allVariants.filter(
-        (variant: ProductVariant) => variant.status !== false
-      ),
+      allVariants.map((variant) => ({
+        ...variant,
+        stock: Number.isFinite(Number(variant.stock))
+          ? Number(variant.stock)
+          : 0,
+        price: Number.isFinite(Number(variant.price))
+          ? Number(variant.price)
+          : 0,
+        status: variant.status !== false,
+      })),
     [allVariants]
   );
 
+  const activeVariants = useMemo(
+    () =>
+      normalizedVariants.filter((variant) => variant.status === true),
+    [normalizedVariants]
+  );
+
+  // Automatically select the first active variant that has stock.
   const firstAvailableVariant = useMemo(
     () =>
-      activeVariants.find(
-        (variant) => Number(variant.stock) > 0
-      ) ??
-      activeVariants[0] ??
-      null,
+      activeVariants.find((variant) => Number(variant.stock) > 0) ?? null,
     [activeVariants]
   );
 
@@ -553,7 +565,7 @@ export default function ProductDetailsClient({
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {allVariants.map((variant, index) => {
+                {normalizedVariants.map((variant, index) => {
                   const stock = Number(variant.stock);
                   const isActive = variant.status !== false;
                   const outOfStock = stock <= 0;
@@ -660,7 +672,7 @@ export default function ProductDetailsClient({
                 </div>
               ) : (
                 <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800">
-                  Pack sizes are available, but none is currently active/in stock.
+                  Pack sizes are available, but none is currently active and in stock. Please update stock and activate at least one pack size from the Admin Panel.
                 </div>
               )}
             </div>
