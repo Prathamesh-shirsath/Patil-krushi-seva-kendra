@@ -89,7 +89,7 @@ export default function CustomersPage() {
       setError("");
 
       const response = await fetch(
-        `${API_URL}/api/admin/customers`,
+        `${API_URL}/admin/customers`,
         {
           method: "GET",
           credentials: "include",
@@ -156,7 +156,7 @@ export default function CustomersPage() {
       setStatsLoading(true);
 
       const response = await fetch(
-        `${API_URL}/api/admin/customers/stats`,
+        `${API_URL}/admin/customers/stats`,
         {
           method: "GET",
           credentials: "include",
