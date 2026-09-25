@@ -52,13 +52,17 @@ import {
     CropSection,
 } from "./crop-section";
 
-import {
-    VariantsSection,
-} from "./variants-section";
+import * as VariantsSectionModule from "./variants-section";
 
 import {
     FormFooter,
 } from "./form-footer";
+
+const VariantsSection =
+    (VariantsSectionModule as any)?.VariantsSection ??
+    function VariantsSectionFallback() {
+        return null;
+    };
 
 import type {
     Product,
