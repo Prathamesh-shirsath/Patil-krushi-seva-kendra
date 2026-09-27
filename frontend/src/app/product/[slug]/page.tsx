@@ -3,8 +3,11 @@ import ProductReviews from "@/components/product/ProductReviews";
 import ProductNotFoundClient from "@/components/product/ProductNotFoundClient";
 
 import { createDemoProduct } from "@/data/demo-product";
-import { relatedProducts } from "@/data/related-products";
-import { getProductBySlug } from "@/services/product.service";
+
+import {
+  getProductBySlug,
+  getRelatedProducts,
+} from "@/services/product.service";
 
 type ProductDetailsPageProps = {
   params: Promise<{
@@ -21,9 +24,9 @@ const isDemoMode =
 
 async function getProductSafely(slug: string) {
   try {
-    const product = await getProductBySlug(slug);
+    const product =
+      await getProductBySlug(slug);
 
-    // Demo mode fallback
     if (!product && isDemoMode) {
       return createDemoProduct(slug);
     }
@@ -35,7 +38,6 @@ async function getProductSafely(slug: string) {
       error
     );
 
-    // Demo mode fallback
     if (isDemoMode) {
       return createDemoProduct(slug);
     }
@@ -58,6 +60,10 @@ export default async function ProductDetailsPage({
     slug
   );
 
+  // ===================================================
+  // GET MAIN PRODUCT
+  // ===================================================
+
   const product =
     await getProductSafely(slug);
 
@@ -70,20 +76,110 @@ export default async function ProductDetailsPage({
   }
 
   // ===================================================
+  // GET RELATED PRODUCTS
+  // ===================================================
+
+  const relatedProducts =
+    await getRelatedProducts(
+      product.categoryId,
+      product.id,
+      4
+    );
+
+  console.log(
+    "RELATED PRODUCTS:",
+    relatedProducts
+  );
+
+  // ===================================================
+  // NORMALIZE RELATED PRODUCTS
+  // ===================================================
+
+  const normalizedRelatedProducts =
+    relatedProducts.map(
+      (relatedProduct) => ({
+        ...relatedProduct,
+
+        // ---------------------------------------------
+        // BRAND
+        // ---------------------------------------------
+
+        brand:
+          typeof relatedProduct.brand ===
+          "string"
+            ? relatedProduct.brand
+            : relatedProduct.brand?.name ??
+              "",
+
+        // ---------------------------------------------
+        // CATEGORY
+        // ---------------------------------------------
+
+        category:
+          typeof relatedProduct.category ===
+          "string"
+            ? relatedProduct.category
+            : relatedProduct.category?.name ??
+              "",
+
+        // ---------------------------------------------
+        // IMAGE
+        // ---------------------------------------------
+
+        image:
+          relatedProduct.image ?? "",
+
+        // ---------------------------------------------
+        // PRICE
+        // ---------------------------------------------
+
+        price: Number(
+          relatedProduct.price ?? 0
+        ),
+
+        // ---------------------------------------------
+        // STOCK / AVAILABILITY
+        // ---------------------------------------------
+
+        availability:
+          Number(
+            relatedProduct.stock ?? 0
+          ) > 0
+            ? ("In Stock" as const)
+            : ("Out of Stock" as const),
+
+        // ---------------------------------------------
+        // RATING
+        // ---------------------------------------------
+
+        rating: 0,
+
+        reviewCount: 0,
+      })
+    );
+
+  console.log(
+    "NORMALIZED RELATED PRODUCTS:",
+    normalizedRelatedProducts
+  );
+
+  // ===================================================
   // PRODUCT PAGE
   // ===================================================
 
   return (
     <main className="bg-white">
       <section className="mx-auto max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
-        
+
         {/* =========================================
             PRODUCT DETAILS
         ========================================= */}
 
         <ProductDetailsClient
           product={product}
-          relatedProducts={relatedProducts}
+          relatedProducts={
+            normalizedRelatedProducts
+          }
         />
 
         {/* =========================================
