@@ -7,6 +7,10 @@ const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
   "http://localhost:5000/api";
 
+// =====================================================
+// BACKEND PRODUCT TYPE
+// =====================================================
+
 export type BackendProduct = {
   id: string;
   name: string;
@@ -27,13 +31,13 @@ export type BackendProduct = {
   category?: {
     id: string;
     name: string;
-    slug: string;
+    slug?: string;
   } | null;
 
   brand?: {
     id: string;
     name: string;
-    slug: string;
+    slug?: string;
   } | null;
 
   variants?: {
@@ -45,21 +49,21 @@ export type BackendProduct = {
   }[];
 };
 
+// =====================================================
+// GET PRODUCTS PARAMS
+// =====================================================
+
 export type GetProductsParams = {
   page?: number;
   limit?: number;
   search?: string;
-
-  /**
-   * Category ID
-   */
   category?: string;
-
-  /**
-   * Brand ID
-   */
   brand?: string;
 };
+
+// =====================================================
+// EXTRACT PRODUCTS
+// =====================================================
 
 function extractProducts(
   result: any
@@ -82,6 +86,81 @@ function extractProducts(
 
   return [];
 }
+
+// =====================================================
+// NORMALIZE PRODUCT
+// =====================================================
+
+function normalizeProduct(
+  product: BackendProduct
+): Product {
+  return {
+    ...product,
+
+    id: product.id ?? "",
+    name: product.name ?? "",
+    slug: product.slug ?? "",
+
+    image: product.image ?? null,
+
+    price: Number(product.price ?? 0),
+
+    packSize:
+      product.packSize ?? "",
+
+    stock: Number(product.stock ?? 0),
+
+    status:
+      product.status !== false,
+
+    description:
+      product.description ?? "",
+
+    usedForCrops:
+      Array.isArray(product.usedForCrops)
+        ? product.usedForCrops
+        : [],
+
+    category: product.category
+      ? {
+          id: product.category.id,
+          name: product.category.name,
+          slug:
+            product.category.slug ?? "",
+        }
+      : null,
+
+    brand: product.brand
+      ? {
+          id: product.brand.id,
+          name: product.brand.name,
+          slug:
+            product.brand.slug ?? "",
+        }
+      : null,
+
+    variants:
+      Array.isArray(product.variants)
+        ? product.variants.map(
+            (variant) => ({
+              ...variant,
+              price: Number(
+                variant.price ?? 0
+              ),
+              stock: Number(
+                variant.stock ?? 0
+              ),
+              status:
+                variant.status !== false,
+            })
+          )
+        : [],
+  } as Product;
+}
+
+// =====================================================
+// GET ALL PRODUCTS
+// =====================================================
 
 export async function getProducts(
   params: GetProductsParams = {}
@@ -110,15 +189,6 @@ export async function getProducts(
     );
   }
 
-  /**
-   * Category ID
-   *
-   * Frontend:
-   * category = categoryId
-   *
-   * Backend:
-   * categoryId
-   */
   if (params.category) {
     searchParams.set(
       "categoryId",
@@ -126,15 +196,6 @@ export async function getProducts(
     );
   }
 
-  /**
-   * Brand ID
-   *
-   * Frontend:
-   * brand = brandId
-   *
-   * Backend:
-   * brandId
-   */
   if (params.brand) {
     searchParams.set(
       "brandId",
@@ -151,9 +212,10 @@ export async function getProducts(
       ? `?${queryString}`
       : "");
 
-  const response = await fetch(url, {
-    cache: "no-store",
-  });
+  const response =
+    await fetch(url, {
+      cache: "no-store",
+    });
 
   if (!response.ok) {
     throw new Error(
@@ -164,25 +226,28 @@ export async function getProducts(
   const result =
     await response.json();
 
-  /**
-   * Only active products
-   * should reach storefront.
-   */
   return extractProducts(result).filter(
     (product) =>
       product.status !== false
   );
 }
 
+// =====================================================
+// GET PRODUCT BY SLUG
+// =====================================================
+
 export async function getProductBySlug(
   slug: string
 ): Promise<Product | null> {
-  const response = await fetch(
-    `${API_URL}/products/${slug}`,
-    {
-      cache: "no-store",
-    }
-  );
+  const response =
+    await fetch(
+      `${API_URL}/products/${encodeURIComponent(
+        slug
+      )}`,
+      {
+        cache: "no-store",
+      }
+    );
 
   if (response.status === 404) {
     return null;
@@ -204,4 +269,73 @@ export async function getProductBySlug(
   }
 
   return result.data;
+}
+
+// =====================================================
+// GET RELATED PRODUCTS
+// =====================================================
+
+export async function getRelatedProducts(
+  categoryId: string,
+  currentProductId: string,
+  limit: number = 4
+): Promise<Product[]> {
+  if (!categoryId) {
+    console.warn(
+      "getRelatedProducts: categoryId is empty"
+    );
+
+    return [];
+  }
+
+  try {
+    const response =
+      await fetch(
+        `${API_URL}/products?categoryId=${encodeURIComponent(
+          categoryId
+        )}&limit=${limit + 1}`,
+        {
+          cache: "no-store",
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch related products (${response.status})`
+      );
+    }
+
+    const result =
+      await response.json();
+
+    console.log(
+      "RELATED PRODUCTS API RESPONSE:",
+      result
+    );
+
+    const products =
+      extractProducts(result);
+
+    console.log(
+      "RELATED PRODUCTS EXTRACTED:",
+      products
+    );
+
+    return products
+      .filter(
+        (product) =>
+          product.id !==
+            currentProductId &&
+          product.status !== false
+      )
+      .slice(0, limit)
+      .map(normalizeProduct);
+  } catch (error) {
+    console.error(
+      "Failed to fetch related products:",
+      error
+    );
+
+    return [];
+  }
 }

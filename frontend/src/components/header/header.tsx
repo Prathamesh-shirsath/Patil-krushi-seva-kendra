@@ -4,7 +4,7 @@ export default function Header() {
       <div className="bg-green-700 text-white text-sm py-2">
         <div className="max-w-7xl mx-auto px-4 flex justify-between">
           <span>📞 +91 87665 87665</span>
-          <span>🚚 Free Shipping Above ₹999</span>
+          <span>🚚 Free Shipping Above ₹499</span>
         </div>
       </div>
 

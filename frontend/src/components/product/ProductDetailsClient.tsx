@@ -440,33 +440,31 @@ export default function ProductDetailsClient({
           </div>
 
           {/* Thumbnails */}
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 sm:mt-4 sm:gap-3">
-            {galleryImages.map((image, index) => (
-              <button
-                key={`${image}-${index}`}
-                type="button"
-                onClick={() =>
-                  setActiveImageIndex(index)
-                }
-                className={`flex aspect-square min-w-[68px] items-center justify-center rounded-xl border bg-white p-2 transition-all sm:min-w-20 ${
-                  activeImageIndex === index
-                    ? "border-green-700 ring-2 ring-green-100"
-                    : "border-gray-200 hover:border-green-300"
-                }`}
-                aria-label={`${t.product.aria.viewImage} ${
-                  index + 1
-                }`}
-              >
-                <Image
-                  src={image}
-                  alt={product.name}
-                  width={120}
-                  height={120}
-                  className="h-full w-full object-contain"
-                />
-              </button>
-            ))}
-          </div>
+          {/*
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 sm:mt-4 sm:gap-3">
+              {galleryImages.map((image, index) => (
+                <button
+                  key={`${image}-${index}`}
+                  type="button"
+                  onClick={() => setActiveImageIndex(index)}
+                  className={`flex aspect-square min-w-[68px] items-center justify-center rounded-xl border bg-white p-2 transition-all sm:min-w-20 ${
+                    activeImageIndex === index
+                      ? "border-green-700 ring-2 ring-green-100"
+                      : "border-gray-200 hover:border-green-300"
+                  }`}
+                  aria-label={`${t.product.aria.viewImage} ${index + 1}`}
+                >
+                  <Image
+                    src={image}
+                    alt={product.name}
+                    width={120}
+                    height={120}
+                    className="h-full w-full object-contain"
+                  />
+                </button>
+              ))}
+            </div>
+          */}
         </div>
 
         {/* ===================================================
