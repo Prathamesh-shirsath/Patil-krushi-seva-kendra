@@ -145,8 +145,8 @@ export default async function ProductDetailsPage({
           Number(
             relatedProduct.stock ?? 0
           ) > 0
-            ? ("In Stock" as const)
-            : ("Out of Stock" as const),
+            ? ("in_stock" as const)
+            : ("out_of_stock" as const),
 
         // ---------------------------------------------
         // RATING
