@@ -1,4 +1,3 @@
-
 import { Request, Response } from "express";
 import { ZodError } from "zod";
 import * as authService from "../services/auth.service";
@@ -6,7 +5,7 @@ import * as authService from "../services/auth.service";
 import {
     LoginSchema,
     RegisterSchema,
-    EmailLoginSchema,
+    PhoneLoginSchema,
 } from "../validators/auth.validator";
 
 // =====================================================
@@ -18,16 +17,21 @@ export const login = async (
     res: Response
 ) => {
     try {
-        const { idToken } = LoginSchema.parse(req.body);
+        const { idToken } =
+            LoginSchema.parse(req.body);
 
         const { user, token } =
-            await authService.loginUser({ idToken });
+            await authService.loginUser({
+                idToken,
+            });
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure:
+                process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 1000 * 60 * 60 * 24 * 7,
+            maxAge:
+                1000 * 60 * 60 * 24 * 7,
         });
 
         return res.status(200).json({
@@ -36,13 +40,14 @@ export const login = async (
             user,
         });
     } catch (error) {
-        console.error(error);
+        console.error("Firebase Login Error:", error);
 
         if (error instanceof ZodError) {
             return res.status(400).json({
                 success: false,
                 message: "Validation failed",
-                errors: error.flatten().fieldErrors,
+                errors:
+                    error.flatten().fieldErrors,
             });
         }
 
@@ -57,7 +62,7 @@ export const login = async (
 };
 
 // =====================================================
-// EMAIL + PASSWORD REGISTER
+// REGISTER - MOBILE + PASSWORD
 // =====================================================
 
 export const register = async (
@@ -65,31 +70,36 @@ export const register = async (
     res: Response
 ) => {
     try {
-        const data = RegisterSchema.parse(req.body);
+        const data =
+            RegisterSchema.parse(req.body);
 
         const { user, token } =
             await authService.registerUser(data);
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure:
+                process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 1000 * 60 * 60 * 24 * 7,
+            maxAge:
+                1000 * 60 * 60 * 24 * 7,
         });
 
         return res.status(201).json({
             success: true,
-            message: "Registration successful.",
+            message:
+                "Registration successful.",
             user,
         });
     } catch (error) {
-        console.error(error);
+        console.error("Registration Error:", error);
 
         if (error instanceof ZodError) {
             return res.status(400).json({
                 success: false,
                 message: "Validation failed",
-                errors: error.flatten().fieldErrors,
+                errors:
+                    error.flatten().fieldErrors,
             });
         }
 
@@ -104,39 +114,44 @@ export const register = async (
 };
 
 // =====================================================
-// EMAIL + PASSWORD LOGIN
+// MOBILE + PASSWORD LOGIN
 // =====================================================
 
-export const emailLogin = async (
+export const phoneLogin = async (
     req: Request,
     res: Response
 ) => {
     try {
-        const data = EmailLoginSchema.parse(req.body);
+        const data =
+            PhoneLoginSchema.parse(req.body);
 
         const { user, token } =
-            await authService.emailLoginUser(data);
+            await authService.phoneLoginUser(data);
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure:
+                process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 1000 * 60 * 60 * 24 * 7,
+            maxAge:
+                1000 * 60 * 60 * 24 * 7,
         });
 
         return res.status(200).json({
             success: true,
-            message: "Email login successful.",
+            message:
+                "Mobile login successful.",
             user,
         });
     } catch (error) {
-        console.error(error);
+        console.error("Mobile Login Error:", error);
 
         if (error instanceof ZodError) {
             return res.status(400).json({
                 success: false,
                 message: "Validation failed",
-                errors: error.flatten().fieldErrors,
+                errors:
+                    error.flatten().fieldErrors,
             });
         }
 
@@ -168,9 +183,10 @@ export const me = async (
             });
         }
 
-        const user = await authService.getCurrentUser(
-            authUser.userId
-        );
+        const user =
+            await authService.getCurrentUser(
+                authUser.userId
+            );
 
         if (!user) {
             return res.status(404).json({
@@ -184,7 +200,7 @@ export const me = async (
             user,
         });
     } catch (error) {
-        console.error(error);
+        console.error("Get Current User Error:", error);
 
         return res.status(500).json({
             success: false,
@@ -206,7 +222,8 @@ export const logout = async (
 ) => {
     res.clearCookie("token", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure:
+            process.env.NODE_ENV === "production",
         sameSite: "lax",
     });
 
