@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -15,16 +14,34 @@ export function useEmailAuth() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const login = async (email: string, password: string) => {
+    // =====================================================
+    // MOBILE + PASSWORD LOGIN
+    // =====================================================
+
+    const login = async (
+        phone: string,
+        password: string
+    ) => {
         try {
             setLoading(true);
             setError("");
             setSuccess("");
 
-            await api.post("/auth/email-login", {
-                email: email.trim().toLowerCase(),
-                password,
-            });
+            const normalizedPhone =
+                phone.trim().replace(/\s+/g, "");
+
+            const response = await api.post(
+                "/auth/phone-login",
+                {
+                    phone: normalizedPhone,
+                    password,
+                }
+            );
+
+            console.log(
+                "Mobile Login Response:",
+                response.data
+            );
 
             await refreshUser();
 
@@ -37,24 +54,34 @@ export function useEmailAuth() {
 
             router.replace(targetRedirect);
         } catch (err: any) {
-            console.error("Email Login Error:", {
-                status: err?.response?.status,
-                data: err?.response?.data,
-                message: err?.message,
-            });
+            console.error(
+                "Mobile Login Error:",
+                {
+                    status:
+                        err?.response?.status,
+                    data:
+                        err?.response?.data,
+                    message:
+                        err?.message,
+                }
+            );
 
             setError(
                 err?.response?.data?.message ||
-                    "Invalid email or password."
+                    "Invalid mobile number or password."
             );
         } finally {
             setLoading(false);
         }
     };
 
+    // =====================================================
+    // MOBILE + PASSWORD REGISTER
+    // =====================================================
+
     const register = async (
         name: string,
-        email: string,
+        phone: string,
         password: string
     ) => {
         try {
@@ -62,15 +89,28 @@ export function useEmailAuth() {
             setError("");
             setSuccess("");
 
-            await api.post("/auth/register", {
-                name: name.trim(),
-                email: email.trim().toLowerCase(),
-                password,
-            });
+            const normalizedPhone =
+                phone.trim().replace(/\s+/g, "");
+
+            const response = await api.post(
+                "/auth/register",
+                {
+                    name: name.trim(),
+                    phone: normalizedPhone,
+                    password,
+                }
+            );
+
+            console.log(
+                "Registration Response:",
+                response.data
+            );
 
             await refreshUser();
 
-            setSuccess("Registration successful.");
+            setSuccess(
+                "Registration successful."
+            );
 
             router.refresh();
 
@@ -79,11 +119,17 @@ export function useEmailAuth() {
 
             router.replace(targetRedirect);
         } catch (err: any) {
-            console.error("Registration Error:", {
-                status: err?.response?.status,
-                data: err?.response?.data,
-                message: err?.message,
-            });
+            console.error(
+                "Registration Error:",
+                {
+                    status:
+                        err?.response?.status,
+                    data:
+                        err?.response?.data,
+                    message:
+                        err?.message,
+                }
+            );
 
             setError(
                 err?.response?.data?.message ||
