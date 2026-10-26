@@ -42,8 +42,8 @@ const supportLinkKeys = [
 
 const contactDetails = [
   {
-    label: "+91 98765 43210",
-    href: "tel:+919876543210",
+    label: "+91 92090 61629",
+    href: "tel:+919209061629",
     icon: Phone,
   },
   {

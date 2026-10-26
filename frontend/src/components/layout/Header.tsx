@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { DEFAULT_BRAND_IMAGE } from "@/lib/image-fallbacks";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 
 import {
   Menu,
@@ -60,6 +60,16 @@ export default function Header() {
 
   const [cartCount, setCartCount] = useState(0);
   const [cartLoading, setCartLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const query = searchQuery.trim();
+    router.push(
+      query ? `/shop?search=${encodeURIComponent(query)}` : "/shop"
+    );
+  };
 
   // =========================================================
   // FETCH WISHLIST COUNT
@@ -355,10 +365,23 @@ export default function Header() {
             ================================================= */}
 
             <div className="hidden min-w-0 flex-1 lg:flex lg:max-w-[380px] xl:max-w-[470px] 2xl:max-w-[540px]">
-              <div className="relative w-full">
-                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <form
+                className="relative w-full"
+                onSubmit={handleSearchSubmit}
+              >
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t.header.searchLabel}
+                  className="absolute left-1.5 top-1/2 h-8 w-8 -translate-y-1/2 text-gray-400 hover:bg-transparent hover:text-green-700"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
 
                 <Input
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder={t.header.searchPlaceholder}
                   aria-label={t.header.searchLabel}
                   className="
@@ -381,7 +404,7 @@ export default function Header() {
                     xl:h-11
                   "
                 />
-              </div>
+              </form>
             </div>
 
             {/* =================================================
@@ -916,10 +939,23 @@ export default function Header() {
           ===================================================== */}
 
           <div className="pb-2.5 pt-0.5 lg:hidden">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <form
+              className="relative"
+              onSubmit={handleSearchSubmit}
+            >
+              <Button
+                type="submit"
+                variant="ghost"
+                size="icon"
+                aria-label={t.header.searchLabel}
+                className="absolute left-1.5 top-1/2 h-8 w-8 -translate-y-1/2 text-gray-400 hover:bg-transparent hover:text-green-700"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
 
               <Input
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder={t.header.searchPlaceholder}
                 aria-label={t.header.searchLabel}
                 className="
@@ -940,7 +976,7 @@ export default function Header() {
                   sm:h-11
                 "
               />
-            </div>
+            </form>
           </div>
         </div>
       </header>
