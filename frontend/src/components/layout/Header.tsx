@@ -288,14 +288,10 @@ export default function Header() {
                 height={64}
                 priority
                 className="
-                  h-9 w-9
-                  rounded-full
-                  border border-green-200
-                  object-cover
-                  shadow-sm
-                  sm:h-11 sm:w-11
-                  md:h-12 md:w-12
-                  lg:h-14 lg:w-14
+                 h-9 w-auto max-w-[120px]
+rounded-none
+object-contain
+sm:h-11 md:h-12 lg:h-14
                 "
               />
 
