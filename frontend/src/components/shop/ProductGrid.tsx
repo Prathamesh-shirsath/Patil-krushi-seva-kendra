@@ -69,7 +69,7 @@ export default function ProductGrid({
         xl:grid-cols-4
       "
     >
-      {products.map((product) => (
+      {products.map((product, index) => (
         <div
           key={product.id}
           className="min-w-0"
@@ -94,6 +94,7 @@ export default function ProductGrid({
             badge={product.badge}
             unit={product.unit}
             slug={product.slug}
+            imageLoading={index === 0 ? "eager" : "lazy"}
           />
         </div>
       ))}

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import webhookRoutes from "./routes/razorpay-webhook.routes";
 
 // Routes
 import adminAuthRoutes from "./routes/admin-auth.routes";
@@ -59,6 +60,11 @@ app.use(
 // =====================================================
 
 app.use(cookieParser());
+
+// Razorpay must receive the untouched JSON bytes for webhook HMAC verification.
+app.use("/api/webhooks/razorpay", express.raw({ type: "application/json", limit: "1mb" }));
+app.use("/api/webhooks/razorpay", webhookRoutes);
+
 app.use(express.json());
 
 // =====================================================

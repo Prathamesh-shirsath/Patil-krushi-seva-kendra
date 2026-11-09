@@ -140,6 +140,12 @@ model Payment {
   order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
+model WebhookEvent {
+  eventId     String   @id
+  eventType   String
+  processedAt DateTime @default(now())
+}
+
 model Review {
   id        String   @id @default(cuid())
   userId    String

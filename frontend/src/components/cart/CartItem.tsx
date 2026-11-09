@@ -46,6 +46,7 @@ export default function CartItem({ item }: Props) {
                     src={item.product.image || "/placeholder.png"}
                     alt={item.product.name}
                     fill
+                    sizes="112px"
                     className="object-cover"
                 />
             </div>

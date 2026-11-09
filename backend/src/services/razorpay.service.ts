@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import Razorpay from "razorpay";
 
 export interface CreateRazorpayOrderOptions {
   amountInRupees: number;
@@ -29,41 +30,48 @@ export const createRazorpayOrder = async ({
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
   if (!keyId || !keySecret) {
-    throw new Error(
-      "Razorpay credentials missing. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET."
+    throw Object.assign(
+      new Error(
+        "Razorpay credentials missing. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET."
+      ),
+      { statusCode: 500 }
     );
   }
 
   const amountInPaise = Math.round(amountInRupees * 100);
-  const truncatedReceipt = receiptId.slice(0, 40);
-
-  const authHeader =
-    "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64");
-
-  const response = await fetch("https://api.razorpay.com/v1/orders", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: authHeader,
-    },
-    body: JSON.stringify({
-      amount: amountInPaise,
-      currency: "INR",
-      receipt: truncatedReceipt,
-      notes,
-    }),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.error("Razorpay order creation error:", data);
-    throw new Error(
-      data?.error?.description || "Failed to create Razorpay order."
+  if (!Number.isFinite(amountInPaise) || amountInPaise < 100) {
+    throw Object.assign(
+      new Error("Razorpay amount must be at least 100 paise."),
+      { statusCode: 400 }
     );
   }
 
-  return data as RazorpayOrderResponse;
+  const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+
+  try {
+    const data = await razorpay.orders.create({
+      amount: amountInPaise,
+      currency: "INR",
+      receipt: receiptId.slice(0, 40),
+      notes,
+    });
+
+    return data as RazorpayOrderResponse;
+  } catch (error: any) {
+    console.error("Razorpay order creation error:", error);
+
+    const description =
+      error?.error?.description ||
+      error?.message ||
+      "Failed to create Razorpay order.";
+    const statusCode =
+      error?.statusCode === 401 ||
+      /authentication failed/i.test(description)
+        ? 401
+        : error?.statusCode || 500;
+
+    throw Object.assign(new Error(description), { statusCode });
+  }
 };
 
 export const verifyRazorpaySignature = ({
@@ -88,5 +96,55 @@ export const verifyRazorpaySignature = ({
     .update(body)
     .digest("hex");
 
-  return expectedSignature === razorpaySignature;
+  const expectedBuffer = Buffer.from(expectedSignature, "hex");
+  const providedBuffer = Buffer.from(razorpaySignature, "hex");
+
+  return (
+    expectedBuffer.length === providedBuffer.length &&
+    crypto.timingSafeEqual(expectedBuffer, providedBuffer)
+  );
+};
+
+export const verifyRazorpayWebhookSignature = (
+  rawBody: Buffer,
+  signature: string | undefined
+): boolean => {
+  const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (!webhookSecret || !signature) return false;
+
+  const expectedSignature = crypto
+    .createHmac("sha256", webhookSecret)
+    .update(rawBody)
+    .digest("hex");
+
+  const expectedBuffer = Buffer.from(expectedSignature, "hex");
+  const providedBuffer = Buffer.from(signature, "hex");
+
+  return (
+    expectedBuffer.length === providedBuffer.length &&
+    crypto.timingSafeEqual(expectedBuffer, providedBuffer)
+  );
+};
+
+export interface FetchedRazorpayPayment {
+  id: string;
+  order_id?: string;
+  amount: number;
+  currency: string;
+  status: string;
+}
+
+export const fetchRazorpayPayment = async (
+  paymentId: string
+): Promise<FetchedRazorpayPayment> => {
+  const keyId = process.env.RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keyId || !keySecret) {
+    throw Object.assign(new Error("Razorpay credentials are not configured."), {
+      statusCode: 500,
+    });
+  }
+
+  const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+  return (await razorpay.payments.fetch(paymentId)) as FetchedRazorpayPayment;
 };

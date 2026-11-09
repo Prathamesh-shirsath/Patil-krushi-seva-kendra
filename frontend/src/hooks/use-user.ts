@@ -13,10 +13,8 @@ export function useUpdateProfile() {
 
     return useMutation({
         mutationFn: updateProfile,
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["profile"],
-            });
+        onSuccess: (profile) => {
+            queryClient.setQueryData(["profile"], profile);
         },
     });
 }

@@ -7,6 +7,7 @@ import {
 import { prisma } from "../lib/prisma";
 import {
   createRazorpayOrder,
+  fetchRazorpayPayment,
   verifyRazorpaySignature,
 } from "./razorpay.service";
 import { clearCart } from "./cart.service";
@@ -271,7 +272,9 @@ export const verifyOrderPayment = async ({
       id: orderId,
       userId,
     },
-    select: { id: true },
+    include: {
+      ...orderInclude,
+    },
   });
 
   if (!order) {
@@ -285,46 +288,58 @@ export const verifyOrderPayment = async ({
   });
 
   if (!isValid) {
-    await prisma.payment.updateMany({
-      where: { orderId },
-      data: {
-        status: PaymentStatus.FAILED,
-        failureReason: "Signature verification failed",
-      },
-    });
+    await prisma.$transaction([
+      prisma.payment.updateMany({
+        where: { orderId },
+        data: {
+          status: PaymentStatus.FAILED,
+          failureReason: "Signature verification failed",
+        },
+      }),
+      prisma.order.updateMany({
+        where: { id: orderId, paymentStatus: { not: PaymentStatus.SUCCESS } },
+        data: { paymentStatus: PaymentStatus.FAILED },
+      }),
+    ]);
 
     throw new Error("Invalid Razorpay payment signature.");
   }
 
-  // Update Payment record
-  await prisma.payment.upsert({
-    where: { orderId },
-    update: {
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature,
-      transactionId: razorpayPaymentId,
-      status: PaymentStatus.SUCCESS,
-    },
-    create: {
-      orderId,
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature,
-      transactionId: razorpayPaymentId,
-      amount: 0,
-      status: PaymentStatus.SUCCESS,
-    },
-  });
+  const payment = await fetchRazorpayPayment(razorpayPaymentId);
+  const expectedAmountPaise = Math.round(Number(order.grandTotal) * 100);
 
-  // Update Order to CONFIRMED & Payment SUCCESS
-  const updatedOrder = await prisma.order.update({
-    where: { id: orderId },
-    data: {
-      paymentStatus: PaymentStatus.SUCCESS,
-      status: OrderStatus.CONFIRMED,
-    },
-    include: orderInclude,
+  if (
+    payment.order_id !== razorpayOrderId ||
+    order.payment?.razorpayOrderId !== razorpayOrderId ||
+    payment.currency !== "INR" ||
+    payment.amount !== expectedAmountPaise ||
+    payment.status !== "captured"
+  ) {
+    throw new Error("Payment does not match the internal order.");
+  }
+
+  const updatedOrder = await prisma.$transaction(async (tx) => {
+    await tx.payment.update({
+      where: { orderId },
+      data: {
+        razorpayOrderId,
+        razorpayPaymentId,
+        razorpaySignature,
+        transactionId: razorpayPaymentId,
+        status: PaymentStatus.SUCCESS,
+        amount: order.grandTotal,
+        failureReason: null,
+      },
+    });
+
+    return tx.order.update({
+      where: { id: orderId },
+      data: {
+        paymentStatus: PaymentStatus.SUCCESS,
+        status: OrderStatus.CONFIRMED,
+      },
+      include: orderInclude,
+    });
   });
 
   // Clear user's shopping cart

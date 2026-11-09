@@ -365,10 +365,7 @@ export default function CheckoutPage() {
         // ======================================================
 
         const options = {
-          key:
-            keyId ||
-            process.env
-              .NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          key: keyId,
 
           amount:
             razorpayOrder.amount,

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ZodError } from "zod";
 import * as userService from "../services/user.service";
 import { updateProfileSchema } from "../validators/user.validator";
 
@@ -33,10 +34,19 @@ export const updateProfile = async (req: Request, res: Response) => {
             message: "Profile updated successfully.",
             data: user,
         });
-    } catch (error: any) {
-        return res.status(400).json({
+    } catch (error: unknown) {
+        if (error instanceof ZodError) {
+            return res.status(400).json({
+                success: false,
+                message: error.issues[0]?.message ?? "Invalid profile data.",
+            });
+        }
+
+        console.error("Update profile error:", error);
+
+        return res.status(500).json({
             success: false,
-            message: error.message,
+            message: "Failed to update profile. Please try again.",
         });
     }
 };

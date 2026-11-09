@@ -2,11 +2,14 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { useAuth } from "@/providers/AuthProvider";
 import {
     useProfile,
     useUpdateProfile,
@@ -21,6 +24,7 @@ type ProfileFormValues = {
 export default function ProfileForm() {
     const { t } = useLanguage();
     const { data, isLoading } = useProfile();
+    const { refreshUser } = useAuth();
 
     const updateProfile = useUpdateProfile();
 
@@ -44,8 +48,32 @@ export default function ProfileForm() {
         }
     }, [data, reset]);
 
-    const onSubmit = (values: ProfileFormValues) => {
-        updateProfile.mutate(values);
+    const onSubmit = async (values: ProfileFormValues) => {
+        try {
+            const profile = await updateProfile.mutateAsync({
+                name: values.name,
+            });
+
+            reset({
+                name: profile.name ?? "",
+                email: profile.email ?? "",
+            });
+            toast.success(t.profile.form.updateSuccess);
+            await refreshUser();
+        } catch (error: unknown) {
+            const message = axios.isAxiosError<{
+                message?: string;
+                error?: string;
+            }>(error)
+                ? error.response?.data?.message ??
+                  error.response?.data?.error ??
+                  error.message
+                : error instanceof Error
+                  ? error.message
+                  : t.profile.form.updateError;
+
+            toast.error(message || t.profile.form.updateError);
+        }
     };
 
     if (isLoading) {

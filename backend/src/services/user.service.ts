@@ -12,6 +12,7 @@ export const getProfile = async (userId: string) => {
             phone: true,
             email: true,
             role: true,
+            image: true,
             createdAt: true,
 
             addresses: {
@@ -46,6 +47,7 @@ export const updateProfile = async (
             phone: true,
             email: true,
             role: true,
+            image: true,
             createdAt: true,
         },
     });

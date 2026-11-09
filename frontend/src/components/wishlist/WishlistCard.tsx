@@ -59,6 +59,11 @@ export default function WishlistCard({
           src={product.image || "/placeholder.png"}
           alt={product.name}
           fill
+          sizes={
+            listView
+              ? "(max-width: 640px) 100vw, 176px"
+              : "(max-width: 640px) 50vw, 256px"
+          }
           className="object-cover"
         />
       </div>

@@ -352,7 +352,9 @@ const mr = {
       emailLabel: "ईमेल",
       emailPlaceholder: "ईमेल प्रविष्ट करा",
       saving: "जतन करत आहे...",
-      saveChanges: "बदल जतन करा"
+      saveChanges: "बदल जतन करा",
+      updateSuccess: "प्रोफाईल यशस्वीरित्या अपडेट केले.",
+      updateError: "प्रोफाईल अपडेट करता आले नाही. कृपया पुन्हा प्रयत्न करा."
     },
     addresses: {
       title: "माझे पत्ते",

@@ -350,7 +350,9 @@ const en = {
       emailLabel: "Email",
       emailPlaceholder: "Enter email",
       saving: "Saving...",
-      saveChanges: "Save Changes"
+      saveChanges: "Save Changes",
+      updateSuccess: "Profile updated successfully.",
+      updateError: "Unable to update your profile. Please try again."
     },
     addresses: {
       title: "My Addresses",

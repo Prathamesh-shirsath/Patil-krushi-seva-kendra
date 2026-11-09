@@ -1,7 +1,7 @@
 export interface UserProfile {
     id: string;
     name: string | null;
-    phone: string;
+    phone: string | null;
     email: string | null;
     image: string | null;
     role: "ADMIN" | "CUSTOMER";

@@ -43,6 +43,7 @@ type Props = {
   badge?: string;
   unit?: string;
   slug?: string;
+  imageLoading?: "eager" | "lazy";
 };
 
 export default function ProductCard({
@@ -59,6 +60,7 @@ export default function ProductCard({
   badge = "New",
   unit,
   slug,
+  imageLoading = "lazy",
 }: Props) {
   const { t } = useLanguage();
 
@@ -218,6 +220,7 @@ export default function ProductCard({
               alt={name}
               width={400}
               height={400}
+              loading={imageLoading}
               className="h-full w-full object-contain transition group-hover:scale-105"
             />
           </Link>
@@ -227,6 +230,7 @@ export default function ProductCard({
             alt={name}
             width={400}
             height={400}
+            loading={imageLoading}
             className="h-full w-full object-contain"
           />
         )}

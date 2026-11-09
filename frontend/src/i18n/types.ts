@@ -392,6 +392,8 @@ export type TranslationDictionary = {
       emailPlaceholder: string;
       saving: string;
       saveChanges: string;
+      updateSuccess: string;
+      updateError: string;
     };
 
     addresses: {

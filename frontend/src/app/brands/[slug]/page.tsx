@@ -383,6 +383,7 @@ export default function BrandDetailPage({
                 src={brandShowcaseDesktopImage}
                 alt={`${brand.name} Product Showcase`}
                 fill
+                sizes="(max-width: 768px) 100vw, 42vw"
                 className="hidden object-cover object-center scale-100 transition duration-700 hover:scale-102 md:block"
                 priority
               />
@@ -390,6 +391,7 @@ export default function BrandDetailPage({
                 src={brandShowcaseMobileImage}
                 alt={`${brand.name} Product Showcase`}
                 fill
+                sizes="(max-width: 768px) 100vw, 42vw"
                 className="object-cover object-center scale-100 transition duration-700 hover:scale-102 md:hidden"
                 priority
               />
@@ -625,4 +627,3 @@ export default function BrandDetailPage({
     </main>
   );
 }
-

@@ -54,7 +54,13 @@ export const createOrderController = async (
   } catch (error: any) {
     console.error("Create order error:", error);
 
-    return res.status(400).json({
+    const statusCode = error?.statusCode === 401
+      ? 401
+      : error?.statusCode === 400
+        ? 400
+        : 500;
+
+    return res.status(statusCode).json({
       success: false,
       message: error?.message || "Failed to create order.",
     });
