@@ -718,7 +718,7 @@ export default function Header() {
                         alt={t.header.logoAlt}
                         width={50}
                         height={50}
-                        className="h-11 w-11 rounded-full border border-green-200 object-cover"
+                        className="h-11 w-auto max-w-[120px] rounded-none object-contain border border-green-200"
                       />
 
                       <div className="min-w-0">
