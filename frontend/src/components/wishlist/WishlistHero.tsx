@@ -11,6 +11,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useLanguage } from "@/i18n/useLanguage";
+import { formatINR } from "@/lib/currency";
 
 type WishlistItem = {
   id: string;
@@ -70,8 +71,6 @@ export default function WishlistHero() {
 
     fetchWishlist();
   }, []);
-
-  const formattedWishlistValue = wishlistValue.toLocaleString("en-IN");
 
   return (
     <section className="relative overflow-hidden border-b bg-gradient-to-br from-green-50 via-white to-emerald-100">
@@ -165,7 +164,7 @@ export default function WishlistHero() {
               number={
                 loading
                   ? "..."
-                  : `₹${formattedWishlistValue}`
+                  : formatINR(wishlistValue)
               }
               title={t.wishlist.stats.wishlistValue}
               color="green"

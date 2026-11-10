@@ -2,6 +2,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import {
     ArrowRight,
     CheckCircle2,
@@ -16,12 +18,15 @@ import {
 } from "lucide-react";
 
 import { useEmailAuth } from "@/hooks/useEmailAuth";
+import { useLanguage } from "@/i18n/useLanguage";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function EmailAuth() {
+    const searchParams = useSearchParams();
+    const { t } = useLanguage();
     const [isRegister, setIsRegister] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -86,7 +91,7 @@ export default function EmailAuth() {
 
                         <div className="max-w-md">
                             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-lime-200">
-                                Farmers' Growth, Our Commitment
+                                Farmers&apos; Growth, Our Commitment
                             </p>
 
                             <h1 className="text-4xl font-bold leading-tight xl:text-5xl">
@@ -140,19 +145,16 @@ export default function EmailAuth() {
                 {/* RIGHT AUTH SECTION */}
                 <div className="flex items-center justify-center bg-white px-5 py-10 sm:px-10 lg:px-12">
                     <div className="w-full max-w-md">
-
-                        {/* Mobile Logo */}
-                        <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-100">
-                                <Leaf className="h-6 w-6 text-green-700" />
-                            </div>
-
-                            <div>
-                                <h2 className="font-bold text-green-900">
-                                    Patil Krushi Seva Kendra
-                                </h2>
-                            </div>
-                        </div>
+                        <Image
+                            src="/logo.jpeg"
+                            alt="Patil Krushi Seva Kendra"
+                            width={160}
+                            height={135}
+                            sizes="(max-width: 640px) 144px, 160px"
+                            className="mx-auto mb-6 h-auto w-36 object-contain sm:w-40"
+                            priority
+                            unoptimized
+                        />
 
                         {/* Login/Register Tabs */}
                         <div className="mb-8 grid grid-cols-2 rounded-xl bg-green-50 p-1">
@@ -213,6 +215,14 @@ export default function EmailAuth() {
                         </div>
 
                         {/* Alerts */}
+                        {searchParams.get("continueShopping") === "1" && (
+                            <Alert className="mb-5 border-amber-200 bg-amber-50 text-amber-900">
+                                <AlertDescription>
+                                    {t.common.toast.loginRequiredForCart}
+                                </AlertDescription>
+                            </Alert>
+                        )}
+
                         {error && (
                             <Alert
                                 variant="destructive"

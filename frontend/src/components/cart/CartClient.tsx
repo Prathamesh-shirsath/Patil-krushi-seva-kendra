@@ -22,6 +22,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { formatINR } from "@/lib/currency";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -370,7 +371,7 @@ export default function CartClient() {
                   <>
                     You are{" "}
                     <span className="font-bold text-emerald-800">
-                      ₹{awayFromFreeShipping}
+                      {formatINR(awayFromFreeShipping)}
                     </span>{" "}
                     away from FREE shipping!
                   </>
@@ -394,7 +395,7 @@ export default function CartClient() {
               </div>
 
               <span className="shrink-0 rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-[11px] font-bold text-slate-700 shadow-2xs sm:px-2.5 sm:py-1 sm:text-xs">
-                ₹{FREE_SHIPPING_THRESHOLD}
+                {formatINR(FREE_SHIPPING_THRESHOLD)}
               </span>
             </div>
           </div>
@@ -501,10 +502,7 @@ export default function CartClient() {
                             </span>
 
                             <span className="text-xs font-bold text-slate-800 sm:text-sm">
-                              ₹
-                              {item.price.toLocaleString(
-                                "en-IN"
-                              )}
+                              {formatINR(item.price)}
                             </span>
                           </div>
 
@@ -553,12 +551,9 @@ export default function CartClient() {
                               </span>
 
                               <span className="text-xs font-bold text-slate-900 sm:text-sm">
-                                ₹
-                                {(
+                                {formatINR(
                                   item.price *
                                   item.quantity
-                                ).toLocaleString(
-                                  "en-IN"
                                 )}
                               </span>
                             </div>
@@ -624,10 +619,7 @@ export default function CartClient() {
                     </span>
 
                     <span className="font-bold text-slate-800">
-                      ₹
-                      {subtotal.toLocaleString(
-                        "en-IN"
-                      )}
+                      {formatINR(subtotal)}
                     </span>
                   </div>
 
@@ -643,7 +635,7 @@ export default function CartClient() {
                           FREE
                         </span>
                       ) : (
-                        `₹${shippingCharges}`
+                        formatINR(shippingCharges)
                       )}
                     </span>
                   </div>
@@ -656,10 +648,7 @@ export default function CartClient() {
                     </span>
 
                     <span className="text-xl font-bold text-emerald-700 sm:text-2xl">
-                      ₹
-                      {totalAmount.toLocaleString(
-                        "en-IN"
-                      )}
+                      {formatINR(totalAmount)}
                     </span>
                   </div>
 
@@ -827,7 +816,7 @@ export default function CartClient() {
                   </h3>
 
                   <p className="mt-1.5 text-xs font-bold text-slate-900 sm:mt-2 sm:text-sm">
-                    ₹{prod.price}
+                    {formatINR(prod.price)}
                   </p>
                 </div>
 

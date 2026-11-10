@@ -10,6 +10,7 @@ import { CartItem as CartItemType } from "@/types/cart";
 import { useUpdateCart } from "@/hooks/cart/useUpdateCart";
 import { useRemoveCart } from "@/hooks/cart/useRemoveCart";
 import { useLanguage } from "@/i18n/useLanguage";
+import { formatINR } from "@/lib/currency";
 
 interface Props {
     item: CartItemType;
@@ -67,7 +68,7 @@ export default function CartItem({ item }: Props) {
                     </p>
 
                     <p className="mt-2 text-lg font-bold text-green-700">
-                        ₹{item.product.price.toLocaleString("en-IN")}
+                        {formatINR(item.product.price)}
                     </p>
 
                     <p className="text-xs text-gray-500">

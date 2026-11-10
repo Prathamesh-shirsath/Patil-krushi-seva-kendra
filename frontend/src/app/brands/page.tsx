@@ -121,6 +121,10 @@ export default function BrandsOverviewPage() {
 
             const isActive =
               brand.status !== false;
+            const brandLogo = getImageSrc(
+              brand.logo,
+              DEFAULT_BRAND_IMAGE
+            );
 
             /*
              * IMPORTANT:
@@ -143,13 +147,11 @@ export default function BrandsOverviewPage() {
                     <div className="flex min-w-0 items-center gap-4">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-white p-2">
                         <Image
-                          src={getImageSrc(
-                            brand.logo,
-                            DEFAULT_BRAND_IMAGE
-                          )}
+                          src={brandLogo}
                           alt={`${brand.name} ${t.brands.accessibility.logoAlt}`}
                           width={50}
                           height={50}
+                          unoptimized={brandLogo === DEFAULT_BRAND_IMAGE}
                           className="h-full w-full object-contain"
                         />
                       </div>

@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { getOrderById } from "@/services/order.service";
 import type { Order, OrderStatus, PaymentMethod, PaymentStatus } from "@/types/order";
 import { useLanguage } from "@/i18n/useLanguage";
+import { formatINR } from "@/lib/currency";
 
 const statusConfig: Record<
   OrderStatus,
@@ -275,7 +276,7 @@ export default function OrderDetailsPage() {
                     </div>
 
                     <p className="font-black text-slate-900">
-                      {formatCurrency(item.price)}
+                      {formatINR(Number(item.price))}
                     </p>
 
                   </div>
@@ -389,17 +390,17 @@ export default function OrderDetailsPage() {
 
                 <SummaryRow
                   label={t.orders.details.subtotal}
-                  value={formatCurrency(order.subTotal)}
+                  value={formatINR(Number(order.subTotal))}
                 />
 
                 <SummaryRow
                   label={t.orders.details.shippingCharge}
-                  value={formatCurrency(order.deliveryCharge)}
+                  value={formatINR(Number(order.deliveryCharge))}
                 />
 
                 <SummaryRow
                   label={t.orders.details.discount}
-                  value={`- ${formatCurrency(order.discount)}`}
+                  value={`- ${formatINR(Number(order.discount))}`}
                   green={Number(order.discount) > 0}
                 />
 
@@ -412,7 +413,7 @@ export default function OrderDetailsPage() {
                     </span>
 
                     <span className="text-2xl font-black text-emerald-700">
-                      {formatCurrency(order.grandTotal)}
+                      {formatINR(Number(order.grandTotal))}
                     </span>
 
                   </div>
@@ -512,10 +513,6 @@ function formatDateTime(value: string) {
     hour: "numeric",
     minute: "2-digit",
   });
-}
-
-function formatCurrency(amount: string) {
-  return `₹${Number(amount).toLocaleString("en-IN")}`;
 }
 
 function formatOrderAddress(order: Order, t: any) {
