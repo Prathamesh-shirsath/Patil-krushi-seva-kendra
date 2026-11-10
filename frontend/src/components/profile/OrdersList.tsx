@@ -20,6 +20,7 @@ import { getUserOrders } from "@/services/order.service";
 import type { Order, OrderStatus } from "@/types/order";
 import Link from "next/link";
 import { useLanguage } from "@/i18n/useLanguage";
+import { formatINR } from "@/lib/currency";
 
 const statusConfig: Record<
   OrderStatus,
@@ -272,7 +273,7 @@ export default function OrdersList() {
                     </p>
 
                     <p className="mt-1 text-2xl font-black text-emerald-700">
-                      {formatCurrency(order.grandTotal)}
+                      {formatINR(Number(order.grandTotal))}
                     </p>
 
                   </div>
@@ -324,7 +325,7 @@ export default function OrdersList() {
                       </div>
 
                       <p className="text-sm font-black text-slate-800">
-                        {formatCurrency(item.price)}
+                        {formatINR(Number(item.price))}
                       </p>
 
                     </div>
@@ -445,10 +446,6 @@ function formatOrderDate(createdAt: string) {
     month: "short",
     year: "numeric",
   });
-}
-
-function formatCurrency(amount: string) {
-  return `₹${Number(amount).toLocaleString("en-IN")}`;
 }
 
 function formatOrderAddress(order: Order, t: any) {

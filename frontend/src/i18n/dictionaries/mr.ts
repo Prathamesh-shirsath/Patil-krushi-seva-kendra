@@ -37,6 +37,7 @@ const mr = {
     toast: {
       addedToCart: "उत्पादन कार्टमध्ये जोडले.",
       addToCartFailed: "उत्पादन कार्टमध्ये जोडता आले नाही.",
+      loginRequiredForCart: "खरेदी सुरू ठेवण्यासाठी कृपया लॉगिन करा.",
     },
     continueShopping: "खरेदी सुरू ठेवा",
   },
@@ -310,9 +311,10 @@ const mr = {
     },
     actions: {
       processing: "ऑर्डरवर प्रक्रिया करत आहे...",
-      payRazorpay: (amount: string) => `Razorpay द्वारे ₹${amount} भरा`,
+      payRazorpay: (amount: string) => `Razorpay द्वारे ${amount} भरा`,
       confirmCod: "कॅश ऑन डिलिव्हरी ऑर्डरची पुष्टी करा",
       loadingDetails: "चेकआउट तपशील लोड करत आहे...",
+      loadingPayment: "सुरक्षित पेमेंट लोड करत आहे...",
     },
     toast: {
       signInRequiredCheckout: "तुमचे चेकआउट पूर्ण करण्यासाठी कृपया साइन इन करा.",

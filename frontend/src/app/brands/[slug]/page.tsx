@@ -315,6 +315,7 @@ export default function BrandDetailPage({
                       alt={brand.name}
                       width={100}
                       height={100}
+                      unoptimized={brand.logo === DEFAULT_BRAND_IMAGE}
                       className="object-contain"
                     />
                   </div>

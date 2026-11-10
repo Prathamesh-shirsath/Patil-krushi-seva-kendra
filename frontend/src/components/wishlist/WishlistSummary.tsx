@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/useLanguage";
+import { formatINR } from "@/lib/currency";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ??
@@ -221,16 +222,6 @@ export default function WishlistSummary() {
 
   const totalSavings = 0;
 
-  const formattedPrice =
-    totalPrice.toLocaleString(
-      "en-IN"
-    );
-
-  const formattedSavings =
-    totalSavings.toLocaleString(
-      "en-IN"
-    );
-
   const estimatedTotal = Math.max(
     totalPrice - totalSavings,
     0
@@ -293,7 +284,7 @@ export default function WishlistSummary() {
               <h3 className="mt-2 text-3xl font-black text-orange-600">
                 {loading
                   ? "..."
-                  : `₹${formattedSavings}`}
+                  : formatINR(totalSavings)}
               </h3>
             </div>
           </div>
@@ -313,7 +304,7 @@ export default function WishlistSummary() {
               value={
                 loading
                   ? "..."
-                  : `₹${formattedPrice}`
+                  : formatINR(totalPrice)
               }
             />
 
@@ -325,7 +316,7 @@ export default function WishlistSummary() {
               value={
                 loading
                   ? "..."
-                  : `- ₹${formattedSavings}`
+                  : `- ${formatINR(totalSavings)}`
               }
               green
             />
@@ -356,9 +347,7 @@ export default function WishlistSummary() {
             <span className="text-3xl font-black text-green-700">
               {loading
                 ? "..."
-                : `₹${estimatedTotal.toLocaleString(
-                  "en-IN"
-                )}`}
+                : formatINR(estimatedTotal)}
             </span>
           </div>
 

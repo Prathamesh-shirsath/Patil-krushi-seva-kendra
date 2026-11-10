@@ -37,6 +37,7 @@ const en = {
     toast: {
       addedToCart: "Product added to cart.",
       addToCartFailed: "Unable to add product to cart.",
+      loginRequiredForCart: "Please login to continue shopping.",
     },
     continueShopping: "Continue Shopping",
   },
@@ -309,9 +310,10 @@ const en = {
     },
     actions: {
       processing: "Processing Order...",
-      payRazorpay: (amount: string) => `Pay ₹${amount} with Razorpay`,
+      payRazorpay: (amount: string) => `Pay ${amount} with Razorpay`,
       confirmCod: "Confirm Cash on Delivery Order",
       loadingDetails: "Loading checkout details...",
+      loadingPayment: "Loading secure payment...",
     },
     toast: {
       signInRequiredCheckout: "Please sign in to complete your checkout.",

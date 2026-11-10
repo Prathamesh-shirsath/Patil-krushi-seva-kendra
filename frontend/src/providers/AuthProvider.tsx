@@ -5,7 +5,7 @@ import api from "@/lib/axios";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 
-interface User {
+export interface AuthUser {
     id: string;
     name: string | null;
     phone: string | null;
@@ -15,9 +15,9 @@ interface User {
 }
 
 interface AuthContextType {
-    user: User | null;
+    user: AuthUser | null;
     loading: boolean;
-    refreshUser: () => Promise<void>;
+    refreshUser: () => Promise<AuthUser | null>;
     logout: () => Promise<void>;
 }
 
@@ -28,23 +28,28 @@ export function AuthProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<AuthUser | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const refreshUser = async () => {
+    const refreshUser = async (): Promise<AuthUser | null> => {
         try {
             const res = await api.get("/auth/me");
 
             console.log("AUTH USER:", res.data);
 
             if (res.data.success) {
-                setUser(res.data.user);
+                const authenticatedUser =
+                    res.data.user as AuthUser;
+                setUser(authenticatedUser);
+                return authenticatedUser;
             } else {
                 setUser(null);
+                return null;
             }
         } catch (err) {
             console.log("AUTH ERROR", err);
             setUser(null);
+            return null;
         } finally {
             setLoading(false);
         }
@@ -97,5 +102,4 @@ export const useAuth = () => {
 
     return context;
 };
-
 

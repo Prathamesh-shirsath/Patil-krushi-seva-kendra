@@ -40,6 +40,7 @@ export type TranslationDictionary = {
     toast: {
       addedToCart: string;
       addToCartFailed: string;
+      loginRequiredForCart: string;
     };
     continueShopping: string;
   };
@@ -349,6 +350,7 @@ export type TranslationDictionary = {
       payRazorpay: (amount: string) => string;
       confirmCod: string;
       loadingDetails: string;
+      loadingPayment: string;
     };
 
     toast: {

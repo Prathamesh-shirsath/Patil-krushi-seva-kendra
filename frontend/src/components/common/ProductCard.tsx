@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingCart, Star } from "lucide-react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,21 +11,19 @@ import {
   DEFAULT_PRODUCT_IMAGE,
   getImageSrc,
 } from "@/lib/image-fallbacks";
+import { formatINR } from "@/lib/currency";
 
 import { useWishlist } from "@/hooks/useWishlist";
 import { useAddWishlist } from "@/hooks/useAddWishlist";
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
 import { useLanguage } from "@/i18n/useLanguage";
+import { useAddToCart } from "@/hooks/cart/useAddToCart";
 
 import {
   isProductInStock,
   STOCK_IN,
   type StockStatus,
 } from "@/lib/shop-filters";
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  "http://localhost:5000/api";
 
 type Props = {
   id: string;
@@ -96,67 +92,16 @@ export default function ProductCard({
   // CART
   // =========================================================
 
-  const [cartLoading, setCartLoading] =
-    useState(false);
+  const addToCart = useAddToCart();
+  const cartLoading = addToCart.isPending;
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (!isAvailable || cartLoading) return;
 
-    try {
-      setCartLoading(true);
-
-      const response = await fetch(
-        `${API_URL}/cart`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            productId: id,
-            quantity: 1,
-          }),
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          result?.message ||
-            "Unable to add product to cart."
-        );
-      }
-
-      // =====================================================
-      // CART HEADER - INSTANT UPDATE
-      // =====================================================
-
-      window.dispatchEvent(
-        new Event("cart-updated")
-      );
-
-      // =====================================================
-      // CART SUCCESS NOTIFICATION
-      // =====================================================
-
-      toast.success(
-        t.common.toast.addedToCart
-      );
-    } catch (error: any) {
-      console.error(
-        "Add to cart error:",
-        error
-      );
-
-      toast.error(
-        error?.message ||
-          t.common.toast.addToCartFailed
-      );
-    } finally {
-      setCartLoading(false);
-    }
+    addToCart.add({
+      productId: id,
+      quantity: 1,
+    });
   };
 
   // =========================================================
@@ -298,12 +243,12 @@ export default function ProductCard({
         <div className="mt-2 flex items-baseline gap-2">
 
           <p className="text-lg font-bold">
-            ₹{price}
+            {formatINR(price)}
           </p>
 
           {originalPrice && (
             <p className="text-xs text-gray-400 line-through">
-              ₹{originalPrice}
+              {formatINR(originalPrice)}
             </p>
           )}
         </div>

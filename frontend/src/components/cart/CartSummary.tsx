@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { CartSummary as CartSummaryType } from "@/types/cart";
 import { useClearCart } from "@/hooks/cart/useClearCart";
 import { useLanguage } from "@/i18n/useLanguage";
+import { formatINR } from "@/lib/currency";
 
 interface Props {
     summary?: CartSummaryType;
@@ -41,7 +42,7 @@ export default function CartSummary({ summary }: Props) {
 
                 <div className="flex justify-between">
                     <span>{t.cart.summary.subtotal}</span>
-                    <span>₹{s.subTotal.toLocaleString("en-IN")}</span>
+                    <span>{formatINR(s.subTotal)}</span>
                 </div>
 
                 <div className="flex justify-between">
@@ -53,7 +54,7 @@ export default function CartSummary({ summary }: Props) {
                         </span>
                     ) : (
                         <span>
-                            ₹{s.deliveryCharge.toLocaleString("en-IN")}
+                            {formatINR(s.deliveryCharge)}
                         </span>
                     )}
                 </div>
@@ -62,7 +63,7 @@ export default function CartSummary({ summary }: Props) {
                     <span>{t.cart.summary.discount}</span>
 
                     <span className="text-green-600">
-                        - ₹{s.discount.toLocaleString("en-IN")}
+                        - {formatINR(s.discount)}
                     </span>
                 </div>
 
@@ -72,7 +73,7 @@ export default function CartSummary({ summary }: Props) {
                     <span>{t.cart.summary.grandTotal}</span>
 
                     <span>
-                        ₹{s.grandTotal.toLocaleString("en-IN")}
+                        {formatINR(s.grandTotal)}
                     </span>
                 </div>
             </div>

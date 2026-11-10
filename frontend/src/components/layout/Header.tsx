@@ -287,7 +287,17 @@ export default function Header() {
                 width={64}
                 height={64}
                 priority
-                className="h-9 w-auto max-w-[120px] rounded-none object-contain shadow-sm sm:h-11 md:h-12 lg:h-14"
+                unoptimized
+                className="
+                  h-9 w-9
+                  rounded-full
+                  border border-green-200
+                  object-contain
+                  shadow-sm
+                  sm:h-11 sm:w-11
+                  md:h-12 md:w-12
+                  lg:h-14 lg:w-14
+                "
               />
 
               <div className="min-w-0 max-w-[130px] sm:max-w-[180px] md:max-w-[220px] lg:max-w-[250px]">
@@ -718,7 +728,8 @@ export default function Header() {
                         alt={t.header.logoAlt}
                         width={50}
                         height={50}
-                        className="h-11 w-auto max-w-[120px] rounded-none object-contain border border-green-200"
+                        unoptimized
+                        className="h-11 w-11 rounded-full border border-green-200 object-contain"
                       />
 
                       <div className="min-w-0">

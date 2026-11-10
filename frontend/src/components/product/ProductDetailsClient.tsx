@@ -24,6 +24,7 @@ import {
   DEFAULT_PRODUCT_IMAGE,
   getImageSrc,
 } from "@/lib/image-fallbacks";
+import { formatINR } from "@/lib/currency";
 
 import type { ShopProduct } from "@/components/shop/ProductGrid";
 import type { Product, ProductVariant } from "@/types/product";
@@ -33,7 +34,6 @@ import { useAddWishlist } from "@/hooks/useAddWishlist";
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
 import { useAddToCart } from "@/hooks/cart/useAddToCart";
 
-import { toast } from "sonner";
 import { useLanguage } from "@/i18n/useLanguage";
 import Link from "next/link";
 
@@ -43,14 +43,6 @@ type ProductDetailsClientProps = {
 };
 
 type ProductTab = "description" | "specifications" | "usage";
-
-function toNumber(value: number | string) {
-  return Number(value);
-}
-
-function formatPrice(value: number | string) {
-  return `₹${toNumber(value).toLocaleString("en-IN")}`;
-}
 
 function getGalleryImages(product: Product) {
   const images = [product.image, ...(product.images ?? [])].map((image) =>
@@ -334,32 +326,11 @@ export default function ProductDetailsClient({
       return;
     }
 
-    addToCart.mutate(
-      {
-        productId: product.id,
-        quantity,
-        variantId: selectedVariant?.id,
-      },
-      {
-  onSuccess: () => {
-    // Cart header count instant update
-    window.dispatchEvent(
-      new Event("cart-updated")
-    );
-
-    // Success notification
-    toast.success(
-      t.common.toast.addedToCart
-    );
-  },
-
-  onError: () => {
-    toast.error(
-      t.common.toast.addToCartFailed
-    );
-  },
-      }
-    );
+    addToCart.add({
+      productId: product.id,
+      quantity,
+      variantId: selectedVariant?.id,
+    });
   };
 
   return (
@@ -493,14 +464,14 @@ export default function ProductDetailsClient({
           {/* Price */}
           <div className="mt-4 flex flex-wrap items-end gap-3">
             <p className="text-3xl font-extrabold tracking-tight text-green-700 sm:text-4xl">
-              {formatPrice(selectedPrice)}
+              {formatINR(selectedPrice)}
             </p>
 
             {!isVariantProduct &&
               hasDiscount &&
               discountedPrice !== null && (
                 <p className="pb-1 text-base text-gray-400 line-through sm:text-lg">
-                  {formatPrice(price)}
+                  {formatINR(price)}
                 </p>
               )}
           </div>
@@ -626,7 +597,7 @@ export default function ProductDetailsClient({
                       </p>
 
                       <p className={`mt-1 text-sm font-black ${accentClasses.price}`}>
-                        {formatPrice(variant.price)}
+                        {formatINR(variant.price)}
                       </p>
 
                       <div className="mt-1 flex flex-wrap items-center gap-1.5">
@@ -665,7 +636,7 @@ export default function ProductDetailsClient({
                     </div>
                   </div>
                   <span className="shrink-0 text-sm font-black sm:text-base">
-                    {formatPrice(selectedVariant.price)}
+                    {formatINR(selectedVariant.price)}
                   </span>
                 </div>
               ) : (
@@ -945,4 +916,3 @@ export default function ProductDetailsClient({
     </>
   );
 }
-

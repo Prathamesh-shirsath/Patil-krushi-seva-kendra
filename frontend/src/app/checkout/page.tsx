@@ -39,6 +39,7 @@ import AddressDialog from "@/components/profile/AddressDialog";
 import { useLanguage } from "@/i18n/useLanguage";
 
 import { Address } from "@/types/address";
+import { formatINR } from "@/lib/currency";
 
 import {
   createOrder,
@@ -97,6 +98,11 @@ export default function CheckoutPage() {
   const [
     razorpayLoaded,
     setRazorpayLoaded,
+  ] = useState(false);
+
+  const [
+    razorpayLoadError,
+    setRazorpayLoadError,
   ] = useState(false);
 
   // Delivery pincode state
@@ -302,12 +308,9 @@ export default function CheckoutPage() {
         return;
       }
 
-      if (
-        !razorpayLoaded &&
-        !window.Razorpay
-      ) {
+      if (!window.Razorpay) {
         toast.error(
-          `Sorry, we currently don't deliver to pincode ${activeAddress.pincode}.`
+          t.checkout.toast.paymentInitFailed
         );
 
         return;
@@ -382,7 +385,7 @@ export default function CheckoutPage() {
               .slice(-6)
               .toUpperCase()}`,
 
-          image: "/logo.png",
+          image: "/logo.jpeg",
 
           order_id:
             razorpayOrder.id,
@@ -696,7 +699,7 @@ export default function CheckoutPage() {
     authLoading
   ) {
     return (
-      <div className="min-h-screen bg-slate-50/60 py-12">
+      <div className="min-h-screen bg-emerald-50/40 py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-64 items-center justify-center">
             <div className="flex flex-col items-center gap-3">
@@ -716,7 +719,7 @@ export default function CheckoutPage() {
 
   if (!items.length) {
     return (
-      <div className="min-h-screen bg-slate-50/60 py-16">
+      <div className="min-h-screen bg-emerald-50/40 py-16">
         <div className="mx-auto max-w-md px-4 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
             <Truck className="h-8 w-8" />
@@ -750,17 +753,17 @@ export default function CheckoutPage() {
 
       <Script
         src="https://checkout.razorpay.com/v1/checkout.js"
-        onLoad={() =>
-          setRazorpayLoaded(true)
-        }
-        onError={() =>
-          console.error(
-            "Razorpay SDK failed to load."
-          )
-        }
+        onLoad={() => {
+          setRazorpayLoaded(true);
+          setRazorpayLoadError(false);
+        }}
+        onError={() => {
+          console.error("Razorpay SDK failed to load.");
+          setRazorpayLoadError(true);
+        }}
       />
 
-      <div className="min-h-screen bg-[#FAF9F5] pb-20 pt-4 text-slate-800 sm:pt-6">
+      <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-emerald-50/70 via-slate-50 to-white pb-12 pt-4 text-slate-800 sm:pb-16 sm:pt-6">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {/* ==================================================
@@ -778,7 +781,7 @@ export default function CheckoutPage() {
 
             <div className="hidden items-center gap-2 text-xs font-semibold sm:flex">
               <span className="text-slate-400">
-                1. Cart
+                {t.checkout.header.breadcrumbs.cart}
               </span>
 
               <span className="text-slate-300">
@@ -792,7 +795,7 @@ export default function CheckoutPage() {
               </span>
 
               <span className="text-slate-400">
-                3. Confirmation
+                {t.checkout.header.breadcrumbs.confirmation}
               </span>
             </div>
           </div>
@@ -804,7 +807,7 @@ export default function CheckoutPage() {
           <div className="mb-8">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1 text-xs font-bold text-emerald-800">
               <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-              Secure Checkout
+              {t.checkout.header.secureCheckout}
             </div>
 
             <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">{t.checkout.header.title}</h1>
@@ -843,21 +846,21 @@ export default function CheckoutPage() {
               MAIN GRID
           ================================================== */}
 
-          <div className="grid gap-8 lg:grid-cols-12">
+          <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-12 lg:gap-6">
 
             {/* =================================================
                 LEFT
             ================================================= */}
 
-            <div className="space-y-6 lg:col-span-8">
+            <div className="min-w-0 space-y-5 lg:col-span-7 lg:space-y-6">
 
               {/* ===============================================
                   DELIVERY ADDRESS
               =============================================== */}
 
-              <Card className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+              <Card className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 sm:rounded-3xl">
 
-                <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/60 p-5 sm:px-7">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/60 p-5 sm:px-7">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
                       <MapPin className="h-5 w-5" />
@@ -882,7 +885,7 @@ export default function CheckoutPage() {
                     className="gap-1.5 rounded-xl border-emerald-600 text-xs font-bold text-emerald-700 hover:bg-emerald-50"
                   >
                     <Plus className="h-3.5 w-3.5" />
-                    Add Address
+                    {t.checkout.address.addBtn}
                   </Button>
                 </div>
 
@@ -925,16 +928,18 @@ export default function CheckoutPage() {
                             address.id;
 
                           return (
-                            <div
+                            <button
+                              type="button"
                               key={
                                 address.id
                               }
+                              aria-pressed={isSelected}
                               onClick={() =>
                                 setSelectedAddressId(
                                   address.id
                                 )
                               }
-                              className={`relative cursor-pointer rounded-2xl border p-4 transition-all ${isSelected
+                              className={`relative w-full cursor-pointer rounded-2xl border p-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 ${isSelected
                                 ? "border-emerald-600 bg-emerald-50/40 ring-2 ring-emerald-600/20"
                                 : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                                 }`}
@@ -1012,7 +1017,7 @@ export default function CheckoutPage() {
                                 </div>
 
                               </div>
-                            </div>
+                            </button>
                           );
                         }
                       )}
@@ -1118,15 +1123,15 @@ export default function CheckoutPage() {
                   PAYMENT METHOD
               =============================================== */}
 
-              <Card className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+              <Card className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 sm:rounded-3xl">
 
-                <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/60 p-5 sm:px-7">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/60 p-5 sm:px-7">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
                       <CreditCard className="h-5 w-5" />
                     </div>
 
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <h2 className="text-base font-bold text-slate-900 sm:text-lg">{t.checkout.payment.title}</h2>
 
                       <p className="text-xs text-slate-500">{t.checkout.payment.subtitle}</p>
@@ -1140,13 +1145,15 @@ export default function CheckoutPage() {
 
                   {/* Razorpay */}
 
-                  <div
+                  <button
+                    type="button"
+                    aria-pressed={paymentMethod === "RAZORPAY"}
                     onClick={() =>
                       setPaymentMethod(
                         "RAZORPAY"
                       )
                     }
-                    className={`cursor-pointer rounded-2xl border p-4 transition-all sm:p-5 ${paymentMethod ===
+                    className={`w-full cursor-pointer rounded-2xl border p-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 sm:p-5 ${paymentMethod ===
                       "RAZORPAY"
                       ? "border-emerald-600 bg-emerald-50/30 ring-2 ring-emerald-600/20"
                       : "border-slate-200 bg-white hover:border-slate-300"
@@ -1170,20 +1177,15 @@ export default function CheckoutPage() {
 
                           <div className="mt-3 flex flex-wrap items-center gap-2">
                             <span className="rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-2xs">
-                              ΓÜí UPI
-                              (GPay /
-                              PhonePe)
+                              {t.checkout.payment.upiBadge}
                             </span>
 
                             <span className="rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-2xs">
-                              ≡ƒÆ│ Cards
-                              (Visa,
-                              RuPay, MC)
+                              {t.checkout.payment.cardsBadge}
                             </span>
 
                             <span className="rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-2xs">
-                              ≡ƒÅª Net
-                              Banking
+                              {t.checkout.payment.netBankingBadge}
                             </span>
                           </div>
                         </div>
@@ -1203,17 +1205,19 @@ export default function CheckoutPage() {
                       </div>
 
                     </div>
-                  </div>
+                  </button>
 
                   {/* COD */}
 
-                  <div
+                  <button
+                    type="button"
+                    aria-pressed={paymentMethod === "COD"}
                     onClick={() =>
                       setPaymentMethod(
                         "COD"
                       )
                     }
-                    className={`cursor-pointer rounded-2xl border p-4 transition-all sm:p-5 ${paymentMethod ===
+                    className={`w-full cursor-pointer rounded-2xl border p-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 sm:p-5 ${paymentMethod ===
                       "COD"
                       ? "border-emerald-600 bg-emerald-50/30 ring-2 ring-emerald-600/20"
                       : "border-slate-200 bg-white hover:border-slate-300"
@@ -1247,7 +1251,7 @@ export default function CheckoutPage() {
                       </div>
 
                     </div>
-                  </div>
+                  </button>
 
                 </CardContent>
               </Card>
@@ -1301,14 +1305,14 @@ export default function CheckoutPage() {
                 RIGHT - ORDER SUMMARY
             ================================================= */}
 
-            <div className="lg:col-span-4">
-              <div className="sticky top-20 space-y-6">
+            <div className="min-w-0 lg:col-span-5">
+              <div className="space-y-5 lg:sticky lg:top-20 lg:space-y-6">
 
-                <Card className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                <Card className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-lg shadow-slate-900/5 sm:rounded-3xl sm:p-6">
 
                   <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                     <h2 className="text-lg font-bold text-slate-900">
-                      Order Summary
+                      {t.cart.summary.title}
                     </h2>
 
                     <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-800">
@@ -1350,7 +1354,7 @@ export default function CheckoutPage() {
                           </div>
 
                           <div className="min-w-0 flex-1">
-                            <h4 className="truncate text-xs font-bold text-slate-900">
+                            <h4 className="break-words text-xs font-bold leading-snug text-slate-900">
                               {
                                 item.product
                                   .name
@@ -1358,30 +1362,21 @@ export default function CheckoutPage() {
                             </h4>
 
                             <p className="text-[11px] text-slate-500">
-                              Qty:{" "}
+                              {t.checkout.summary.qty}:{" "}
                               {
                                 item.quantity
                               }{" "}
-                              ├ù Γé╣
-                              {Number(
-                                item.product
-                                  .price
-                              ).toLocaleString(
-                                "en-IN"
-                              )}
+                              {formatINR(Number(item.product.price))}
                             </p>
                           </div>
 
-                          <p className="text-xs font-bold text-slate-900">
-                            Γé╣
-                            {(
+                          <p className="shrink-0 whitespace-nowrap text-xs font-bold tabular-nums text-slate-900">
+                            {formatINR(
                               Number(
                                 item.product
                                   .price
                               ) *
                               item.quantity
-                            ).toLocaleString(
-                              "en-IN"
                             )}
                           </p>
                         </div>
@@ -1395,64 +1390,52 @@ export default function CheckoutPage() {
 
                   <div className="space-y-3 py-4 text-xs sm:text-sm">
 
-                    <div className="flex justify-between text-slate-600">
-                      <span>{t.cart.summary?.subtotal || "Subtotal"}</span>
+                    <div className="flex items-center justify-between gap-3 text-slate-600">
+                      <span className="min-w-0">{t.cart.summary?.subtotal || "Subtotal"}</span>
 
-                      <span className="font-bold text-slate-900">
-                        Γé╣
-                        {summary.subTotal.toLocaleString(
-                          "en-IN"
-                        )}
+                      <span className="shrink-0 whitespace-nowrap font-bold tabular-nums text-slate-900">
+                        {formatINR(summary.subTotal)}
                       </span>
                     </div>
 
-                    <div className="flex justify-between text-slate-600">
+                    <div className="flex items-center justify-between gap-3 text-slate-600">
                       <span>{t.cart.summary?.deliveryCharge || "Delivery Fee"}</span>
 
                       {summary.deliveryCharge ===
                         0 ? (
                         <span className="font-bold text-emerald-700">
-                          FREE
+                          {t.cart.summary.free}
                         </span>
                       ) : (
-                        <span className="font-bold text-slate-900">
-                          Γé╣
-                          {summary.deliveryCharge.toLocaleString(
-                            "en-IN"
-                          )}
+                        <span className="shrink-0 whitespace-nowrap font-bold tabular-nums text-slate-900">
+                          {formatINR(summary.deliveryCharge)}
                         </span>
                       )}
                     </div>
 
                     {summary.discount >
                       0 && (
-                        <div className="flex justify-between text-slate-600">
+                        <div className="flex items-center justify-between gap-3 text-slate-600">
                           <span>{t.cart.summary?.discount || "Discount"}</span>
 
-                          <span className="font-bold text-emerald-700">
-                            - Γé╣
-                            {summary.discount.toLocaleString(
-                              "en-IN"
-                            )}
+                          <span className="shrink-0 whitespace-nowrap font-bold tabular-nums text-emerald-700">
+                            -{formatINR(summary.discount)}
                           </span>
                         </div>
                       )}
 
-                    <div className="border-t border-slate-100 pt-3">
-                      <div className="flex items-baseline justify-between">
+                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-3.5 sm:p-4">
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                         <span className="text-sm font-bold text-slate-900 sm:text-base">
-                          Grand Total
+                          {t.cart.summary.grandTotal}
                         </span>
 
-                        <span className="text-2xl font-black text-emerald-700">
-                          Γé╣
-                          {summary.grandTotal.toLocaleString(
-                            "en-IN"
-                          )}
+                        <span className="whitespace-nowrap text-xl font-black tabular-nums text-emerald-800 sm:text-2xl">
+                          {formatINR(summary.grandTotal)}
                         </span>
                       </div>
 
-                      <p className="mt-0.5 text-[11px] text-slate-400">{t.checkout.summary.taxesDesc}</p>
+                      <p className="mt-1 text-[11px] leading-4 text-slate-600">{t.checkout.summary.taxesDesc}</p>
                     </div>
                   </div>
 
@@ -1539,6 +1522,15 @@ export default function CheckoutPage() {
                       PLACE ORDER
                   ========================================== */}
 
+                  {razorpayLoadError && paymentMethod === "RAZORPAY" && (
+                    <p
+                      role="alert"
+                      className="mb-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs leading-5 text-red-800"
+                    >
+                      {t.checkout.toast.paymentInitFailed}
+                    </p>
+                  )}
+
                   <Button
                     onClick={
                       handleProceed
@@ -1547,7 +1539,8 @@ export default function CheckoutPage() {
                       isProcessing ||
                       checkingDelivery ||
                       deliveryAvailable !==
-                      true
+                      true ||
+                      (paymentMethod === "RAZORPAY" && !razorpayLoaded)
                     }
                     className={`h-12 w-full rounded-2xl text-sm font-bold text-white shadow-md transition-all active:scale-[0.99] ${deliveryAvailable ===
                       true &&
@@ -1565,23 +1558,29 @@ export default function CheckoutPage() {
                         Checking
                         Delivery...
                       </span>
-                    ) : deliveryAvailable !==
-                      true ? (
+                    ) : deliveryAvailable !== true ? (
                       <span className="flex items-center gap-2">
                         <AlertCircle className="h-4 w-4" />
                         Delivery Not
                         Available
                       </span>
+                    ) : razorpayLoadError && paymentMethod === "RAZORPAY" ? (
+                      <span className="flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4" />
+                        {t.checkout.toast.paymentInitFailed}
+                      </span>
+                    ) : paymentMethod === "RAZORPAY" && !razorpayLoaded ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {t.checkout.actions.loadingPayment}
+                      </span>
                     ) : paymentMethod ===
                       "RAZORPAY" ? (
                       <span className="flex items-center gap-2">
                         <Lock className="h-4 w-4" />
-                        Pay Γé╣
-                        {summary.grandTotal.toLocaleString(
-                          "en-IN"
-                        )}{" "}
-                        with
-                        Razorpay
+                        {t.checkout.actions.payRazorpay(
+                          formatINR(summary.grandTotal)
+                        )}
                       </span>
                     ) : (
                       <span className="flex items-center gap-2">

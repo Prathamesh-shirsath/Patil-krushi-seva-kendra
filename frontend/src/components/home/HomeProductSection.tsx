@@ -145,9 +145,12 @@ export default function HomeProductSection({
                   <ProductCardSkeleton />
                 </SwiperSlide>
               ))
-              : products.map((product) => (
+              : products.map((product, index) => (
                 <SwiperSlide key={product.id} className="h-auto">
-                  <ProductCard {...product} />
+                  <ProductCard
+                    {...product}
+                    imageLoading={index === 0 ? "eager" : "lazy"}
+                  />
                 </SwiperSlide>
               ))}
           </Swiper>

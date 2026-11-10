@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { useRemoveWishlist } from "@/hooks/useRemoveWishlist";
 import { useLanguage } from "@/i18n/useLanguage";
+import { formatINR } from "@/lib/currency";
 
 interface Props {
   wishlistId: string;
@@ -90,7 +91,7 @@ export default function WishlistCard({
         )}
 
         <div className="mt-5 text-3xl font-bold text-green-700">
-          ₹{product.price}
+          {formatINR(Number(product.price))}
         </div>
 
         <div className={`mt-auto grid gap-3 pt-6 ${listView ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2"}`}>
